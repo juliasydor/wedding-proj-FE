@@ -233,5 +233,32 @@
     "hours": "HOURS",
     "minutes": "MINS",
     "seconds": "SECS"
+  },
+  "footer": {
+    "help": {
+      "title": "Let us help you",
+      "createSite": "I want to create a wedding site",
+      "giftList": "I want to receive gift list in cash",
+      "giveGift": "I want to give a gift to a couple",
+      "questions": "I have questions"
+    },
+    "best": {
+      "title": "Only the best",
+      "showcase": "I want to showcase",
+      "event": "The Véu & Gravata Event"
+    },
+    "about": {
+      "title": "More about us",
+      "joinTeam": "I'd like to join the team",
+      "ourStory": "Know our story",
+      "contactHours": "Contact us",
+      "schedule": "Monday to Friday 9am to 9pm"
+    },
+    "bottom": {
+      "developedWith": "Developed with",
+      "forEveryone": "for everyone",
+      "terms": "Terms and conditions",
+      "privacy": "Privacy policy"
+    }
   }
 }

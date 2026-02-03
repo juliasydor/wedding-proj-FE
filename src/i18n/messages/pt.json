@@ -233,5 +233,32 @@
     "hours": "HORAS",
     "minutes": "MINS",
     "seconds": "SEGS"
+  },
+  "footer": {
+    "help": {
+      "title": "Vamos te ajudar",
+      "createSite": "Quero criar um site de casamento",
+      "giftList": "Quero receber a lista de casamento em dinheiro",
+      "giveGift": "Quero presentear um casal",
+      "questions": "Quero tirar minhas dúvidas"
+    },
+    "best": {
+      "title": "Só os melhores",
+      "showcase": "Quero expor",
+      "event": "O Evento Véu & Gravata"
+    },
+    "about": {
+      "title": "Mais da gente",
+      "joinTeam": "Gostaria de fazer parte da equipe",
+      "ourStory": "Conheça nossa história",
+      "contactHours": "Fale com a gente de",
+      "schedule": "segunda a sexta das 9:00 às 21:00h"
+    },
+    "bottom": {
+      "developedWith": "Desenvolvido para todos com muito",
+      "forEveryone": "para todos",
+      "terms": "Termos e condições de uso",
+      "privacy": "Política de privacidade"
+    }
   }
 }
