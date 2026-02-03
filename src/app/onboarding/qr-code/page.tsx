@@ -8,7 +8,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { IconButton } from '@/shared/ui/atoms/IconButton';
-import { SparkleText } from '@/shared/animations/SparkleText';
+import { SparkleText, CelebrationEffect } from '@/shared/animations';
 import { useWeddingStore } from '@/entities/wedding';
 import { ROUTES } from '@/shared/config';
 import { toast } from 'sonner';
@@ -43,12 +43,8 @@ export default function OnboardingQRCodePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-10 text-2xl animate-bounce">💍</div>
-      <div className="absolute top-32 right-16 text-xl animate-pulse">✨</div>
-      <div className="absolute bottom-40 left-16 text-2xl animate-bounce" style={{ animationDelay: '0.1s' }}>🎉</div>
-      <div className="absolute top-40 right-10 text-xl">💜</div>
-      <div className="absolute bottom-32 right-20 text-2xl animate-pulse">🥂</div>
+      {/* Celebration animation background */}
+      <CelebrationEffect />
 
       {/* Close button */}
       <IconButton
@@ -65,7 +61,7 @@ export default function OnboardingQRCodePage() {
         {/* Title */}
         <div className="space-y-2">
           <h1 className="text-heading-2">
-            <SparkleText>{t('title')}</SparkleText> 🎉
+            <SparkleText>{t('title')}</SparkleText>
           </h1>
           <p className="text-subtitle">{t('subtitle')}</p>
         </div>

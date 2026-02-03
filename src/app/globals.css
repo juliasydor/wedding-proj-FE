@@ -337,6 +337,148 @@
                 0 0 60px rgba(234, 46, 91, 0.1),
                 0 20px 40px -20px rgba(0, 0, 0, 0.3);
   }
+
+  /* Celebration confetti fall */
+  @keyframes confetti-fall {
+    0% {
+      transform: translateY(0) rotate(0deg) scale(1);
+      opacity: 1;
+    }
+    25% {
+      transform: translateY(25vh) rotate(180deg) translateX(20px) scale(0.9);
+    }
+    50% {
+      transform: translateY(50vh) rotate(360deg) translateX(-20px) scale(0.8);
+    }
+    75% {
+      transform: translateY(75vh) rotate(540deg) translateX(10px) scale(0.7);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(120vh) rotate(720deg) translateX(-10px) scale(0.5);
+      opacity: 0;
+    }
+  }
+
+  .animate-confetti-fall {
+    animation: confetti-fall linear infinite;
+  }
+
+  /* Firework burst */
+  @keyframes firework-burst {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-firework-burst {
+    animation: firework-burst 0.6s ease-out forwards;
+  }
+
+  /* Firework particle expansion */
+  @keyframes firework-particle {
+    0% {
+      transform: rotate(var(--rotation, 0deg)) translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(var(--rotation, 0deg)) translateY(-60px) scale(0);
+      opacity: 0;
+    }
+  }
+
+  .animate-firework-particle {
+    animation: firework-particle 1.5s ease-out forwards;
+  }
+
+  /* Firework heart pop */
+  @keyframes firework-heart {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+    }
+    30% {
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 1;
+    }
+    60% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0.6;
+    }
+  }
+
+  .animate-firework-heart {
+    animation: firework-heart 1.5s ease-out forwards;
+  }
+
+  /* Floating slow animation */
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-15px) rotate(5deg);
+    }
+    50% {
+      transform: translateY(-5px) rotate(-3deg);
+    }
+    75% {
+      transform: translateY(-20px) rotate(3deg);
+    }
+  }
+
+  .animate-float-slow {
+    animation: float-slow 6s ease-in-out infinite;
+  }
+
+  /* Twinkle animation */
+  @keyframes twinkle {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+
+  .animate-twinkle {
+    animation: twinkle 2s ease-in-out infinite;
+  }
+
+  /* Bubble rise animation */
+  @keyframes bubble-rise {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translateY(-50vh) translateX(10px) scale(0.9);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(-100vh) translateX(-5px) scale(0.5);
+      opacity: 0;
+    }
+  }
+
+  .animate-bubble-rise {
+    animation: bubble-rise ease-out infinite;
+  }
 }
 
 /* Typography variants */
