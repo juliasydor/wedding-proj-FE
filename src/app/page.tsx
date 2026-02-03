@@ -47,12 +47,13 @@ export default async function HomePage() {
           {/* Hero Image Background */}
           <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden mb-8">
             <Image
-              src="/hero-couple.jpg"
+              src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
               alt="Happy wedding couple"
               fill
-              className="object-cover"
+              className="object-cover object-[center_25%]"
               priority
               sizes="(max-width: 768px) 100vw, 1200px"
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
