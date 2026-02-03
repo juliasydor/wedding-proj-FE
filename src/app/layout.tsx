@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { Toaster } from '@/components/ui/sonner';
+import { HeartCursorTrail } from '@/shared/animations/HeartCursorTrail';
 import './globals.css';
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
+          <HeartCursorTrail />
           {children}
           <Toaster position="top-center" />
         </NextIntlClientProvider>
