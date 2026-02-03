@@ -1,0 +1,229 @@
+{
+  "common": {
+    "appName": "Véu & Gravata",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "skip": "Skip",
+    "done": "Done",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "create": "Create",
+    "view": "View",
+    "close": "Close"
+  },
+  "nav": {
+    "home": "Home",
+    "login": "Login",
+    "signup": "Get Started",
+    "dashboard": "Dashboard",
+    "giftList": "Gift List",
+    "guests": "Guests",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "landing": {
+    "hero": {
+      "title": "Your Love Story, Beautifully Online.",
+      "subtitle": "Create a stunning wedding website, manage RSVPs, and build your dream registry in minutes.",
+      "cta": "Create Your Site"
+    },
+    "stats": {
+      "couples": "COUPLES",
+      "customizable": "CUSTOMIZABLE",
+      "rating": "RATING"
+    },
+    "features": {
+      "title": "Everything you need",
+      "subtitle": "Powerful tools to plan your dream wedding",
+      "websites": {
+        "title": "Beautiful Websites",
+        "description": "Choose from stunning templates and personalize every detail"
+      },
+      "guests": {
+        "title": "Guest Management",
+        "description": "Track RSVPs and manage your guest list easily"
+      },
+      "gifts": {
+        "title": "Gift Registry",
+        "description": "Create your gift list and receive contributions directly"
+      },
+      "share": {
+        "title": "Share with Ease",
+        "description": "QR Code and personalized link to share with everyone"
+      }
+    },
+    "cta": {
+      "title": "Ready to start your journey?",
+      "subtitle": "Create your wedding website in minutes and share your love story with the world.",
+      "button": "Create Your Site"
+    },
+    "footer": {
+      "copyright": "Wedding Planner App © {year}"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signupLink": "Sign up"
+    },
+    "signup": {
+      "title": "Start Your Forever",
+      "subtitle": "Create your personalized wedding space",
+      "partnerNames": "Partner Names",
+      "partnerNamesPlaceholder": "e.g. Romeo & Juliet",
+      "email": "Email Address",
+      "emailPlaceholder": "hello@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Create a secure password",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Log In",
+      "or": "or join with"
+    }
+  },
+  "onboarding": {
+    "names": {
+      "title": "Let's start with your names",
+      "subtitle": "Who are we celebrating?",
+      "partner1": "PARTNER 1",
+      "partner1Placeholder": "Your Name",
+      "partner2": "PARTNER 2",
+      "partner2Placeholder": "Partner's Name"
+    },
+    "date": {
+      "title": "When do we celebrate?",
+      "subtitle": "Pick the big day.",
+      "label": "Wedding Date"
+    },
+    "location": {
+      "title": "Set the scene",
+      "subtitle": "Where is the magic happening?",
+      "searchPlaceholder": "Search venue or city...",
+      "selectedLocation": "SELECTED LOCATION"
+    },
+    "dressCode": {
+      "title": "Dress Code & Theme",
+      "subtitle": "Define the aesthetic for your special day. Select colors and styles for your wedding party.",
+      "tabs": {
+        "guests": "Guests",
+        "bridesmaids": "Bridesmaids",
+        "groomsmen": "Groomsmen"
+      },
+      "colorPalette": "Color Palette",
+      "dressLength": "Dress Length",
+      "lengths": {
+        "short": "Short",
+        "midi": "Midi",
+        "long": "Long"
+      },
+      "preview": "PREVIEW",
+      "yourStyle": "Your Wedding Style"
+    },
+    "banking": {
+      "title": "Where should we send your gifts?",
+      "subtitle": "Link a bank account to receive cash funds directly. It's safe, secure, and free.",
+      "securePayouts": "Secure Payouts",
+      "securityNote": "We use 256-bit SSL encryption to keep your data safe. Your info is never shared with third parties.",
+      "bankName": "Bank Name",
+      "bankNamePlaceholder": "Select your bank",
+      "routingNumber": "Routing Number",
+      "accountNumber": "Account Number",
+      "submit": "Connect Bank",
+      "skipForNow": "Skip for now"
+    },
+    "template": {
+      "title": "Choose your style",
+      "subtitle": "Select a design to start building your personalized wedding landing page.",
+      "categories": {
+        "all": "All",
+        "modern": "Modern",
+        "classic": "Classic",
+        "rustic": "Rustic",
+        "boho": "Boho"
+      },
+      "selectTemplate": "Select Template",
+      "previewDesign": "Preview Design"
+    },
+    "giftList": {
+      "title": "Edit Gift List",
+      "searchPlaceholder": "Search for toaster, mixer, funds...",
+      "createCustom": {
+        "title": "Create Custom Gift",
+        "subtitle": "Don't see it? Add a cash fund or unique item.",
+        "button": "Create"
+      },
+      "popular": "Popular for Weddings",
+      "categories": {
+        "all": "All",
+        "honeymoon": "Honeymoon",
+        "kitchen": "Kitchen",
+        "dining": "Dining",
+        "bedroom": "Bedroom"
+      }
+    },
+    "preview": {
+      "title": "SITE PREVIEW",
+      "countdownTitle": "COUNTDOWN TO FOREVER",
+      "viewGiftRegistry": "View Gift Registry",
+      "readyToGoLive": "Ready to go live?",
+      "publishSite": "Publish Site"
+    },
+    "qrCode": {
+      "title": "It's Official!",
+      "subtitle": "Your wedding website is now live. Time to share the big news with your guests.",
+      "scanToPreview": "SCAN TO PREVIEW",
+      "createdBy": "CREATED BY",
+      "copyLink": "Copy Link",
+      "shareVia": "Or share via",
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram",
+      "email": "Email"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {name}!",
+    "overview": "Overview",
+    "giftsReceived": {
+      "title": "Gifts Received",
+      "newToday": "{count} new gifts today",
+      "totalReceived": "Total Received",
+      "ofGoal": "{percent}% of goal"
+    },
+    "sendThanks": "Send Thanks"
+  },
+  "checkout": {
+    "title": "Secure Checkout",
+    "selectedGift": "SELECTED GIFT",
+    "leaveNote": "Leave a note for {names}",
+    "notePlaceholder": "Wishing you a lifetime of happiness together!",
+    "paymentMethod": "Payment Method",
+    "creditCard": "Credit Card",
+    "pix": "PIX",
+    "cardNumber": "Card number",
+    "expiry": "MM/YY",
+    "cvv": "CVV",
+    "cardholderName": "Cardholder name",
+    "subtotal": "Subtotal",
+    "transactionFee": "Transaction Fee ({percent}%)",
+    "total": "Total",
+    "sendGift": "Send Gift",
+    "securePayment": "Payments are secure and encrypted"
+  },
+  "countdown": {
+    "days": "DAYS",
+    "hours": "HOURS",
+    "minutes": "MINS",
+    "seconds": "SECS"
+  }
+}

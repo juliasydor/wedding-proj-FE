@@ -1,0 +1,229 @@
+{
+  "common": {
+    "appName": "Véu & Gravata",
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "back": "Voltar",
+    "skip": "Pular",
+    "done": "Concluído",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "search": "Buscar",
+    "create": "Criar",
+    "view": "Ver",
+    "close": "Fechar"
+  },
+  "nav": {
+    "home": "Início",
+    "login": "Entrar",
+    "signup": "Começar Agora",
+    "dashboard": "Painel",
+    "giftList": "Lista de Presentes",
+    "guests": "Convidados",
+    "settings": "Configurações",
+    "logout": "Sair"
+  },
+  "landing": {
+    "hero": {
+      "title": "Sua História de Amor, Lindamente Online.",
+      "subtitle": "Crie um site de casamento incrível, gerencie RSVPs e construa sua lista de presentes em minutos.",
+      "cta": "Criar Seu Site"
+    },
+    "stats": {
+      "couples": "CASAIS",
+      "customizable": "PERSONALIZÁVEL",
+      "rating": "AVALIAÇÃO"
+    },
+    "features": {
+      "title": "Tudo que você precisa",
+      "subtitle": "Ferramentas poderosas para planejar o casamento dos seus sonhos",
+      "websites": {
+        "title": "Sites Lindos",
+        "description": "Escolha entre templates impressionantes e personalize cada detalhe"
+      },
+      "guests": {
+        "title": "Gestão de Convidados",
+        "description": "Acompanhe RSVPs e gerencie sua lista de convidados facilmente"
+      },
+      "gifts": {
+        "title": "Lista de Presentes",
+        "description": "Crie sua lista de presentes e receba contribuições diretamente"
+      },
+      "share": {
+        "title": "Compartilhe com Facilidade",
+        "description": "QR Code e link personalizados para compartilhar com todos"
+      }
+    },
+    "cta": {
+      "title": "Pronto para começar sua jornada?",
+      "subtitle": "Crie seu site de casamento em minutos e compartilhe sua história de amor com o mundo.",
+      "button": "Criar Seu Site"
+    },
+    "footer": {
+      "copyright": "Wedding Planner App © {year}"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bem-vindo de volta",
+      "subtitle": "Entre na sua conta",
+      "email": "Email",
+      "password": "Senha",
+      "submit": "Entrar",
+      "forgotPassword": "Esqueceu a senha?",
+      "noAccount": "Não tem uma conta?",
+      "signupLink": "Cadastre-se"
+    },
+    "signup": {
+      "title": "Comece Sua Jornada",
+      "subtitle": "Crie seu espaço de casamento personalizado",
+      "partnerNames": "Nomes dos Noivos",
+      "partnerNamesPlaceholder": "Sarah & Tom",
+      "email": "Email",
+      "emailPlaceholder": "seu@email.com",
+      "password": "Senha",
+      "passwordPlaceholder": "Crie uma senha segura",
+      "submit": "Criar Conta",
+      "hasAccount": "Já tem uma conta?",
+      "loginLink": "Entre aqui",
+      "or": "ou continue com"
+    }
+  },
+  "onboarding": {
+    "names": {
+      "title": "Vamos começar com seus nomes",
+      "subtitle": "Quem estamos celebrando?",
+      "partner1": "PARCEIRO 1",
+      "partner1Placeholder": "Seu Nome",
+      "partner2": "PARCEIRO 2",
+      "partner2Placeholder": "Nome do Parceiro"
+    },
+    "date": {
+      "title": "Quando vamos celebrar?",
+      "subtitle": "Escolha o grande dia.",
+      "label": "Data do Casamento"
+    },
+    "location": {
+      "title": "Onde acontece a magia?",
+      "subtitle": "Defina o cenário.",
+      "searchPlaceholder": "Buscar local ou cidade...",
+      "selectedLocation": "LOCAL SELECIONADO"
+    },
+    "dressCode": {
+      "title": "Dress Code & Tema",
+      "subtitle": "Defina a estética do seu dia especial. Selecione cores e estilos para sua festa de casamento.",
+      "tabs": {
+        "guests": "Convidados",
+        "bridesmaids": "Madrinhas",
+        "groomsmen": "Padrinhos"
+      },
+      "colorPalette": "Paleta de Cores",
+      "dressLength": "Comprimento do Vestido",
+      "lengths": {
+        "short": "Curto",
+        "midi": "Midi",
+        "long": "Longo"
+      },
+      "preview": "PREVIEW",
+      "yourStyle": "Seu Estilo de Casamento"
+    },
+    "banking": {
+      "title": "Para onde enviamos seus presentes?",
+      "subtitle": "Vincule uma conta bancária para receber fundos diretamente. É seguro e gratuito.",
+      "securePayouts": "Pagamentos Seguros",
+      "securityNote": "Usamos criptografia SSL de 256 bits para manter seus dados seguros. Suas informações nunca são compartilhadas com terceiros.",
+      "bankName": "Nome do Banco",
+      "bankNamePlaceholder": "Selecione seu banco",
+      "routingNumber": "Número da Agência",
+      "accountNumber": "Número da Conta",
+      "submit": "Conectar Banco",
+      "skipForNow": "Pular por agora"
+    },
+    "template": {
+      "title": "Escolha seu estilo",
+      "subtitle": "Selecione um design para começar a construir sua página de casamento personalizada.",
+      "categories": {
+        "all": "Todos",
+        "modern": "Moderno",
+        "classic": "Clássico",
+        "rustic": "Rústico",
+        "boho": "Boho"
+      },
+      "selectTemplate": "Selecionar Template",
+      "previewDesign": "Visualizar Design"
+    },
+    "giftList": {
+      "title": "Lista de Presentes",
+      "searchPlaceholder": "Buscar torradeira, mixer, fundos...",
+      "createCustom": {
+        "title": "Criar Presente Personalizado",
+        "subtitle": "Não encontrou? Adicione um fundo ou item único.",
+        "button": "Criar"
+      },
+      "popular": "Populares para Casamentos",
+      "categories": {
+        "all": "Todos",
+        "honeymoon": "Lua de Mel",
+        "kitchen": "Cozinha",
+        "dining": "Jantar",
+        "bedroom": "Quarto"
+      }
+    },
+    "preview": {
+      "title": "PREVIEW DO SITE",
+      "countdownTitle": "CONTAGEM REGRESSIVA PARA SEMPRE",
+      "viewGiftRegistry": "Ver Lista de Presentes",
+      "readyToGoLive": "Pronto para ir ao ar?",
+      "publishSite": "Publicar Site"
+    },
+    "qrCode": {
+      "title": "É Oficial!",
+      "subtitle": "Seu site de casamento está no ar. Hora de compartilhar a novidade com seus convidados.",
+      "scanToPreview": "ESCANEIE PARA VISUALIZAR",
+      "createdBy": "CRIADO POR",
+      "copyLink": "Copiar Link",
+      "shareVia": "Ou compartilhe via",
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram",
+      "email": "Email"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bem-vindo, {name}!",
+    "overview": "Visão Geral",
+    "giftsReceived": {
+      "title": "Presentes Recebidos",
+      "newToday": "{count} novos presentes hoje",
+      "totalReceived": "Total Recebido",
+      "ofGoal": "{percent}% da meta"
+    },
+    "sendThanks": "Enviar Agradecimento"
+  },
+  "checkout": {
+    "title": "Checkout Seguro",
+    "selectedGift": "PRESENTE SELECIONADO",
+    "leaveNote": "Deixe uma mensagem para {names}",
+    "notePlaceholder": "Desejando uma vida de felicidade juntos!",
+    "paymentMethod": "Método de Pagamento",
+    "creditCard": "Cartão de Crédito",
+    "pix": "PIX",
+    "cardNumber": "Número do Cartão",
+    "expiry": "MM/AA",
+    "cvv": "CVV",
+    "cardholderName": "Nome no Cartão",
+    "subtotal": "Subtotal",
+    "transactionFee": "Taxa de Transação ({percent}%)",
+    "total": "Total",
+    "sendGift": "Enviar Presente",
+    "securePayment": "Pagamentos são seguros e criptografados"
+  },
+  "countdown": {
+    "days": "DIAS",
+    "hours": "HORAS",
+    "minutes": "MINS",
+    "seconds": "SEGS"
+  }
+}

@@ -1,0 +1,350 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Wedding Theme Color Tokens */
+@theme inline {
+  /* Core color system */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Wedding palette */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-tertiary: var(--tertiary);
+  --color-quaternary: var(--quaternary);
+  --color-subtitle: var(--subtitle);
+  --color-input-bg: var(--input-bg);
+
+  /* Card system */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* UI states */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+
+  /* Borders and inputs */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Border radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* Wedding Theme - Dark by default */
+:root {
+  --radius: 0.625rem;
+
+  /* Main wedding palette */
+  --background: #261516;
+  --foreground: #FFFFFF;
+  --primary: #261516;
+  --primary-foreground: #FFFFFF;
+  --secondary: #ea2e5b;
+  --secondary-foreground: #FFFFFF;
+  --tertiary: #F1557C;
+  --quaternary: #221015;
+  --subtitle: #8D968F;
+  --input-bg: #271C1E;
+
+  /* Card and popover */
+  --card: #221015;
+  --card-foreground: #FFFFFF;
+  --popover: #221015;
+  --popover-foreground: #FFFFFF;
+
+  /* UI states */
+  --muted: #271C1E;
+  --muted-foreground: #8D968F;
+  --accent: #F1557C;
+  --accent-foreground: #FFFFFF;
+  --destructive: #ef4444;
+
+  /* Borders and inputs */
+  --border: #3a2a2c;
+  --input: #271C1E;
+  --ring: #ea2e5b;
+
+  /* Charts (wedding themed) */
+  --chart-1: #ea2e5b;
+  --chart-2: #F1557C;
+  --chart-3: #ff7a9c;
+  --chart-4: #ffb3c6;
+  --chart-5: #ffd6e0;
+
+  /* Sidebar */
+  --sidebar: #221015;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #ea2e5b;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #271C1E;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #3a2a2c;
+  --sidebar-ring: #ea2e5b;
+}
+
+/* Light mode variant (optional, for guest-facing pages if needed) */
+.light {
+  --background: #FFFFFF;
+  --foreground: #261516;
+  --primary: #FFFFFF;
+  --primary-foreground: #261516;
+  --secondary: #ea2e5b;
+  --secondary-foreground: #FFFFFF;
+  --tertiary: #F1557C;
+  --quaternary: #faf5f5;
+  --subtitle: #6b7280;
+  --input-bg: #f3f4f6;
+
+  --card: #FFFFFF;
+  --card-foreground: #261516;
+  --popover: #FFFFFF;
+  --popover-foreground: #261516;
+
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #F1557C;
+  --accent-foreground: #FFFFFF;
+  --destructive: #ef4444;
+
+  --border: #e5e7eb;
+  --input: #f3f4f6;
+  --ring: #ea2e5b;
+
+  --sidebar: #faf5f5;
+  --sidebar-foreground: #261516;
+  --sidebar-primary: #ea2e5b;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #f3f4f6;
+  --sidebar-accent-foreground: #261516;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #ea2e5b;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Custom scrollbar for wedding theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--quaternary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--tertiary);
+  }
+}
+
+/* Wedding-specific animations */
+@layer utilities {
+  /* Floating heart animation */
+  @keyframes float-heart {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-100vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  .animate-float-heart {
+    animation: float-heart linear infinite;
+  }
+
+  /* Pulsing heart animation */
+  @keyframes pulse-heart {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  .animate-pulse-heart {
+    animation: pulse-heart 1.5s ease-in-out infinite;
+  }
+
+  /* Falling petal animation */
+  @keyframes fall-petal {
+    0% {
+      transform: translateY(-20px) translateX(0) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    90% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(100vh) translateX(100px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  .animate-fall-petal {
+    animation: fall-petal linear infinite;
+  }
+
+  /* Sparkle animation */
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  /* Glow effect */
+  .glow-secondary {
+    box-shadow: 0 0 20px rgba(234, 46, 91, 0.4),
+                0 0 40px rgba(234, 46, 91, 0.2),
+                0 0 60px rgba(234, 46, 91, 0.1);
+  }
+
+  .glow-tertiary {
+    box-shadow: 0 0 20px rgba(241, 85, 124, 0.4),
+                0 0 40px rgba(241, 85, 124, 0.2),
+                0 0 60px rgba(241, 85, 124, 0.1);
+  }
+
+  /* Text glow */
+  .text-glow {
+    text-shadow: 0 0 10px rgba(234, 46, 91, 0.5),
+                 0 0 20px rgba(234, 46, 91, 0.3),
+                 0 0 30px rgba(234, 46, 91, 0.2);
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-wedding {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--quaternary) 100%);
+  }
+
+  .bg-gradient-romantic {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
+  }
+
+  /* Smooth transitions */
+  .transition-wedding {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Focus ring for accessibility */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+}
+
+/* Typography variants */
+@layer components {
+  .text-heading-1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  }
+
+  .text-heading-2 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+  }
+
+  .text-heading-3 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+
+  .text-heading-4 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+
+  .text-body-large {
+    @apply text-lg md:text-xl;
+  }
+
+  .text-body {
+    @apply text-base;
+  }
+
+  .text-body-small {
+    @apply text-sm;
+  }
+
+  .text-caption {
+    @apply text-xs text-subtitle;
+  }
+}
