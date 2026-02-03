@@ -61,7 +61,7 @@ export default function OnboardingTemplatePage() {
     if (selectedTemplate) {
       updateOnboarding({ templateId: selectedTemplate });
       nextStep();
-      router.push(ROUTES.onboarding.giftList);
+      router.push(ROUTES.onboarding.preview);
     }
   };
 

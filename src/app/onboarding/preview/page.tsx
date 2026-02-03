@@ -22,7 +22,7 @@ export default function OnboardingPreviewPage() {
 
   const handleBack = () => {
     prevStep();
-    router.push(ROUTES.onboarding.giftList);
+    router.push(ROUTES.onboarding.template);
   };
 
   const weddingDate = onboarding.date ? new Date(onboarding.date) : new Date();

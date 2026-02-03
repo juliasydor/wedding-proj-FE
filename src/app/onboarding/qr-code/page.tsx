@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { X, Link2, MessageCircle, Instagram, Mail } from 'lucide-react';
+import { X, Link2, MessageCircle, Instagram, Mail, Gift, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -10,14 +11,20 @@ import { IconButton } from '@/shared/ui/atoms/IconButton';
 import { SparkleText } from '@/shared/animations/SparkleText';
 import { useWeddingStore } from '@/entities/wedding';
 import { ROUTES } from '@/shared/config';
+import { toast } from 'sonner';
 
 export default function OnboardingQRCodePage() {
   const t = useTranslations('onboarding.qrCode');
   const router = useRouter();
-  const { onboarding, resetOnboarding } = useWeddingStore();
+  const { onboarding } = useWeddingStore();
+  const [copied, setCopied] = useState(false);
 
-  const weddingUrl = `https://veugravata.com/${onboarding.partner1Name?.toLowerCase()}and${onboarding.partner2Name?.toLowerCase()}/2024`;
-  const displayUrl = `${onboarding.partner1Name?.toLowerCase()}and${onboarding.partner2Name?.toLowerCase()}.wedding/2024`;
+  const weddingUrl = `https://veugravata.com/${onboarding.partner1Name?.toLowerCase().replace(/\s/g, '')}and${onboarding.partner2Name?.toLowerCase().replace(/\s/g, '')}/2024`;
+  const displayUrl = `${onboarding.partner1Name?.toLowerCase().replace(/\s/g, '')}and${onboarding.partner2Name?.toLowerCase().replace(/\s/g, '')}.wedding/2024`;
+
+  const handleConfigureGifts = () => {
+    router.push(ROUTES.onboarding.giftList);
+  };
 
   const handleDone = () => {
     router.push(ROUTES.dashboard);
@@ -29,14 +36,17 @@ export default function OnboardingQRCodePage() {
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(weddingUrl);
+    setCopied(true);
+    toast.success('Link copied to clipboard!');
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-20 left-10 text-2xl animate-bounce">💍</div>
       <div className="absolute top-32 right-16 text-xl animate-pulse">✨</div>
-      <div className="absolute bottom-40 left-16 text-2xl animate-bounce delay-100">🎉</div>
+      <div className="absolute bottom-40 left-16 text-2xl animate-bounce" style={{ animationDelay: '0.1s' }}>🎉</div>
       <div className="absolute top-40 right-10 text-xl">💜</div>
       <div className="absolute bottom-32 right-20 text-2xl animate-pulse">🥂</div>
 
@@ -98,8 +108,17 @@ export default function OnboardingQRCodePage() {
           onClick={copyLink}
           className="w-full h-14 rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium text-lg"
         >
-          <Link2 className="mr-2 h-5 w-5" />
-          {t('copyLink')}
+          {copied ? (
+            <>
+              <Check className="mr-2 h-5 w-5" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Link2 className="mr-2 h-5 w-5" />
+              {t('copyLink')}
+            </>
+          )}
         </Button>
 
         {/* Share Options */}
@@ -109,7 +128,7 @@ export default function OnboardingQRCodePage() {
             <button
               type="button"
               className="flex flex-col items-center gap-2 group"
-              onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(weddingUrl)}`, '_blank')}
+              onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Check out our wedding website! ${weddingUrl}`)}`, '_blank')}
             >
               <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center group-hover:scale-110 transition-transform">
                 <MessageCircle className="h-6 w-6 text-white" />
@@ -130,7 +149,7 @@ export default function OnboardingQRCodePage() {
             <button
               type="button"
               className="flex flex-col items-center gap-2 group"
-              onClick={() => window.open(`mailto:?subject=Our Wedding Website&body=${encodeURIComponent(weddingUrl)}`, '_blank')}
+              onClick={() => window.open(`mailto:?subject=Our Wedding Website&body=${encodeURIComponent(`We're getting married! Check out our wedding website: ${weddingUrl}`)}`, '_blank')}
             >
               <div className="w-12 h-12 rounded-full bg-[#4A90D9] flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Mail className="h-6 w-6 text-white" />
@@ -140,13 +159,34 @@ export default function OnboardingQRCodePage() {
           </div>
         </div>
 
+        {/* Configure Gift List CTA */}
+        <div className="bg-gradient-to-r from-secondary/20 to-tertiary/20 rounded-2xl p-4 border border-secondary/30">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+              <Gift className="h-5 w-5 text-secondary" />
+            </div>
+            <div className="text-left">
+              <p className="font-medium text-foreground">Configure your Gift Registry</p>
+              <p className="text-sm text-subtitle">Let your guests know what you'd love!</p>
+            </div>
+          </div>
+          <Button
+            onClick={handleConfigureGifts}
+            variant="outline"
+            className="w-full rounded-full border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground"
+          >
+            <Gift className="mr-2 h-4 w-4" />
+            Set Up Gift List
+          </Button>
+        </div>
+
         {/* Done Button */}
         <Button
           variant="ghost"
           onClick={handleDone}
           className="text-subtitle hover:text-foreground"
         >
-          Done
+          Skip for now, go to Dashboard
         </Button>
       </div>
     </div>
