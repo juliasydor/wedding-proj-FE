@@ -312,6 +312,31 @@
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
+
+  /* Shine effect animation for cards */
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) skewX(-12deg);
+    }
+    100% {
+      transform: translateX(200%) skewX(-12deg);
+    }
+  }
+
+  .animate-shine {
+    animation: shine 1.5s ease-in-out;
+  }
+
+  /* Card hover glow effect */
+  .card-glow {
+    transition: box-shadow 0.3s ease-out;
+  }
+
+  .card-glow:hover {
+    box-shadow: 0 0 30px rgba(234, 46, 91, 0.15),
+                0 0 60px rgba(234, 46, 91, 0.1),
+                0 20px 40px -20px rgba(0, 0, 0, 0.3);
+  }
 }
 
 /* Typography variants */
