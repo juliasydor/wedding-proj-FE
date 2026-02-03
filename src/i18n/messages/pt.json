@@ -38,23 +38,31 @@
       "rating": "AVALIAÇÃO"
     },
     "features": {
-      "title": "Tudo que você precisa",
-      "subtitle": "Ferramentas poderosas para planejar o casamento dos seus sonhos",
-      "websites": {
-        "title": "Sites Lindos",
-        "description": "Escolha entre templates impressionantes e personalize cada detalhe"
+      "title": "Um site completo e sem custo para o seu casamento",
+      "subtitle": "Diversos recursos para personalizar o seu site do seu jeito!",
+      "themes": {
+        "title": "Temas diversos e customizáveis",
+        "description": "Diversos modelos para você personalizar o seu site."
       },
-      "guests": {
-        "title": "Gestão de Convidados",
-        "description": "Acompanhe RSVPs e gerencie sua lista de convidados facilmente"
+      "edits": {
+        "title": "Edições ilimitadas",
+        "description": "Imagens, vídeos, textos e muito mais."
       },
-      "gifts": {
-        "title": "Lista de Presentes",
-        "description": "Crie sua lista de presentes e receba contribuições diretamente"
+      "location": {
+        "title": "Localização, mapa e rotas",
+        "description": "Chegar ao evento não será problema para os convidados."
       },
-      "share": {
-        "title": "Compartilhe com Facilidade",
-        "description": "QR Code e link personalizados para compartilhar com todos"
+      "rsvp": {
+        "title": "Confirmação de presença - RSVP",
+        "description": "Receba em tempo real as confirmações de presença."
+      },
+      "messages": {
+        "title": "Mural de recados",
+        "description": "Receba as felicitações dos convidados no site."
+      },
+      "stationery": {
+        "title": "Papelaria exclusiva",
+        "description": "Save the date e convite para enviar via WhatsApp."
       }
     },
     "cta": {

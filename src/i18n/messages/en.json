@@ -38,23 +38,31 @@
       "rating": "RATING"
     },
     "features": {
-      "title": "Everything you need",
-      "subtitle": "Powerful tools to plan your dream wedding",
-      "websites": {
-        "title": "Beautiful Websites",
-        "description": "Choose from stunning templates and personalize every detail"
+      "title": "A complete and free website for your wedding",
+      "subtitle": "Many features to customize your site your way!",
+      "themes": {
+        "title": "Diverse & customizable themes",
+        "description": "Various templates for you to personalize your site."
       },
-      "guests": {
-        "title": "Guest Management",
-        "description": "Track RSVPs and manage your guest list easily"
+      "edits": {
+        "title": "Unlimited edits",
+        "description": "Images, videos, texts, and much more."
       },
-      "gifts": {
-        "title": "Gift Registry",
-        "description": "Create your gift list and receive contributions directly"
+      "location": {
+        "title": "Location, map & directions",
+        "description": "Getting to the event won't be a problem for guests."
       },
-      "share": {
-        "title": "Share with Ease",
-        "description": "QR Code and personalized link to share with everyone"
+      "rsvp": {
+        "title": "RSVP confirmation",
+        "description": "Receive real-time attendance confirmations."
+      },
+      "messages": {
+        "title": "Message board",
+        "description": "Receive congratulations from guests on your site."
+      },
+      "stationery": {
+        "title": "Exclusive stationery",
+        "description": "Save the date and invites to send via WhatsApp."
       }
     },
     "cta": {

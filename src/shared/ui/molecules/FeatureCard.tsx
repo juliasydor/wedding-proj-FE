@@ -1,15 +1,31 @@
 'use client';
 
-import { Globe, Users, Gift, QrCode, type LucideIcon } from 'lucide-react';
+import {
+  Globe,
+  Users,
+  Gift,
+  QrCode,
+  Palette,
+  MapPin,
+  ClipboardCheck,
+  MessageCircleHeart,
+  Mail,
+  type LucideIcon,
+} from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
-type IconName = 'globe' | 'users' | 'gift' | 'qrCode';
+type IconName = 'globe' | 'users' | 'gift' | 'qrCode' | 'palette' | 'mapPin' | 'clipboardCheck' | 'messageHeart' | 'mail';
 
 const iconMap: Record<IconName, LucideIcon> = {
   globe: Globe,
   users: Users,
   gift: Gift,
   qrCode: QrCode,
+  palette: Palette,
+  mapPin: MapPin,
+  clipboardCheck: ClipboardCheck,
+  messageHeart: MessageCircleHeart,
+  mail: Mail,
 };
 
 interface FeatureCardProps {

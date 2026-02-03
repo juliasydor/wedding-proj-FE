@@ -15,24 +15,34 @@ export default async function HomePage() {
 
   const features = [
     {
+      iconName: 'palette' as const,
+      title: t('features.themes.title'),
+      description: t('features.themes.description'),
+    },
+    {
       iconName: 'globe' as const,
-      title: t('features.websites.title'),
-      description: t('features.websites.description'),
+      title: t('features.edits.title'),
+      description: t('features.edits.description'),
     },
     {
-      iconName: 'users' as const,
-      title: t('features.guests.title'),
-      description: t('features.guests.description'),
+      iconName: 'mapPin' as const,
+      title: t('features.location.title'),
+      description: t('features.location.description'),
     },
     {
-      iconName: 'gift' as const,
-      title: t('features.gifts.title'),
-      description: t('features.gifts.description'),
+      iconName: 'clipboardCheck' as const,
+      title: t('features.rsvp.title'),
+      description: t('features.rsvp.description'),
     },
     {
-      iconName: 'qrCode' as const,
-      title: t('features.share.title'),
-      description: t('features.share.description'),
+      iconName: 'messageHeart' as const,
+      title: t('features.messages.title'),
+      description: t('features.messages.description'),
+    },
+    {
+      iconName: 'mail' as const,
+      title: t('features.stationery.title'),
+      description: t('features.stationery.description'),
     },
   ];
 
@@ -97,7 +107,7 @@ export default async function HomePage() {
             <p className="text-subtitle text-lg">{t('features.subtitle')}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <FeatureCard
                 key={index}
