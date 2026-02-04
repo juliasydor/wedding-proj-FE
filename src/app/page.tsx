@@ -7,11 +7,45 @@ import { Navbar } from '@/widgets/navbar';
 import { Footer } from '@/widgets/footer';
 import { StatCard } from '@/shared/ui/atoms/StatCard';
 import { FeatureCard } from '@/shared/ui/molecules/FeatureCard';
+import { BenefitCard } from '@/shared/ui/molecules/BenefitCard';
 import { HeartAnimation } from '@/shared/animations/HeartAnimation';
 import { ROUTES } from '@/shared/config';
 
 export default async function HomePage() {
   const t = await getTranslations('landing');
+
+  const benefits = [
+    {
+      iconName: 'timer' as const,
+      title: t('benefits.transparency.title'),
+      description: t('benefits.transparency.description'),
+    },
+    {
+      iconName: 'heartHandshake' as const,
+      title: t('benefits.track.title'),
+      description: t('benefits.track.description'),
+    },
+    {
+      iconName: 'piggyBank' as const,
+      title: t('benefits.fee.title'),
+      description: t('benefits.fee.description'),
+    },
+    {
+      iconName: 'clipboardList' as const,
+      title: t('benefits.practicality.title'),
+      description: t('benefits.practicality.description'),
+    },
+    {
+      iconName: 'wallet' as const,
+      title: t('benefits.pix.title'),
+      description: t('benefits.pix.description'),
+    },
+    {
+      iconName: 'creditCard' as const,
+      title: t('benefits.guests.title'),
+      description: t('benefits.guests.description'),
+    },
+  ];
 
   const features = [
     {
@@ -114,6 +148,26 @@ export default async function HomePage() {
                 iconName={feature.iconName}
                 title={feature.title}
                 description={feature.description}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-16 md:py-24 bg-quaternary/30">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-heading-2 mb-4">{t('benefits.title')}</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {benefits.map((benefit, index) => (
+              <BenefitCard
+                key={index}
+                iconName={benefit.iconName}
+                title={benefit.title}
+                description={benefit.description}
               />
             ))}
           </div>

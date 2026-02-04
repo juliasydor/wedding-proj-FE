@@ -65,6 +65,33 @@
         "description": "Save the date e convite para enviar via WhatsApp."
       }
     },
+    "benefits": {
+      "title": "Benefícios que só o Véu & Gravata oferece",
+      "transparency": {
+        "title": "Seus créditos com transparência",
+        "description": "Seus presentes recebidos via PIX ou Boleto na sua conta em 2 dias úteis e via cartão de crédito, com o menor tempo do mercado."
+      },
+      "track": {
+        "title": "Acompanhe e agradeça",
+        "description": "Seja notificado ao receber um presente e agradeça os convidados na hora."
+      },
+      "fee": {
+        "title": "Taxa única de 3,89%",
+        "description": "Monte sua lista com taxa única que também pode ser repassada aos convidados."
+      },
+      "practicality": {
+        "title": "Monte sua lista com praticidade",
+        "description": "Utilize listas prontas para agilizar a edição ou personalize do seu jeito!"
+      },
+      "pix": {
+        "title": "Transfira gratuitamente via PIX",
+        "description": "Transfira seu saldo para sua conta bancária por PIX, é rápido, seguro e sem custo."
+      },
+      "guests": {
+        "title": "Prático para os seus convidados",
+        "description": "Acesso fácil à lista com pagamento via PIX, boleto ou cartão de crédito."
+      }
+    },
     "cta": {
       "title": "Pronto para começar sua jornada?",
       "subtitle": "Crie seu site de casamento em minutos e compartilhe sua história de amor com o mundo.",
