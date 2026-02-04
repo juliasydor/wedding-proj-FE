@@ -65,6 +65,33 @@
         "description": "Save the date and invites to send via WhatsApp."
       }
     },
+    "benefits": {
+      "title": "Benefits only Véu & Gravata offers",
+      "transparency": {
+        "title": "Your credits with transparency",
+        "description": "Gifts received via PIX or Boleto in your account within 2 business days, and via credit card with the fastest processing time."
+      },
+      "track": {
+        "title": "Track and thank",
+        "description": "Get notified when you receive a gift and thank your guests instantly."
+      },
+      "fee": {
+        "title": "Single 3.89% fee",
+        "description": "Build your list with a single fee that can also be passed on to guests."
+      },
+      "practicality": {
+        "title": "Build your list with ease",
+        "description": "Use ready-made lists to speed up editing or customize your own way!"
+      },
+      "pix": {
+        "title": "Transfer for free via PIX",
+        "description": "Transfer your balance to your bank account via PIX - fast, secure, and free."
+      },
+      "guests": {
+        "title": "Convenient for your guests",
+        "description": "Easy access to the list with payment via PIX, boleto, or credit card."
+      }
+    },
     "cta": {
       "title": "Ready to start your journey?",
       "subtitle": "Create your wedding website in minutes and share your love story with the world.",
