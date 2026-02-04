@@ -92,6 +92,29 @@
         "description": "Acesso fácil à lista com pagamento via PIX, boleto ou cartão de crédito."
       }
     },
+    "faq": {
+      "title": "Perguntas frequentes",
+      "subtitle": "Ficou com dúvidas? Não se preocupe, a gente te explica tudo!",
+      "seeMore": "Ver mais perguntas",
+      "questions": {
+        "free": {
+          "question": "O site é realmente grátis?",
+          "answer": "Sim! E sem asteriscos! Para ter o seu site no Véu & Gravata não precisa pagar absolutamente nada! E você tem acesso a funcionalidades incríveis, como: Fotos ilimitadas, Músicas ilimitadas, Acompanhe o RSVP (confirmação de presença) do seu site, Mapa da localização do evento, Mural de Recados, Mais de 35 temas, Save the Date e muito mais. O seu site grátis ficará no ar até a data do seu casamento + 30 dias. Caso você queira alterar esse período, você pode entrar em contato com nosso time."
+        },
+        "plans": {
+          "question": "O Véu & Gravata tem planos?",
+          "answer": "Não temos mais a opção de planos no site. É isso mesmo! Agora o nosso site é totalmente gratuito. Você pode criar o site do seu casamento sem pagar nada, e se quiser, pode utilizar os serviços pagos: Lista virtual de presentes em dinheiro com o melhor custo-benefício do mercado (taxa única e fixa de 3,89% sobre o valor do presente), Domínio personalizado (a partir de R$39,90), Download do site para guardar para sempre (R$39,90). O seu site ficará no ar até a data do seu casamento + 30 dias."
+        },
+        "duration": {
+          "question": "Por quanto tempo o meu site ficará no ar?",
+          "answer": "O seu site grátis ficará ativo a partir do momento da criação da sua conta e irá expirar 30 dias após a data do seu casamento. Caso você altere a data no seu site, a data de expiração também será alterada para acompanhar o prazo de 30 dias após a data do casamento."
+        },
+        "howTo": {
+          "question": "Como criar um site de casamento no Véu & Gravata?",
+          "answer": "É muito simples! Basta criar sua conta, preencher as informações do casamento como nomes, data e local, escolher um dos nossos mais de 35 templates exclusivos e personalizar do seu jeito. Em poucos minutos seu site estará pronto para compartilhar com os convidados!"
+        }
+      }
+    },
     "cta": {
       "title": "Pronto para começar sua jornada?",
       "subtitle": "Crie seu site de casamento em minutos e compartilhe sua história de amor com o mundo.",

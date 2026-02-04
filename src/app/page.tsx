@@ -1,8 +1,14 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
 import { Navbar } from '@/widgets/navbar';
 import { Footer } from '@/widgets/footer';
 import { StatCard } from '@/shared/ui/atoms/StatCard';
@@ -154,8 +160,52 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Benefits Section */}
+      {/* FAQ Section */}
       <section className="py-16 md:py-24 bg-quaternary/30">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            {/* Left side - Title */}
+            <div>
+              <h2 className="text-heading-2 mb-4">{t('faq.title')}</h2>
+              <p className="text-subtitle text-lg mb-6">
+                {t('faq.subtitle')}
+              </p>
+              <Link
+                href="#"
+                className="inline-flex items-center text-secondary hover:text-tertiary transition-colors font-medium"
+              >
+                {t('faq.seeMore')}
+                <ChevronRight className="ml-1 h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* Right side - Accordion */}
+            <div>
+              <Accordion type="single">
+                <AccordionItem value="free">
+                  <AccordionTrigger>{t('faq.questions.free.question')}</AccordionTrigger>
+                  <AccordionContent>{t('faq.questions.free.answer')}</AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="plans">
+                  <AccordionTrigger>{t('faq.questions.plans.question')}</AccordionTrigger>
+                  <AccordionContent>{t('faq.questions.plans.answer')}</AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="duration">
+                  <AccordionTrigger>{t('faq.questions.duration.question')}</AccordionTrigger>
+                  <AccordionContent>{t('faq.questions.duration.answer')}</AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="howTo">
+                  <AccordionTrigger>{t('faq.questions.howTo.question')}</AccordionTrigger>
+                  <AccordionContent>{t('faq.questions.howTo.answer')}</AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
             <h2 className="text-heading-2 mb-4">{t('benefits.title')}</h2>
@@ -175,7 +225,7 @@ export default async function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-quaternary/30">
         <div className="max-w-3xl mx-auto px-4 md:px-8 text-center">
           <h2 className="text-heading-2 mb-4">{t('cta.title')}</h2>
           <p className="text-subtitle text-lg mb-8">{t('cta.subtitle')}</p>

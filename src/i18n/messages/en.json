@@ -92,6 +92,29 @@
         "description": "Easy access to the list with payment via PIX, boleto, or credit card."
       }
     },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "Got questions? Don't worry, we'll explain everything!",
+      "seeMore": "See more questions",
+      "questions": {
+        "free": {
+          "question": "Is the site really free?",
+          "answer": "Yes! No asterisks! To have your site on Véu & Gravata you don't have to pay anything! And you get access to amazing features like: Unlimited photos, Unlimited music, Track your RSVP, Event location map, Message board, 35+ themes, Save the Date, and much more. Your free site will stay online until your wedding date + 30 days. If you want to change this period, you can contact our team."
+        },
+        "plans": {
+          "question": "Does Véu & Gravata have plans?",
+          "answer": "We no longer have plan options. That's right! Now our site is completely free. You can create your wedding site without paying anything, and if you want, you can use paid services: Virtual gift list with the best cost-benefit (single fixed fee of 3.89% on gift value), Custom domain (from R$39.90), Site download to keep forever (R$39.90). Your site stays online until your wedding date + 30 days."
+        },
+        "duration": {
+          "question": "How long will my site stay online?",
+          "answer": "Your free site will be active from the moment you create your account and will expire 30 days after your wedding date. If you change the date on your site, the expiration date will also be updated to follow the 30-day period after the wedding date."
+        },
+        "howTo": {
+          "question": "How to create a wedding site on Véu & Gravata?",
+          "answer": "It's very simple! Just create your account, fill in your wedding information like names, date and location, choose one of our 35+ exclusive templates and customize it your way. In a few minutes your site will be ready to share with guests!"
+        }
+      }
+    },
     "cta": {
       "title": "Ready to start your journey?",
       "subtitle": "Create your wedding website in minutes and share your love story with the world.",
