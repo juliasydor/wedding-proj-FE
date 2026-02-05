@@ -407,6 +407,228 @@ To add a new template:
 4. **Backend**: Add new template ID to validation whitelist
 5. No database schema changes needed (templateId is just a string)
 
+---
+
+## Guest Wedding Site Architecture
+
+### Overview
+
+When guests access the wedding site via URL/QR Code, they see the couple's personalized website with the selected template, color customization, and full guest experience including gift list and checkout.
+
+### File Structure
+
+```
+src/app/wedding/[slug]/
+├── layout.tsx           # Navigation layout with mobile-responsive header
+├── page.tsx             # Main wedding page (renders selected template)
+├── gifts/
+│   └── page.tsx         # Gift list page for guests
+└── checkout/
+    └── page.tsx         # Payment checkout flow
+```
+
+### Guest Wedding Site Flow
+
+1. **Guest accesses `/wedding/[slug]`**
+   - Layout wraps all pages with navigation header
+   - Navigation shows: Home, Gift List (with icons)
+   - Mobile-responsive with hamburger menu
+
+2. **Main Page (`/wedding/[slug]`)**
+   - Fetches wedding data from API (or uses store for demo)
+   - Dynamically renders the selected template component
+   - Passes couple's customized colors (primaryColor, secondaryColor)
+   - Displays hero image if uploaded
+
+3. **Gift List Page (`/wedding/[slug]/gifts`)**
+   - Displays all gifts from couple's gift list
+   - Features: search, category filters (all, honeymoon, kitchen, etc.)
+   - Progress bar showing contribution status
+   - "Presentear" (Gift) button leads to checkout
+   - Fully responsive (cards on mobile, grid on desktop)
+
+4. **Checkout Page (`/wedding/[slug]/checkout?gift={id}`)**
+   - Multi-step checkout process:
+     - Step 1: Guest info + contribution amount
+     - Step 2: Payment method (PIX or Credit Card)
+     - Processing state with loading animation
+     - Success/Error result pages
+
+### Template Rendering in Guest Site
+
+```typescript
+// src/app/wedding/[slug]/page.tsx
+
+function getTemplateComponent(templateId: TemplateId | string | null) {
+  switch (templateId) {
+    case 'modern-elegance':
+      return ModernEleganceTemplate;
+    case 'classic-romance':
+      return ClassicRomanceTemplate;
+    case 'rustic-garden':
+      return RusticGardenTemplate;
+    case 'bohemian-dream':
+      return BohemianDreamTemplate;
+    default:
+      return ModernEleganceTemplate;
+  }
+}
+
+// Render with couple's customizations
+<TemplateComponent
+  partner1Name={weddingData.partner1Name}
+  partner2Name={weddingData.partner2Name}
+  date={weddingData.date}
+  location={weddingData.location}
+  heroImage={weddingData.heroImageUrl}
+  primaryColor={weddingData.primaryColor}
+  secondaryColor={weddingData.secondaryColor}
+/>
+```
+
+### Dynamic Color Application
+
+The guest site applies couple's chosen colors throughout:
+
+```typescript
+// Example from gifts page
+<button
+  style={category === cat.id ? { backgroundColor: primaryColor } : {}}
+  className={cn(
+    'px-4 py-2 rounded-full text-sm font-medium',
+    category === cat.id ? 'text-white' : 'bg-quaternary text-foreground/70'
+  )}
+>
+  {cat.label}
+</button>
+```
+
+### Backend Endpoints for Guest Site
+
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `GET /api/wedding/by-slug/:slug` | GET | Get full wedding data | Fetch on page load |
+| `GET /api/wedding/:id/gifts` | GET | Get couple's gift list | Display on gifts page |
+| `POST /api/payments/checkout` | POST | Process gift contribution | Checkout submission |
+| `GET /api/payments/:paymentId/status` | GET | Check payment status | Polling during processing |
+
+### Checkout Request Body
+
+```typescript
+interface CheckoutRequest {
+  weddingId: string;
+  giftId: string;
+  amount: number;                    // Contribution amount in cents
+  paymentMethod: 'pix' | 'credit_card';
+  guestInfo: {
+    name: string;
+    email: string;
+    phone?: string;
+    message?: string;                // Optional message for couple
+  };
+  // For credit card payments:
+  cardDetails?: {
+    number: string;
+    expiry: string;
+    cvv: string;
+    holderName: string;
+  };
+}
+```
+
+### Checkout Response
+
+```typescript
+// PIX Payment Response
+interface PixResponse {
+  paymentId: string;
+  qrCode: string;                    // Base64 QR code image
+  pixCopyPaste: string;              // PIX copy-paste code
+  expiresAt: string;                 // ISO timestamp
+}
+
+// Credit Card Response
+interface CardResponse {
+  paymentId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+}
+
+// Payment Status Response
+interface PaymentStatus {
+  paymentId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  paidAt?: string;
+  errorMessage?: string;
+}
+```
+
+---
+
+## Guest Management System
+
+### Overview
+
+Couples can manually add guests with full control over their RSVP status. The guest list supports companion (plus-one) information with name and age.
+
+### Add Guest Modal Features
+
+Located in `/dashboard/guests/page.tsx`:
+
+- **Guest Information**
+  - Name (required)
+  - Email (required)
+  - Phone (optional)
+  - Dietary restrictions (optional)
+
+- **Status Selection**
+  - Pending (default) - yellow badge
+  - Confirmed - green badge
+  - Declined - red badge
+  - Allows couple to manually set status when adding
+
+- **Companion (Plus-One) Support**
+  - Toggle to add companion
+  - Companion name field
+  - Companion age field
+
+### Guest Data Model
+
+```typescript
+interface Guest {
+  id: string;
+  weddingId: string;
+  name: string;
+  email: string;
+  phone?: string;
+  rsvpStatus: 'pending' | 'confirmed' | 'declined';
+  plusOne: boolean;
+  plusOneName?: string;      // Companion's name
+  plusOneAge?: number;       // Companion's age
+  dietaryRestrictions?: string;
+  invitedAt: string;
+}
+
+// Request body for adding guest
+interface AddGuestRequest {
+  name: string;
+  email: string;
+  phone?: string;
+  status: 'pending' | 'confirmed' | 'declined';  // Editable by couple
+  plusOne: boolean;
+  plusOneName?: string;
+  plusOneAge?: number;
+  dietaryRestrictions?: string;
+}
+```
+
+### Guest List Features
+
+- **Desktop View**: Table with columns (Name, Email, Status, Companion, Actions)
+- **Mobile View**: Card-based layout with expandable info
+- **Search**: Filter by guest name, email, or companion name
+- **Status Filters**: All, Confirmed, Pending, Declined
+- **Companion Display**: Shows companion name and age when available
+
 ### Color Palette System
 
 The frontend provides 6 predefined color palettes:
