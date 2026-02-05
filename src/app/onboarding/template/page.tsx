@@ -16,11 +16,13 @@ import {
   ClassicRomanceTemplate,
   RusticGardenTemplate,
   BohemianDreamTemplate,
+  BeachWeddingTemplate,
+  ChurchWeddingTemplate,
   TEMPLATE_CONFIG,
   type TemplateId,
 } from '@/shared/ui/templates';
 
-const CATEGORIES = ['all', 'modern', 'classic', 'rustic', 'boho'] as const;
+const CATEGORIES = ['all', 'modern', 'classic', 'rustic', 'boho', 'beach', 'traditional'] as const;
 
 const TEMPLATES = [
   {
@@ -28,7 +30,6 @@ const TEMPLATES = [
     name: 'Modern Elegance',
     category: 'modern',
     preview: TEMPLATE_CONFIG['modern-elegance'].preview,
-    isNew: true,
   },
   {
     id: 'classic-romance' as TemplateId,
@@ -47,6 +48,20 @@ const TEMPLATES = [
     name: 'Bohemian Dream',
     category: 'boho',
     preview: TEMPLATE_CONFIG['bohemian-dream'].preview,
+  },
+  {
+    id: 'beach-wedding' as TemplateId,
+    name: 'Beach Wedding',
+    category: 'beach',
+    preview: TEMPLATE_CONFIG['beach-wedding'].preview,
+    isNew: true,
+  },
+  {
+    id: 'church-wedding' as TemplateId,
+    name: 'Church Wedding',
+    category: 'traditional',
+    preview: TEMPLATE_CONFIG['church-wedding'].preview,
+    isNew: true,
   },
 ];
 
@@ -99,6 +114,10 @@ function getTemplateComponent(templateId: TemplateId) {
       return RusticGardenTemplate;
     case 'bohemian-dream':
       return BohemianDreamTemplate;
+    case 'beach-wedding':
+      return BeachWeddingTemplate;
+    case 'church-wedding':
+      return ChurchWeddingTemplate;
     default:
       return ModernEleganceTemplate;
   }
@@ -325,17 +344,20 @@ export default function OnboardingTemplatePage() {
                 </div>
 
                 {/* Preview Content */}
-                <div className="bg-quaternary/50 p-4 flex items-center justify-center min-h-[600px]">
+                <div className="bg-quaternary/50 p-3 flex items-start justify-center min-h-[500px]">
                   {selectedTemplate && TemplateComponent ? (
                     previewMode === 'desktop' ? (
-                      /* Desktop Preview - Scaled down full width view */
-                      <div className="w-full h-[580px] overflow-hidden rounded-lg border border-border/50 bg-white shadow-2xl">
+                      /* Desktop Preview - Scaled down with scroll */
+                      <div
+                        className="w-full max-w-[340px] h-[500px] rounded-lg border border-border/50 bg-white"
+                        style={{ overflow: 'scroll' }}
+                      >
                         <div
-                          className="origin-top-left"
                           style={{
-                            width: '1440px',
-                            transform: 'scale(0.38)',
+                            width: '1280px',
                             transformOrigin: 'top left',
+                            transform: 'scale(0.265)',
+                            marginBottom: '-75%',
                           }}
                         >
                           <TemplateComponent
@@ -350,16 +372,23 @@ export default function OnboardingTemplatePage() {
                         </div>
                       </div>
                     ) : (
-                      /* Mobile Preview - Phone frame */
+                      /* Mobile Preview - Phone frame with scroll */
                       <div className="relative">
-                        {/* Phone Frame */}
-                        <div className="w-[280px] h-[580px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
-                          {/* Screen */}
-                          <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
-                            {/* Notch */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-10" />
-                            {/* Content */}
-                            <div className="h-full overflow-y-auto">
+                        <div className="w-[200px] h-[420px] bg-gray-900 rounded-[2rem] p-1.5 shadow-xl">
+                          <div
+                            className="w-full h-full bg-white rounded-[1.5rem] relative"
+                            style={{ overflow: 'scroll' }}
+                          >
+                            <div className="sticky top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-gray-900 rounded-b-xl z-20 mx-auto" />
+                            <div
+                              style={{
+                                width: '390px',
+                                transformOrigin: 'top left',
+                                transform: 'scale(0.48)',
+                                marginBottom: '-52%',
+                                marginTop: '-8px',
+                              }}
+                            >
                               <TemplateComponent
                                 partner1Name={onboarding.partner1Name || 'Partner 1'}
                                 partner2Name={onboarding.partner2Name || 'Partner 2'}
@@ -434,17 +463,10 @@ export default function OnboardingTemplatePage() {
             </div>
 
             {/* Modal Content */}
-            <div className="flex-1 overflow-auto bg-quaternary/50 p-4 flex items-start justify-center">
+            <div className="flex-1 overflow-hidden bg-quaternary/50 flex items-center justify-center p-4">
               {previewMode === 'desktop' ? (
-                <div className="w-full overflow-x-auto">
-                  <div
-                    className="origin-top-left"
-                    style={{
-                      width: '1200px',
-                      transform: 'scale(0.3)',
-                      transformOrigin: 'top left',
-                    }}
-                  >
+                <div className="w-full max-w-6xl h-full overflow-auto rounded-lg border border-border/50 bg-white">
+                  <div style={{ minWidth: '1024px' }}>
                     <TemplateComponent
                       partner1Name={onboarding.partner1Name || 'Partner 1'}
                       partner2Name={onboarding.partner2Name || 'Partner 2'}
@@ -457,17 +479,26 @@ export default function OnboardingTemplatePage() {
                   </div>
                 </div>
               ) : (
-                <div className="h-full overflow-y-auto">
-                  <TemplateComponent
-                    partner1Name={onboarding.partner1Name || 'Partner 1'}
-                    partner2Name={onboarding.partner2Name || 'Partner 2'}
-                    date={onboarding.date}
-                    location={onboarding.location || 'Wedding Venue'}
-                    heroImage={onboarding.heroImage}
-                    primaryColor={currentPalette.primary}
-                    secondaryColor={currentPalette.secondary}
-                    isPreview
-                  />
+                <div className="relative h-full flex items-center justify-center">
+                  <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl flex flex-col" style={{ width: '390px', height: 'min(95%, 844px)' }}>
+                    <div className="w-full flex-1 bg-white rounded-[2.5rem] overflow-hidden relative flex flex-col">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-gray-900 rounded-b-2xl z-10" />
+                      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                        <div style={{ width: '100%' }}>
+                          <TemplateComponent
+                            partner1Name={onboarding.partner1Name || 'Partner 1'}
+                            partner2Name={onboarding.partner2Name || 'Partner 2'}
+                            date={onboarding.date}
+                            location={onboarding.location || 'Wedding Venue'}
+                            heroImage={onboarding.heroImage}
+                            primaryColor={currentPalette.primary}
+                            secondaryColor={currentPalette.secondary}
+                            isPreview
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

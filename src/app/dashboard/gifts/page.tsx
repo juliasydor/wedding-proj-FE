@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Plus, Search, Gift, Trash2, Edit2, DollarSign, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/shared/lib/utils';
+import { ROUTES } from '@/shared/config';
 import type { Gift as GiftType } from '@/shared/types';
 
 const MOCK_GIFTS: GiftType[] = [
@@ -91,10 +93,12 @@ export default function GiftsPage() {
           <h1 className="text-xl md:text-heading-2 mb-1 md:mb-2">Lista de Presentes</h1>
           <p className="text-subtitle text-sm md:text-base">Gerencie os presentes que você deseja receber</p>
         </div>
-        <Button className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm" size="sm">
-          <Plus className="mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Adicionar Presente</span>
-          <span className="sm:hidden">Adicionar</span>
+        <Button asChild className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm" size="sm">
+          <Link href={ROUTES.addGift}>
+            <Plus className="mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">Adicionar Presente</span>
+            <span className="sm:hidden">Adicionar</span>
+          </Link>
         </Button>
       </div>
 

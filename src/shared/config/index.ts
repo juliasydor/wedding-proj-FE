@@ -24,6 +24,7 @@ export const ROUTES = {
   dashboard: '/dashboard',
   siteEditor: '/dashboard/site',
   giftList: '/dashboard/gifts',
+  addGift: '/dashboard/gifts/add',
   guests: '/dashboard/guests',
   settings: '/dashboard/settings',
   weddingSite: (slug: string) => `/wedding/${slug}`,
