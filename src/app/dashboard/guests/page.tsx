@@ -13,11 +13,26 @@ import {
   MoreVertical,
   ChevronDown,
   UserPlus,
+  Phone,
+  User,
+  AtSign,
+  Calendar,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/shared/lib/utils';
+import { toast } from 'sonner';
 
 interface Guest {
   id: string;
@@ -33,12 +48,12 @@ interface Guest {
 }
 
 const MOCK_GUESTS: Guest[] = [
-  { id: '1', name: 'Maria Silva', email: 'maria@email.com', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Carlos Silva', plusOneAge: 35, invitedAt: '2024-01-15' },
+  { id: '1', name: 'Maria Silva', email: 'maria@email.com', phone: '(11) 99999-1111', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Carlos Silva', plusOneAge: 35, invitedAt: '2024-01-15' },
   { id: '2', name: 'João Santos', email: 'joao@email.com', rsvpStatus: 'confirmed', plusOne: false, invitedAt: '2024-01-15' },
-  { id: '3', name: 'Ana Costa', email: 'ana@email.com', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Roberto Costa', plusOneAge: 42, invitedAt: '2024-01-16' },
+  { id: '3', name: 'Ana Costa', email: 'ana@email.com', phone: '(11) 99999-3333', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Roberto Costa', plusOneAge: 42, invitedAt: '2024-01-16' },
   { id: '4', name: 'Pedro Oliveira', email: 'pedro@email.com', rsvpStatus: 'declined', plusOne: false, invitedAt: '2024-01-16' },
   { id: '5', name: 'Carla Mendes', email: 'carla@email.com', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Felipe Mendes', plusOneAge: 28, invitedAt: '2024-01-17' },
-  { id: '6', name: 'Lucas Ferreira', email: 'lucas@email.com', rsvpStatus: 'pending', plusOne: false, invitedAt: '2024-01-18' },
+  { id: '6', name: 'Lucas Ferreira', email: 'lucas@email.com', phone: '(11) 99999-6666', rsvpStatus: 'pending', plusOne: false, invitedAt: '2024-01-18' },
   { id: '7', name: 'Fernanda Lima', email: 'fernanda@email.com', rsvpStatus: 'confirmed', plusOne: false, invitedAt: '2024-01-18' },
   { id: '8', name: 'Ricardo Alves', email: 'ricardo@email.com', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Juliana Alves', plusOneAge: 31, invitedAt: '2024-01-19' },
 ];
@@ -50,13 +65,36 @@ const FILTERS = [
   { id: 'declined', label: 'Recusados', icon: UserX },
 ];
 
+interface NewGuestForm {
+  name: string;
+  email: string;
+  phone: string;
+  hasPlusOne: boolean;
+  plusOneName: string;
+  plusOneAge: string;
+  dietaryRestrictions: string;
+}
+
+const initialFormState: NewGuestForm = {
+  name: '',
+  email: '',
+  phone: '',
+  hasPlusOne: false,
+  plusOneName: '',
+  plusOneAge: '',
+  dietaryRestrictions: '',
+};
+
 export default function GuestsPage() {
   const t = useTranslations('dashboard.guests');
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [guests, setGuests] = useState<Guest[]>(MOCK_GUESTS);
+  const [formData, setFormData] = useState<NewGuestForm>(initialFormState);
 
-  const filteredGuests = MOCK_GUESTS.filter((guest) => {
+  const filteredGuests = guests.filter((guest) => {
     const matchesSearch = guest.name.toLowerCase().includes(search.toLowerCase()) ||
       guest.email.toLowerCase().includes(search.toLowerCase()) ||
       (guest.plusOneName && guest.plusOneName.toLowerCase().includes(search.toLowerCase()));
@@ -65,10 +103,10 @@ export default function GuestsPage() {
   });
 
   const stats = {
-    total: MOCK_GUESTS.length,
-    confirmed: MOCK_GUESTS.filter((g) => g.rsvpStatus === 'confirmed').length,
-    pending: MOCK_GUESTS.filter((g) => g.rsvpStatus === 'pending').length,
-    declined: MOCK_GUESTS.filter((g) => g.rsvpStatus === 'declined').length,
+    total: guests.length,
+    confirmed: guests.filter((g) => g.rsvpStatus === 'confirmed').length,
+    pending: guests.filter((g) => g.rsvpStatus === 'pending').length,
+    declined: guests.filter((g) => g.rsvpStatus === 'declined').length,
   };
 
   const getStatusColor = (status: string) => {
@@ -97,6 +135,36 @@ export default function GuestsPage() {
     }
   };
 
+  const handleAddGuest = () => {
+    if (!formData.name || !formData.email) {
+      toast.error('Por favor, preencha nome e email do convidado.');
+      return;
+    }
+
+    const newGuest: Guest = {
+      id: `guest-${Date.now()}`,
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      rsvpStatus: 'pending',
+      plusOne: formData.hasPlusOne,
+      plusOneName: formData.hasPlusOne && formData.plusOneName ? formData.plusOneName : undefined,
+      plusOneAge: formData.hasPlusOne && formData.plusOneAge ? parseInt(formData.plusOneAge) : undefined,
+      dietaryRestrictions: formData.dietaryRestrictions || undefined,
+      invitedAt: new Date().toISOString().split('T')[0],
+    };
+
+    setGuests([newGuest, ...guests]);
+    setFormData(initialFormState);
+    setShowAddModal(false);
+    toast.success('Convidado adicionado com sucesso!');
+  };
+
+  const handleCloseModal = () => {
+    setFormData(initialFormState);
+    setShowAddModal(false);
+  };
+
   return (
     <div className="p-4 md:p-8">
       {/* Header */}
@@ -111,7 +179,11 @@ export default function GuestsPage() {
             <span className="hidden sm:inline">Enviar Convites</span>
             <span className="sm:hidden">Convites</span>
           </Button>
-          <Button className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm" size="sm">
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm"
+            size="sm"
+          >
             <Plus className="mr-2 h-4 w-4" />
             <span className="hidden sm:inline">{t('addGuest')}</span>
             <span className="sm:hidden">Adicionar</span>
@@ -359,6 +431,159 @@ export default function GuestsPage() {
           </div>
         )}
       </div>
+
+      {/* Add Guest Modal */}
+      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+        <DialogContent className="bg-card border-border max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-secondary" />
+              Adicionar Convidado
+            </DialogTitle>
+            <DialogDescription className="text-subtitle">
+              Preencha as informações do convidado abaixo.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Guest Name */}
+            <div className="space-y-2">
+              <Label htmlFor="guest-name" className="text-sm flex items-center gap-2">
+                <User className="h-4 w-4 text-secondary" />
+                Nome completo *
+              </Label>
+              <Input
+                id="guest-name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Ex: Maria da Silva"
+                className="bg-input-bg border-border"
+              />
+            </div>
+
+            {/* Guest Email */}
+            <div className="space-y-2">
+              <Label htmlFor="guest-email" className="text-sm flex items-center gap-2">
+                <AtSign className="h-4 w-4 text-secondary" />
+                Email *
+              </Label>
+              <Input
+                id="guest-email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="Ex: maria@email.com"
+                className="bg-input-bg border-border"
+              />
+            </div>
+
+            {/* Guest Phone */}
+            <div className="space-y-2">
+              <Label htmlFor="guest-phone" className="text-sm flex items-center gap-2">
+                <Phone className="h-4 w-4 text-secondary" />
+                Telefone
+              </Label>
+              <Input
+                id="guest-phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="Ex: (11) 99999-9999"
+                className="bg-input-bg border-border"
+              />
+            </div>
+
+            {/* Dietary Restrictions */}
+            <div className="space-y-2">
+              <Label htmlFor="dietary" className="text-sm text-foreground">
+                Restrições Alimentares
+              </Label>
+              <Input
+                id="dietary"
+                value={formData.dietaryRestrictions}
+                onChange={(e) => setFormData({ ...formData, dietaryRestrictions: e.target.value })}
+                placeholder="Ex: Vegetariano, sem glúten..."
+                className="bg-input-bg border-border"
+              />
+            </div>
+
+            {/* Plus One Checkbox */}
+            <div className="flex items-center space-x-3 pt-2">
+              <Checkbox
+                id="has-plus-one"
+                checked={formData.hasPlusOne}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, hasPlusOne: checked as boolean })
+                }
+                className="border-border data-[state=checked]:bg-secondary data-[state=checked]:border-secondary"
+              />
+              <Label
+                htmlFor="has-plus-one"
+                className="text-sm font-medium text-foreground cursor-pointer"
+              >
+                Possui acompanhante
+              </Label>
+            </div>
+
+            {/* Plus One Fields */}
+            {formData.hasPlusOne && (
+              <div className="space-y-4 p-4 bg-tertiary/10 rounded-xl border border-tertiary/20">
+                <div className="flex items-center gap-2 text-tertiary text-sm font-medium">
+                  <UserPlus className="h-4 w-4" />
+                  Dados do Acompanhante
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="plus-one-name" className="text-sm">
+                    Nome do acompanhante
+                  </Label>
+                  <Input
+                    id="plus-one-name"
+                    value={formData.plusOneName}
+                    onChange={(e) => setFormData({ ...formData, plusOneName: e.target.value })}
+                    placeholder="Ex: Carlos da Silva"
+                    className="bg-input-bg border-border"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="plus-one-age" className="text-sm flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-tertiary" />
+                    Idade do acompanhante
+                  </Label>
+                  <Input
+                    id="plus-one-age"
+                    type="number"
+                    min="0"
+                    max="120"
+                    value={formData.plusOneAge}
+                    onChange={(e) => setFormData({ ...formData, plusOneAge: e.target.value })}
+                    placeholder="Ex: 35"
+                    className="bg-input-bg border-border"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCloseModal}
+              className="rounded-full border-border"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleAddGuest}
+              className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Adicionar Convidado
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
