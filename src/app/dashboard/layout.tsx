@@ -1,4 +1,4 @@
-import { Navbar } from '@/widgets/navbar';
+import { DashboardSidebar } from '@/widgets/dashboard-sidebar';
 
 export default function DashboardLayout({
   children,
@@ -7,8 +7,8 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar variant="dashboard" />
-      <main className="pt-16">{children}</main>
+      <DashboardSidebar />
+      <main className="ml-64 min-h-screen">{children}</main>
     </div>
   );
 }
