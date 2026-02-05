@@ -71,6 +71,7 @@ export default function WeddingPage() {
       secondaryColor={secondaryColor}
       siteContent={(weddingData as any)?.siteContent || onboarding.siteContent}
       customSections={customSections}
+      weddingSlug={slug}
     />
   );
 }

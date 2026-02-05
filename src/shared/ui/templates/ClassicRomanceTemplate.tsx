@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Heart, Calendar, MapPin, Clock, Gift, Mail, Hotel, Camera, Quote } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
@@ -16,6 +17,7 @@ interface ClassicRomanceTemplateProps {
   isPreview?: boolean;
   siteContent?: Partial<SiteContent>;
   customSections?: CustomSection[];
+  weddingSlug?: string;
 }
 
 // Custom Section Renderer
@@ -123,6 +125,7 @@ export function ClassicRomanceTemplate({
   isPreview = false,
   siteContent,
   customSections = [],
+  weddingSlug,
 }: ClassicRomanceTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
@@ -281,12 +284,22 @@ export function ClassicRomanceTemplate({
             <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
             <h2 className="font-serif text-3xl mb-4 italic">{content.rsvpTitle}</h2>
             <p className="mb-6 opacity-80">{content.rsvpDescription}</p>
-            <button
-              className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
-              style={{ backgroundColor: primaryColor }}
-            >
-              Confirmar Presença
-            </button>
+            {weddingSlug ? (
+              <Link
+                href={`/wedding/${weddingSlug}/rsvp`}
+                className="inline-block px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Confirmar Presença
+              </Link>
+            ) : (
+              <button
+                className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Confirmar Presença
+              </button>
+            )}
           </div>
         </section>
       )}
@@ -298,12 +311,22 @@ export function ClassicRomanceTemplate({
             <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
             <h2 className="font-serif text-3xl mb-4 italic">{content.giftTitle}</h2>
             <p className="mb-6 opacity-80">{content.giftDescription}</p>
-            <button
-              className="px-8 py-3 rounded-full font-semibold transition-all hover:opacity-90 border-2"
-              style={{ borderColor: primaryColor, color: primaryColor }}
-            >
-              Ver Lista de Presentes
-            </button>
+            {weddingSlug ? (
+              <Link
+                href={`/wedding/${weddingSlug}/gifts`}
+                className="inline-block px-8 py-3 rounded-full font-semibold transition-all hover:opacity-90 border-2"
+                style={{ borderColor: primaryColor, color: primaryColor }}
+              >
+                Ver Lista de Presentes
+              </Link>
+            ) : (
+              <button
+                className="px-8 py-3 rounded-full font-semibold transition-all hover:opacity-90 border-2"
+                style={{ borderColor: primaryColor, color: primaryColor }}
+              >
+                Ver Lista de Presentes
+              </button>
+            )}
           </div>
         </section>
       )}

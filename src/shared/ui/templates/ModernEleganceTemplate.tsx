@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Heart, Calendar, MapPin, Clock, Gift, Users, Hotel, Camera, Mail, Type, Quote } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
@@ -16,6 +17,7 @@ interface ModernEleganceTemplateProps {
   isPreview?: boolean;
   siteContent?: Partial<SiteContent>;
   customSections?: CustomSection[];
+  weddingSlug?: string;
 }
 
 // Custom Section Renderer
@@ -116,6 +118,7 @@ export function ModernEleganceTemplate({
   isPreview = false,
   siteContent,
   customSections = [],
+  weddingSlug,
 }: ModernEleganceTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
@@ -276,12 +279,22 @@ export function ModernEleganceTemplate({
             </div>
             <h2 className="text-3xl font-serif mb-4">{content.rsvpTitle}</h2>
             <p className="text-lg opacity-80 mb-8">{content.rsvpDescription}</p>
-            <button
-              className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
-              style={{ backgroundColor: primaryColor }}
-            >
-              Confirmar Presença
-            </button>
+            {weddingSlug ? (
+              <Link
+                href={`/wedding/${weddingSlug}/rsvp`}
+                className="inline-block px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Confirmar Presença
+              </Link>
+            ) : (
+              <button
+                className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Confirmar Presença
+              </button>
+            )}
           </div>
         </section>
       )}
@@ -298,12 +311,22 @@ export function ModernEleganceTemplate({
             </div>
             <h2 className="text-3xl font-serif mb-4">{content.giftTitle}</h2>
             <p className="text-lg opacity-80 mb-8">{content.giftDescription}</p>
-            <button
-              className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
-              style={{ backgroundColor: primaryColor }}
-            >
-              Ver Lista de Presentes
-            </button>
+            {weddingSlug ? (
+              <Link
+                href={`/wedding/${weddingSlug}/gifts`}
+                className="inline-block px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Ver Lista de Presentes
+              </Link>
+            ) : (
+              <button
+                className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Ver Lista de Presentes
+              </button>
+            )}
           </div>
         </section>
       )}
