@@ -2,16 +2,37 @@
 
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ChevronLeft, Share2, Gift } from 'lucide-react';
+import { ChevronLeft, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/shared/ui/atoms/IconButton';
-import { WeddingHero } from '@/shared/ui/organisms/WeddingHero';
 import { useWeddingStore } from '@/entities/wedding';
 import { ROUTES } from '@/shared/config';
+import {
+  ModernEleganceTemplate,
+  ClassicRomanceTemplate,
+  RusticGardenTemplate,
+  BohemianDreamTemplate,
+  TEMPLATE_CONFIG,
+  type TemplateId,
+} from '@/shared/ui/templates';
+
+function getTemplateComponent(templateId: TemplateId | string | null) {
+  switch (templateId) {
+    case 'modern-elegance':
+      return ModernEleganceTemplate;
+    case 'classic-romance':
+      return ClassicRomanceTemplate;
+    case 'rustic-garden':
+      return RusticGardenTemplate;
+    case 'bohemian-dream':
+      return BohemianDreamTemplate;
+    default:
+      return ModernEleganceTemplate;
+  }
+}
 
 export default function OnboardingPreviewPage() {
   const t = useTranslations('onboarding.preview');
-  const tCountdown = useTranslations('countdown');
   const router = useRouter();
   const { onboarding, nextStep, prevStep } = useWeddingStore();
 
@@ -25,7 +46,14 @@ export default function OnboardingPreviewPage() {
     router.push(ROUTES.onboarding.template);
   };
 
-  const weddingDate = onboarding.date ? new Date(onboarding.date) : new Date();
+  const templateId = onboarding.templateId as TemplateId | null;
+  const templateConfig = templateId ? TEMPLATE_CONFIG[templateId] : null;
+
+  // Use onboarding colors if set, otherwise fall back to template defaults
+  const primaryColor = onboarding.primaryColor || templateConfig?.defaultColors.primary || '#ea2e5b';
+  const secondaryColor = onboarding.secondaryColor || templateConfig?.defaultColors.secondary || '#F1557C';
+
+  const TemplateComponent = getTemplateComponent(templateId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,23 +79,18 @@ export default function OnboardingPreviewPage() {
         </IconButton>
       </header>
 
-      {/* Wedding Preview */}
-      <WeddingHero
-        partner1Name={onboarding.partner1Name || 'Sarah'}
-        partner2Name={onboarding.partner2Name || 'James'}
-        date={weddingDate}
-        location={onboarding.location || 'Napa Valley, CA'}
-        isPreview
-        countdownTitle={t('countdownTitle')}
-        countdownLabels={{
-          days: tCountdown('days'),
-          hours: tCountdown('hours'),
-          minutes: tCountdown('minutes'),
-          seconds: tCountdown('seconds'),
-        }}
-        onViewRegistry={() => {}}
-        onPublish={handlePublish}
-      />
+      {/* Template Preview */}
+      <div className="min-h-screen">
+        <TemplateComponent
+          partner1Name={onboarding.partner1Name || 'Partner 1'}
+          partner2Name={onboarding.partner2Name || 'Partner 2'}
+          date={onboarding.date}
+          location={onboarding.location || 'Wedding Venue'}
+          heroImage={onboarding.heroImage}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+        />
+      </div>
 
       {/* Bottom Actions */}
       <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent px-4 py-8 md:px-8">

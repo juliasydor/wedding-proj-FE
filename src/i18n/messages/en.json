@@ -211,7 +211,10 @@
         "boho": "Boho"
       },
       "selectTemplate": "Select Template",
-      "previewDesign": "Preview Design"
+      "previewDesign": "Preview Design",
+      "colorPalette": "Color Palette",
+      "livePreview": "Live Preview",
+      "selectTemplatePreview": "Select a template to preview"
     },
     "giftList": {
       "title": "Edit Gift List",
@@ -250,6 +253,16 @@
     }
   },
   "dashboard": {
+    "nav": {
+      "overview": "Overview",
+      "siteEditor": "Edit Site",
+      "giftList": "Gift List",
+      "guests": "Guests",
+      "settings": "Settings",
+      "viewSite": "View Site",
+      "shareQR": "Share QR",
+      "logout": "Logout"
+    },
     "welcome": "Welcome, {name}!",
     "overview": "Overview",
     "giftsReceived": {
@@ -258,7 +271,44 @@
       "totalReceived": "Total Received",
       "ofGoal": "{percent}% of goal"
     },
-    "sendThanks": "Send Thanks"
+    "sendThanks": "Send Thanks",
+    "siteEditor": {
+      "title": "Edit Site",
+      "subtitle": "Customize your wedding website",
+      "sections": {
+        "template": "Template",
+        "colors": "Colors",
+        "info": "Information",
+        "images": "Images"
+      },
+      "coupleNames": "Couple Names",
+      "weddingDate": "Wedding Date",
+      "location": "Location",
+      "dressCode": "Dress Code",
+      "colorPalette": "Color Palette",
+      "heroImage": "Hero Image",
+      "uploadImage": "Upload Image",
+      "changeTemplate": "Change Template",
+      "saveChanges": "Save Changes",
+      "preview": "Preview"
+    },
+    "guests": {
+      "title": "Manage Guests",
+      "subtitle": "Track confirmations and manage your list",
+      "addGuest": "Add Guest",
+      "total": "Total",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "declined": "Declined"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage your account and preferences",
+      "account": "Account",
+      "banking": "Banking Info",
+      "notifications": "Notifications",
+      "language": "Language"
+    }
   },
   "checkout": {
     "title": "Secure Checkout",

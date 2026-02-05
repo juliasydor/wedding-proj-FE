@@ -12,6 +12,9 @@ interface OnboardingData {
   theme: WeddingTheme | null;
   templateId: string | null;
   bankingInfo: BankingInfo | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  heroImage: string | null;
 }
 
 interface WeddingState {
@@ -44,6 +47,9 @@ const initialOnboarding: OnboardingData = {
   theme: null,
   templateId: null,
   bankingInfo: null,
+  primaryColor: null,
+  secondaryColor: null,
+  heroImage: null,
 };
 
 const initialState: WeddingState = {

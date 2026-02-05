@@ -211,7 +211,10 @@
         "boho": "Boho"
       },
       "selectTemplate": "Selecionar Template",
-      "previewDesign": "Visualizar Design"
+      "previewDesign": "Visualizar Design",
+      "colorPalette": "Paleta de Cores",
+      "livePreview": "Visualização ao Vivo",
+      "selectTemplatePreview": "Selecione um template para ver a pré-visualização"
     },
     "giftList": {
       "title": "Lista de Presentes",
@@ -250,6 +253,16 @@
     }
   },
   "dashboard": {
+    "nav": {
+      "overview": "Visão Geral",
+      "siteEditor": "Editar Site",
+      "giftList": "Lista de Presentes",
+      "guests": "Convidados",
+      "settings": "Configurações",
+      "viewSite": "Ver Site",
+      "shareQR": "Compartilhar QR",
+      "logout": "Sair"
+    },
     "welcome": "Bem-vindo, {name}!",
     "overview": "Visão Geral",
     "giftsReceived": {
@@ -258,7 +271,44 @@
       "totalReceived": "Total Recebido",
       "ofGoal": "{percent}% da meta"
     },
-    "sendThanks": "Enviar Agradecimento"
+    "sendThanks": "Enviar Agradecimento",
+    "siteEditor": {
+      "title": "Editar Site",
+      "subtitle": "Personalize seu site de casamento",
+      "sections": {
+        "template": "Template",
+        "colors": "Cores",
+        "info": "Informações",
+        "images": "Imagens"
+      },
+      "coupleNames": "Nomes do Casal",
+      "weddingDate": "Data do Casamento",
+      "location": "Local",
+      "dressCode": "Dress Code",
+      "colorPalette": "Paleta de Cores",
+      "heroImage": "Imagem Principal",
+      "uploadImage": "Enviar Imagem",
+      "changeTemplate": "Trocar Template",
+      "saveChanges": "Salvar Alterações",
+      "preview": "Visualizar"
+    },
+    "guests": {
+      "title": "Gerenciar Convidados",
+      "subtitle": "Acompanhe confirmações e gerencie sua lista",
+      "addGuest": "Adicionar Convidado",
+      "total": "Total",
+      "confirmed": "Confirmados",
+      "pending": "Pendentes",
+      "declined": "Recusados"
+    },
+    "settings": {
+      "title": "Configurações",
+      "subtitle": "Gerencie sua conta e preferências",
+      "account": "Conta",
+      "banking": "Dados Bancários",
+      "notifications": "Notificações",
+      "language": "Idioma"
+    }
   },
   "checkout": {
     "title": "Checkout Seguro",
