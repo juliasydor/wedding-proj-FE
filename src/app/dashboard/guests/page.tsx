@@ -69,6 +69,7 @@ interface NewGuestForm {
   name: string;
   email: string;
   phone: string;
+  status: 'pending' | 'confirmed' | 'declined';
   hasPlusOne: boolean;
   plusOneName: string;
   plusOneAge: string;
@@ -79,11 +80,18 @@ const initialFormState: NewGuestForm = {
   name: '',
   email: '',
   phone: '',
+  status: 'pending',
   hasPlusOne: false,
   plusOneName: '',
   plusOneAge: '',
   dietaryRestrictions: '',
 };
+
+const STATUS_OPTIONS = [
+  { id: 'pending' as const, label: 'Pendente', color: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' },
+  { id: 'confirmed' as const, label: 'Confirmado', color: 'bg-green-500/20 text-green-500 border-green-500/30' },
+  { id: 'declined' as const, label: 'Recusado', color: 'bg-red-500/20 text-red-500 border-red-500/30' },
+];
 
 export default function GuestsPage() {
   const t = useTranslations('dashboard.guests');
@@ -146,7 +154,7 @@ export default function GuestsPage() {
       name: formData.name,
       email: formData.email,
       phone: formData.phone || undefined,
-      rsvpStatus: 'pending',
+      rsvpStatus: formData.status,
       plusOne: formData.hasPlusOne,
       plusOneName: formData.hasPlusOne && formData.plusOneName ? formData.plusOneName : undefined,
       plusOneAge: formData.hasPlusOne && formData.plusOneAge ? parseInt(formData.plusOneAge) : undefined,
@@ -491,6 +499,31 @@ export default function GuestsPage() {
                 placeholder="Ex: (11) 99999-9999"
                 className="bg-input-bg border-border"
               />
+            </div>
+
+            {/* Status Selection */}
+            <div className="space-y-2">
+              <Label className="text-sm flex items-center gap-2">
+                <UserCheck className="h-4 w-4 text-secondary" />
+                Status de Confirmação
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {STATUS_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, status: option.id })}
+                    className={cn(
+                      'px-4 py-2 rounded-full text-sm font-medium transition-all border',
+                      formData.status === option.id
+                        ? option.color
+                        : 'bg-quaternary text-foreground/70 border-transparent hover:border-border'
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Dietary Restrictions */}
