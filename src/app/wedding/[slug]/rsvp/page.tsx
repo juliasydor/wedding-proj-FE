@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { IconButton } from '@/shared/ui/atoms/IconButton';
 import { useWeddingStore } from '@/entities/wedding';
+import { useGuestStore } from '@/entities/guest';
 import { toast } from 'sonner';
 import { cn } from '@/shared/lib/utils';
 
@@ -18,6 +19,7 @@ export default function RsvpPage() {
   const router = useRouter();
   const slug = params?.slug as string || '';
   const { onboarding } = useWeddingStore();
+  const { confirmRSVP } = useGuestStore();
 
   const primaryColor = onboarding.primaryColor || '#ea2e5b';
 
@@ -58,8 +60,23 @@ export default function RsvpPage() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement API call to save RSVP
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Save guest to store (will be synced with backend later)
+      confirmRSVP({
+        weddingId: slug,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        attending: rsvpStatus === 'attending',
+        numberOfGuests: parseInt(formData.guests, 10),
+        dietaryRestrictions: formData.dietaryRestrictions || undefined,
+        message: formData.message || undefined,
+      });
+
+      // TODO: Implement API call to save RSVP to backend
+      // await api.rsvp.confirm({ ... });
+
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       setIsSubmitted(true);
       toast.success(

@@ -93,8 +93,12 @@ export interface Guest {
   phone?: string;
   rsvpStatus: 'pending' | 'confirmed' | 'declined';
   plusOne: boolean;
+  numberOfGuests: number;
   dietaryRestrictions?: string;
+  message?: string;
   notes?: string;
+  confirmedAt?: Date;
+  source: 'manual' | 'rsvp-form';
 }
 
 export interface Template {

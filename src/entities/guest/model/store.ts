@@ -1,7 +1,19 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { Guest } from '@/shared/types';
 
 type RSVPFilter = 'all' | 'pending' | 'confirmed' | 'declined';
+
+export interface RSVPFormData {
+  weddingId: string;
+  name: string;
+  email: string;
+  phone?: string;
+  attending: boolean;
+  numberOfGuests: number;
+  dietaryRestrictions?: string;
+  message?: string;
+}
 
 interface GuestState {
   guests: Guest[];
@@ -16,10 +28,12 @@ interface GuestActions {
   addGuest: (guest: Guest) => void;
   updateGuest: (guestId: string, data: Partial<Guest>) => void;
   removeGuest: (guestId: string) => void;
+  confirmRSVP: (data: RSVPFormData) => Guest;
   setRsvpFilter: (filter: RSVPFilter) => void;
   setSearchQuery: (query: string) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
+  getGuestsByWedding: (weddingId: string) => Guest[];
   reset: () => void;
 }
 
@@ -31,36 +45,71 @@ const initialState: GuestState = {
   error: null,
 };
 
-export const useGuestStore = create<GuestState & GuestActions>()((set) => ({
-  ...initialState,
+export const useGuestStore = create<GuestState & GuestActions>()(
+  persist(
+    (set, get) => ({
+      ...initialState,
 
-  setGuests: (guests) => set({ guests }),
+      setGuests: (guests) => set({ guests }),
 
-  addGuest: (guest) =>
-    set((state) => ({
-      guests: [...state.guests, guest],
-    })),
+      addGuest: (guest) =>
+        set((state) => ({
+          guests: [...state.guests, guest],
+        })),
 
-  updateGuest: (guestId, data) =>
-    set((state) => ({
-      guests: state.guests.map((g) => (g.id === guestId ? { ...g, ...data } : g)),
-    })),
+      updateGuest: (guestId, data) =>
+        set((state) => ({
+          guests: state.guests.map((g) => (g.id === guestId ? { ...g, ...data } : g)),
+        })),
 
-  removeGuest: (guestId) =>
-    set((state) => ({
-      guests: state.guests.filter((g) => g.id !== guestId),
-    })),
+      removeGuest: (guestId) =>
+        set((state) => ({
+          guests: state.guests.filter((g) => g.id !== guestId),
+        })),
 
-  setRsvpFilter: (filter) => set({ rsvpFilter: filter }),
+      confirmRSVP: (data: RSVPFormData) => {
+        const newGuest: Guest = {
+          id: `guest-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          weddingId: data.weddingId,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          rsvpStatus: data.attending ? 'confirmed' : 'declined',
+          plusOne: data.numberOfGuests > 1,
+          numberOfGuests: data.numberOfGuests,
+          dietaryRestrictions: data.dietaryRestrictions,
+          message: data.message,
+          confirmedAt: new Date(),
+          source: 'rsvp-form',
+        };
 
-  setSearchQuery: (query) => set({ searchQuery: query }),
+        set((state) => ({
+          guests: [...state.guests, newGuest],
+        }));
 
-  setLoading: (isLoading) => set({ isLoading }),
+        return newGuest;
+      },
 
-  setError: (error) => set({ error }),
+      setRsvpFilter: (filter) => set({ rsvpFilter: filter }),
 
-  reset: () => set(initialState),
-}));
+      setSearchQuery: (query) => set({ searchQuery: query }),
+
+      setLoading: (isLoading) => set({ isLoading }),
+
+      setError: (error) => set({ error }),
+
+      getGuestsByWedding: (weddingId: string) => {
+        return get().guests.filter((g) => g.weddingId === weddingId);
+      },
+
+      reset: () => set(initialState),
+    }),
+    {
+      name: 'guest-storage',
+      partialize: (state) => ({ guests: state.guests }),
+    }
+  )
+);
 
 // Selectors
 export const useFilteredGuests = () => {
@@ -80,9 +129,13 @@ export const useFilteredGuests = () => {
 export const useGuestStats = () => {
   const { guests } = useGuestStore();
 
+  const confirmedGuests = guests.filter((g) => g.rsvpStatus === 'confirmed');
+  const totalAttendees = confirmedGuests.reduce((sum, g) => sum + (g.numberOfGuests || 1), 0);
+
   return {
     total: guests.length,
-    confirmed: guests.filter((g) => g.rsvpStatus === 'confirmed').length,
+    confirmed: confirmedGuests.length,
+    totalAttendees,
     pending: guests.filter((g) => g.rsvpStatus === 'pending').length,
     declined: guests.filter((g) => g.rsvpStatus === 'declined').length,
   };
