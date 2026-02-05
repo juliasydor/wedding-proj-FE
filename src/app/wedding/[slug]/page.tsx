@@ -59,6 +59,7 @@ export default function WeddingPage() {
       heroImage={(weddingData as any)?.heroImageUrl || onboarding.heroImage}
       primaryColor={primaryColor}
       secondaryColor={secondaryColor}
+      siteContent={(weddingData as any)?.siteContent || onboarding.siteContent}
     />
   );
 }

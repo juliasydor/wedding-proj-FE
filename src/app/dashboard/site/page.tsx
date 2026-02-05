@@ -17,12 +17,18 @@ import {
   X,
   Monitor,
   Smartphone,
+  Type,
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { cn } from '@/shared/lib/utils';
-import { useWeddingStore } from '@/entities/wedding';
+import { useWeddingStore, type SiteContent } from '@/entities/wedding';
 import { toast } from 'sonner';
 import {
   ModernEleganceTemplate,
@@ -33,7 +39,7 @@ import {
   type TemplateId,
 } from '@/shared/ui/templates';
 
-type TabId = 'template' | 'colors' | 'info' | 'images';
+type TabId = 'template' | 'colors' | 'content' | 'info' | 'images';
 type PreviewMode = 'desktop' | 'mobile';
 
 const COLOR_PALETTES = [
@@ -87,6 +93,59 @@ function getTemplateComponent(templateId: TemplateId) {
   }
 }
 
+// Collapsible Section Component
+function CollapsibleSection({
+  title,
+  children,
+  isOpen,
+  onToggle,
+  showToggle,
+  enabled,
+  onEnabledChange,
+}: {
+  title: string;
+  children: React.ReactNode;
+  isOpen: boolean;
+  onToggle: () => void;
+  showToggle?: boolean;
+  enabled?: boolean;
+  onEnabledChange?: (enabled: boolean) => void;
+}) {
+  return (
+    <div className="border border-border/50 rounded-xl overflow-hidden">
+      <div
+        className="flex items-center justify-between p-4 bg-quaternary/30 cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="flex items-center gap-3">
+          <h4 className="font-medium text-foreground">{title}</h4>
+          {showToggle && enabled !== undefined && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-2"
+            >
+              <Switch
+                checked={enabled}
+                onCheckedChange={onEnabledChange}
+                className="data-[state=checked]:bg-secondary"
+              />
+              <span className="text-xs text-subtitle">
+                {enabled ? 'Visível' : 'Oculto'}
+              </span>
+            </div>
+          )}
+        </div>
+        {isOpen ? (
+          <ChevronUp className="h-4 w-4 text-subtitle" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-subtitle" />
+        )}
+      </div>
+      {isOpen && <div className="p-4 space-y-4">{children}</div>}
+    </div>
+  );
+}
+
 export default function SiteEditorPage() {
   const t = useTranslations('dashboard.siteEditor');
   const { onboarding, updateOnboarding } = useWeddingStore();
@@ -110,11 +169,62 @@ export default function SiteEditorPage() {
     venue: onboarding.venue || '',
   });
 
+  // Content state
+  const [siteContent, setSiteContent] = useState<SiteContent>(
+    onboarding.siteContent || {
+      heroTitle: 'We\'re Getting Married',
+      heroSubtitle: 'Join us to celebrate our love',
+      storyTitle: 'Nossa História',
+      storyContent: 'Uma história de amor que começou...',
+      storyImage: null,
+      showStorySection: true,
+      ceremonyTitle: 'Cerimônia',
+      ceremonyTime: '17:00',
+      ceremonyDescription: 'A cerimônia será realizada ao ar livre',
+      receptionTitle: 'Recepção',
+      receptionTime: '19:00',
+      receptionDescription: 'Celebre conosco com música e boa comida',
+      countdownTitle: 'Contagem Regressiva',
+      showCountdown: true,
+      rsvpTitle: 'Confirme sua Presença',
+      rsvpDescription: 'Por favor, confirme sua presença até 30 dias antes do evento',
+      showRsvpSection: true,
+      accommodationsTitle: 'Hospedagem',
+      accommodationsContent: 'Sugerimos os seguintes hotéis próximos ao local do evento...',
+      showAccommodationsSection: false,
+      giftTitle: 'Lista de Presentes',
+      giftDescription: 'Sua presença é o nosso maior presente, mas se desejar nos presentear...',
+      showGiftSection: true,
+      galleryTitle: 'Nossa Galeria',
+      galleryImages: [],
+      showGallerySection: false,
+      footerMessage: 'Mal podemos esperar para celebrar com você!',
+    }
+  );
+
+  // Collapsible sections state
+  const [openSections, setOpenSections] = useState({
+    hero: true,
+    countdown: false,
+    story: false,
+    ceremony: false,
+    rsvp: false,
+    gifts: false,
+    accommodations: false,
+    gallery: false,
+    footer: false,
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
   const currentPalette = COLOR_PALETTES.find((p) => p.id === selectedPalette) || COLOR_PALETTES[0];
 
   const tabs = [
     { id: 'template' as TabId, icon: Layout, label: t('sections.template') },
     { id: 'colors' as TabId, icon: Palette, label: t('sections.colors') },
+    { id: 'content' as TabId, icon: Type, label: 'Conteúdo' },
     { id: 'info' as TabId, icon: Info, label: t('sections.info') },
     { id: 'images' as TabId, icon: ImageIcon, label: t('sections.images') },
   ];
@@ -126,6 +236,7 @@ export default function SiteEditorPage() {
       primaryColor: currentPalette.primary,
       secondaryColor: currentPalette.secondary,
       heroImage,
+      siteContent,
     });
     toast.success('Alterações salvas com sucesso!');
   };
@@ -140,6 +251,42 @@ export default function SiteEditorPage() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleStoryImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSiteContent({ ...siteContent, storyImage: reader.result as string });
+        toast.success('Imagem da história enviada!');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleGalleryImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setSiteContent((prev) => ({
+            ...prev,
+            galleryImages: [...prev.galleryImages, reader.result as string],
+          }));
+        };
+        reader.readAsDataURL(file);
+      });
+      toast.success('Imagens adicionadas à galeria!');
+    }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setSiteContent((prev) => ({
+      ...prev,
+      galleryImages: prev.galleryImages.filter((_, i) => i !== index),
+    }));
   };
 
   const TemplateComponent = getTemplateComponent(selectedTemplate);
@@ -269,6 +416,351 @@ export default function SiteEditorPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Content Editing */}
+            {activeTab === 'content' && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground mb-6">Editar Textos e Seções</h3>
+
+                {/* Hero Section */}
+                <CollapsibleSection
+                  title="Seção Principal (Hero)"
+                  isOpen={openSections.hero}
+                  onToggle={() => toggleSection('hero')}
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Título Principal</Label>
+                      <Input
+                        value={siteContent.heroTitle}
+                        onChange={(e) => setSiteContent({ ...siteContent, heroTitle: e.target.value })}
+                        placeholder="Ex: We're Getting Married"
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Subtítulo</Label>
+                      <Input
+                        value={siteContent.heroSubtitle}
+                        onChange={(e) => setSiteContent({ ...siteContent, heroSubtitle: e.target.value })}
+                        placeholder="Ex: Join us to celebrate our love"
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Countdown Section */}
+                <CollapsibleSection
+                  title="Contagem Regressiva"
+                  isOpen={openSections.countdown}
+                  onToggle={() => toggleSection('countdown')}
+                  showToggle
+                  enabled={siteContent.showCountdown}
+                  onEnabledChange={(enabled) => setSiteContent({ ...siteContent, showCountdown: enabled })}
+                >
+                  <div className="space-y-2">
+                    <Label className="text-sm">Título da Seção</Label>
+                    <Input
+                      value={siteContent.countdownTitle}
+                      onChange={(e) => setSiteContent({ ...siteContent, countdownTitle: e.target.value })}
+                      placeholder="Ex: Contagem Regressiva"
+                      className="bg-input-bg border-border"
+                    />
+                  </div>
+                </CollapsibleSection>
+
+                {/* Our Story Section */}
+                <CollapsibleSection
+                  title="Nossa História"
+                  isOpen={openSections.story}
+                  onToggle={() => toggleSection('story')}
+                  showToggle
+                  enabled={siteContent.showStorySection}
+                  onEnabledChange={(enabled) => setSiteContent({ ...siteContent, showStorySection: enabled })}
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Título</Label>
+                      <Input
+                        value={siteContent.storyTitle}
+                        onChange={(e) => setSiteContent({ ...siteContent, storyTitle: e.target.value })}
+                        placeholder="Ex: Nossa História"
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Conteúdo</Label>
+                      <textarea
+                        value={siteContent.storyContent}
+                        onChange={(e) => setSiteContent({ ...siteContent, storyContent: e.target.value })}
+                        placeholder="Conte sua história de amor..."
+                        rows={4}
+                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Imagem da História</Label>
+                      <div className="flex gap-3">
+                        <label className="flex-1 flex items-center justify-center px-4 py-3 rounded-xl border border-dashed border-border cursor-pointer hover:border-secondary/50 transition-colors">
+                          <Upload className="h-4 w-4 mr-2 text-subtitle" />
+                          <span className="text-sm text-subtitle">
+                            {siteContent.storyImage ? 'Trocar imagem' : 'Adicionar imagem'}
+                          </span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleStoryImageUpload}
+                            className="hidden"
+                          />
+                        </label>
+                        {siteContent.storyImage && (
+                          <button
+                            onClick={() => setSiteContent({ ...siteContent, storyImage: null })}
+                            className="px-3 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                      {siteContent.storyImage && (
+                        <img
+                          src={siteContent.storyImage}
+                          alt="Story preview"
+                          className="w-32 h-20 object-cover rounded-lg mt-2"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Ceremony & Reception Section */}
+                <CollapsibleSection
+                  title="Cerimônia e Recepção"
+                  isOpen={openSections.ceremony}
+                  onToggle={() => toggleSection('ceremony')}
+                >
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm">Título Cerimônia</Label>
+                        <Input
+                          value={siteContent.ceremonyTitle}
+                          onChange={(e) => setSiteContent({ ...siteContent, ceremonyTitle: e.target.value })}
+                          className="bg-input-bg border-border"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm">Horário</Label>
+                        <Input
+                          value={siteContent.ceremonyTime}
+                          onChange={(e) => setSiteContent({ ...siteContent, ceremonyTime: e.target.value })}
+                          placeholder="Ex: 17:00"
+                          className="bg-input-bg border-border"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Descrição da Cerimônia</Label>
+                      <Input
+                        value={siteContent.ceremonyDescription}
+                        onChange={(e) => setSiteContent({ ...siteContent, ceremonyDescription: e.target.value })}
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm">Título Recepção</Label>
+                        <Input
+                          value={siteContent.receptionTitle}
+                          onChange={(e) => setSiteContent({ ...siteContent, receptionTitle: e.target.value })}
+                          className="bg-input-bg border-border"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm">Horário</Label>
+                        <Input
+                          value={siteContent.receptionTime}
+                          onChange={(e) => setSiteContent({ ...siteContent, receptionTime: e.target.value })}
+                          placeholder="Ex: 19:00"
+                          className="bg-input-bg border-border"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Descrição da Recepção</Label>
+                      <Input
+                        value={siteContent.receptionDescription}
+                        onChange={(e) => setSiteContent({ ...siteContent, receptionDescription: e.target.value })}
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* RSVP Section */}
+                <CollapsibleSection
+                  title="Confirmação de Presença (RSVP)"
+                  isOpen={openSections.rsvp}
+                  onToggle={() => toggleSection('rsvp')}
+                  showToggle
+                  enabled={siteContent.showRsvpSection}
+                  onEnabledChange={(enabled) => setSiteContent({ ...siteContent, showRsvpSection: enabled })}
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Título</Label>
+                      <Input
+                        value={siteContent.rsvpTitle}
+                        onChange={(e) => setSiteContent({ ...siteContent, rsvpTitle: e.target.value })}
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Descrição</Label>
+                      <textarea
+                        value={siteContent.rsvpDescription}
+                        onChange={(e) => setSiteContent({ ...siteContent, rsvpDescription: e.target.value })}
+                        rows={2}
+                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Gift Section */}
+                <CollapsibleSection
+                  title="Lista de Presentes"
+                  isOpen={openSections.gifts}
+                  onToggle={() => toggleSection('gifts')}
+                  showToggle
+                  enabled={siteContent.showGiftSection}
+                  onEnabledChange={(enabled) => setSiteContent({ ...siteContent, showGiftSection: enabled })}
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Título</Label>
+                      <Input
+                        value={siteContent.giftTitle}
+                        onChange={(e) => setSiteContent({ ...siteContent, giftTitle: e.target.value })}
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Descrição</Label>
+                      <textarea
+                        value={siteContent.giftDescription}
+                        onChange={(e) => setSiteContent({ ...siteContent, giftDescription: e.target.value })}
+                        rows={2}
+                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Accommodations Section */}
+                <CollapsibleSection
+                  title="Hospedagem"
+                  isOpen={openSections.accommodations}
+                  onToggle={() => toggleSection('accommodations')}
+                  showToggle
+                  enabled={siteContent.showAccommodationsSection}
+                  onEnabledChange={(enabled) => setSiteContent({ ...siteContent, showAccommodationsSection: enabled })}
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Título</Label>
+                      <Input
+                        value={siteContent.accommodationsTitle}
+                        onChange={(e) => setSiteContent({ ...siteContent, accommodationsTitle: e.target.value })}
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Conteúdo</Label>
+                      <textarea
+                        value={siteContent.accommodationsContent}
+                        onChange={(e) => setSiteContent({ ...siteContent, accommodationsContent: e.target.value })}
+                        rows={3}
+                        placeholder="Adicione informações sobre hotéis, pousadas..."
+                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Gallery Section */}
+                <CollapsibleSection
+                  title="Galeria de Fotos"
+                  isOpen={openSections.gallery}
+                  onToggle={() => toggleSection('gallery')}
+                  showToggle
+                  enabled={siteContent.showGallerySection}
+                  onEnabledChange={(enabled) => setSiteContent({ ...siteContent, showGallerySection: enabled })}
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Título</Label>
+                      <Input
+                        value={siteContent.galleryTitle}
+                        onChange={(e) => setSiteContent({ ...siteContent, galleryTitle: e.target.value })}
+                        className="bg-input-bg border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Imagens da Galeria</Label>
+                      <label className="flex items-center justify-center px-4 py-6 rounded-xl border border-dashed border-border cursor-pointer hover:border-secondary/50 transition-colors">
+                        <Plus className="h-5 w-5 mr-2 text-subtitle" />
+                        <span className="text-sm text-subtitle">Adicionar imagens</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleGalleryImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                      {siteContent.galleryImages.length > 0 && (
+                        <div className="grid grid-cols-4 gap-2 mt-3">
+                          {siteContent.galleryImages.map((img, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={img}
+                                alt={`Gallery ${index + 1}`}
+                                className="w-full h-16 object-cover rounded-lg"
+                              />
+                              <button
+                                onClick={() => removeGalleryImage(index)}
+                                className="absolute inset-0 bg-red-500/80 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center"
+                              >
+                                <Trash2 className="h-4 w-4 text-white" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Footer Section */}
+                <CollapsibleSection
+                  title="Rodapé"
+                  isOpen={openSections.footer}
+                  onToggle={() => toggleSection('footer')}
+                >
+                  <div className="space-y-2">
+                    <Label className="text-sm">Mensagem do Rodapé</Label>
+                    <Input
+                      value={siteContent.footerMessage}
+                      onChange={(e) => setSiteContent({ ...siteContent, footerMessage: e.target.value })}
+                      placeholder="Ex: Mal podemos esperar para celebrar com você!"
+                      className="bg-input-bg border-border"
+                    />
+                  </div>
+                </CollapsibleSection>
               </div>
             )}
 
@@ -489,6 +981,7 @@ export default function SiteEditorPage() {
                         heroImage={heroImage}
                         primaryColor={currentPalette.primary}
                         secondaryColor={currentPalette.secondary}
+                        siteContent={siteContent}
                       />
                     </div>
                   </div>
@@ -507,6 +1000,7 @@ export default function SiteEditorPage() {
                             primaryColor={currentPalette.primary}
                             secondaryColor={currentPalette.secondary}
                             isPreview
+                            siteContent={siteContent}
                           />
                         </div>
                       </div>
@@ -574,6 +1068,7 @@ export default function SiteEditorPage() {
                     heroImage={heroImage}
                     primaryColor={currentPalette.primary}
                     secondaryColor={currentPalette.secondary}
+                    siteContent={siteContent}
                   />
                 </div>
               ) : (
@@ -591,6 +1086,7 @@ export default function SiteEditorPage() {
                           primaryColor={currentPalette.primary}
                           secondaryColor={currentPalette.secondary}
                           isPreview
+                          siteContent={siteContent}
                         />
                       </div>
                     </div>

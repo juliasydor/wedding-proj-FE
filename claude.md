@@ -409,6 +409,135 @@ To add a new template:
 
 ---
 
+## Site Content Editing System
+
+### Overview
+
+The site editor (`/dashboard/site`) allows couples to fully customize their wedding website content, including editing all texts, titles, and toggling sections on/off.
+
+### Editable Sections
+
+Each template supports the following customizable sections:
+
+1. **Hero Section** (sempre visível)
+   - `heroTitle`: Main title (e.g., "We're Getting Married")
+   - `heroSubtitle`: Subtitle text
+
+2. **Countdown Section** (toggle: `showCountdown`)
+   - `countdownTitle`: Section title
+
+3. **Our Story Section** (toggle: `showStorySection`)
+   - `storyTitle`: Section title
+   - `storyContent`: Story text (supports line breaks)
+   - `storyImage`: Optional image
+
+4. **Ceremony & Reception** (sempre visível)
+   - `ceremonyTitle`, `ceremonyTime`, `ceremonyDescription`
+   - `receptionTitle`, `receptionTime`, `receptionDescription`
+
+5. **RSVP Section** (toggle: `showRsvpSection`)
+   - `rsvpTitle`: Section title
+   - `rsvpDescription`: Description text
+
+6. **Gift Section** (toggle: `showGiftSection`)
+   - `giftTitle`: Section title
+   - `giftDescription`: Description text
+
+7. **Accommodations Section** (toggle: `showAccommodationsSection`)
+   - `accommodationsTitle`: Section title
+   - `accommodationsContent`: Content text
+
+8. **Gallery Section** (toggle: `showGallerySection`)
+   - `galleryTitle`: Section title
+   - `galleryImages`: Array of image URLs
+
+9. **Footer**
+   - `footerMessage`: Footer message text
+
+### SiteContent Data Model
+
+```typescript
+export interface SiteContent {
+  // Hero section
+  heroTitle: string;
+  heroSubtitle: string;
+
+  // Our Story section
+  storyTitle: string;
+  storyContent: string;
+  storyImage: string | null;
+  showStorySection: boolean;
+
+  // Ceremony & Reception section
+  ceremonyTitle: string;
+  ceremonyTime: string;
+  ceremonyDescription: string;
+  receptionTitle: string;
+  receptionTime: string;
+  receptionDescription: string;
+
+  // Countdown section
+  countdownTitle: string;
+  showCountdown: boolean;
+
+  // RSVP section
+  rsvpTitle: string;
+  rsvpDescription: string;
+  showRsvpSection: boolean;
+
+  // Accommodations section
+  accommodationsTitle: string;
+  accommodationsContent: string;
+  showAccommodationsSection: boolean;
+
+  // Gift section
+  giftTitle: string;
+  giftDescription: string;
+  showGiftSection: boolean;
+
+  // Gallery section
+  galleryTitle: string;
+  galleryImages: string[];
+  showGallerySection: boolean;
+
+  // Footer
+  footerMessage: string;
+}
+```
+
+### Backend Storage Requirements
+
+The backend needs to store `siteContent` as a JSON object within the Wedding entity:
+
+```typescript
+interface Wedding {
+  // ... existing fields
+  siteContent: SiteContent;
+}
+```
+
+### API Endpoints for Content
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `PUT /api/wedding/:id/content` | PUT | Update all site content |
+| `PATCH /api/wedding/:id/content` | PATCH | Partial update of content |
+| `POST /api/wedding/:id/content/gallery` | POST | Upload gallery image |
+| `DELETE /api/wedding/:id/content/gallery/:index` | DELETE | Remove gallery image |
+| `POST /api/wedding/:id/content/story-image` | POST | Upload story section image |
+
+### Site Editor UI
+
+Located at `/dashboard/site`, the editor has 5 tabs:
+
+1. **Template** - Choose from 4 templates
+2. **Colors** - Select color palette
+3. **Content** - Edit all texts and toggle sections (collapsible sections)
+4. **Info** - Basic wedding information
+5. **Images** - Hero image upload
+
+---
+
 ## Guest Wedding Site Architecture
 
 ### Overview
@@ -483,6 +612,7 @@ function getTemplateComponent(templateId: TemplateId | string | null) {
   heroImage={weddingData.heroImageUrl}
   primaryColor={weddingData.primaryColor}
   secondaryColor={weddingData.secondaryColor}
+  siteContent={weddingData.siteContent}  // Custom texts and section visibility
 />
 ```
 
@@ -588,8 +718,8 @@ Located in `/dashboard/guests/page.tsx`:
 
 - **Companion (Plus-One) Support**
   - Toggle to add companion
-  - Companion name field
-  - Companion age field
+  - Companion name field (optional)
+  - Companion age field (optional)
 
 ### Guest Data Model
 

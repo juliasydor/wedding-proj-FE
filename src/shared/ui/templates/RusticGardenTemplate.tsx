@@ -1,8 +1,9 @@
 'use client';
 
-import { Heart, Calendar, MapPin, Leaf } from 'lucide-react';
+import { Heart, Calendar, MapPin, Leaf, Gift, Mail, Hotel, Camera, Clock } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
+import type { SiteContent } from '@/entities/wedding/model/store';
 
 interface RusticGardenTemplateProps {
   partner1Name: string;
@@ -13,7 +14,38 @@ interface RusticGardenTemplateProps {
   primaryColor?: string;
   secondaryColor?: string;
   isPreview?: boolean;
+  siteContent?: Partial<SiteContent>;
 }
+
+const defaultContent: SiteContent = {
+  heroTitle: 'Save the Date',
+  heroSubtitle: 'Join us in the garden',
+  storyTitle: 'Nossa História',
+  storyContent: 'Uma história de amor que floresceu...',
+  storyImage: null,
+  showStorySection: true,
+  ceremonyTitle: 'Cerimônia',
+  ceremonyTime: '16:00',
+  ceremonyDescription: 'Garden Chapel',
+  receptionTitle: 'Recepção',
+  receptionTime: '18:00',
+  receptionDescription: 'The Garden Pavilion',
+  countdownTitle: 'Days Until We Say I Do',
+  showCountdown: true,
+  rsvpTitle: 'Confirme sua Presença',
+  rsvpDescription: 'Por favor, confirme sua presença.',
+  showRsvpSection: true,
+  accommodationsTitle: 'Hospedagem',
+  accommodationsContent: 'Hotéis próximos...',
+  showAccommodationsSection: false,
+  giftTitle: 'Lista de Presentes',
+  giftDescription: 'Sua presença é o maior presente!',
+  showGiftSection: true,
+  galleryTitle: 'Nossa Galeria',
+  galleryImages: [],
+  showGallerySection: false,
+  footerMessage: 'Forever & Always',
+};
 
 export function RusticGardenTemplate({
   partner1Name,
@@ -24,7 +56,9 @@ export function RusticGardenTemplate({
   primaryColor = '#5d7052',
   secondaryColor = '#8fa67a',
   isPreview = false,
+  siteContent,
 }: RusticGardenTemplateProps) {
+  const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
 
   return (
@@ -79,7 +113,7 @@ export function RusticGardenTemplate({
             <div className="text-center">
               <Leaf className="h-8 w-8 mx-auto mb-2" style={{ color: primaryColor }} />
               <p className="text-xs uppercase tracking-widest" style={{ color: primaryColor }}>
-                Save the Date
+                {content.heroTitle}
               </p>
             </div>
           </div>
@@ -123,47 +157,139 @@ export function RusticGardenTemplate({
       </section>
 
       {/* Countdown Section */}
-      {weddingDate && (
+      {content.showCountdown && weddingDate && (
         <section
           className="py-16 px-4 text-center"
           style={{ backgroundColor: `${primaryColor}10` }}
         >
           <div className="flex items-center justify-center gap-4 mb-8">
             <Leaf className="h-6 w-6 -rotate-45" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-2xl">Days Until We Say I Do</h2>
+            <h2 className="font-serif text-2xl">{content.countdownTitle}</h2>
             <Leaf className="h-6 w-6 rotate-45" style={{ color: primaryColor }} />
           </div>
           <Countdown
             targetDate={weddingDate}
-            labels={{ days: 'Days', hours: 'Hours', minutes: 'Mins', seconds: 'Secs' }}
+            labels={{ days: 'Dias', hours: 'Horas', minutes: 'Min', seconds: 'Seg' }}
           />
         </section>
       )}
 
+      {/* Our Story Section */}
+      {content.showStorySection && (
+        <section className="py-16 px-4 bg-white">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <Leaf className="h-5 w-5 -rotate-45" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl" style={{ color: primaryColor }}>
+                {content.storyTitle}
+              </h2>
+              <Leaf className="h-5 w-5 rotate-45" style={{ color: primaryColor }} />
+            </div>
+            {content.storyImage && (
+              <img
+                src={content.storyImage}
+                alt="Nossa história"
+                className="w-full max-w-md mx-auto h-48 object-cover rounded-2xl mb-6"
+              />
+            )}
+            <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+              {content.storyContent}
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* Details Cards */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
           <div
-            className="p-8 rounded-2xl text-center border-2"
+            className="p-8 rounded-2xl text-center border-2 bg-white"
             style={{ borderColor: `${primaryColor}30` }}
           >
-            <Calendar className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h3 className="font-serif text-xl mb-2">Ceremony</h3>
-            <p className="opacity-70">Saturday at 4:00 PM</p>
-            <p className="text-sm opacity-50 mt-2">Garden Chapel</p>
+            <Clock className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h3 className="font-serif text-xl mb-2">{content.ceremonyTitle}</h3>
+            <p className="text-2xl font-bold mb-2" style={{ color: primaryColor }}>{content.ceremonyTime}</p>
+            <p className="opacity-70">{content.ceremonyDescription}</p>
           </div>
 
           <div
-            className="p-8 rounded-2xl text-center border-2"
+            className="p-8 rounded-2xl text-center border-2 bg-white"
             style={{ borderColor: `${primaryColor}30` }}
           >
             <Heart className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h3 className="font-serif text-xl mb-2">Reception</h3>
-            <p className="opacity-70">Dinner & Dancing at 6:00 PM</p>
-            <p className="text-sm opacity-50 mt-2">The Garden Pavilion</p>
+            <h3 className="font-serif text-xl mb-2">{content.receptionTitle}</h3>
+            <p className="text-2xl font-bold mb-2" style={{ color: primaryColor }}>{content.receptionTime}</p>
+            <p className="opacity-70">{content.receptionDescription}</p>
           </div>
         </div>
       </section>
+
+      {/* RSVP Section */}
+      {content.showRsvpSection && (
+        <section className="py-16 px-4 text-center bg-white">
+          <div className="max-w-xl mx-auto">
+            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h2 className="font-serif text-3xl mb-4">{content.rsvpTitle}</h2>
+            <p className="mb-6 opacity-80">{content.rsvpDescription}</p>
+            <button
+              className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+              style={{ backgroundColor: primaryColor }}
+            >
+              Confirmar Presença
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* Gift Section */}
+      {content.showGiftSection && (
+        <section className="py-16 px-4 text-center" style={{ backgroundColor: `${primaryColor}10` }}>
+          <div className="max-w-xl mx-auto">
+            <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h2 className="font-serif text-3xl mb-4">{content.giftTitle}</h2>
+            <p className="mb-6 opacity-80">{content.giftDescription}</p>
+            <button
+              className="px-8 py-3 rounded-full font-semibold transition-all hover:opacity-90 border-2"
+              style={{ borderColor: primaryColor, color: primaryColor }}
+            >
+              Ver Lista de Presentes
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* Accommodations Section */}
+      {content.showAccommodationsSection && (
+        <section className="py-16 px-4 text-center bg-white">
+          <div className="max-w-xl mx-auto">
+            <Hotel className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h2 className="font-serif text-3xl mb-4">{content.accommodationsTitle}</h2>
+            <p className="opacity-80 whitespace-pre-line">{content.accommodationsContent}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Gallery Section */}
+      {content.showGallerySection && content.galleryImages.length > 0 && (
+        <section className="py-16 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <Camera className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl">{content.galleryTitle}</h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {content.galleryImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt={`Gallery ${index + 1}`}
+                  className="w-full aspect-square object-cover rounded-2xl hover:scale-105 transition-transform"
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Footer */}
       <footer
@@ -171,10 +297,10 @@ export function RusticGardenTemplate({
         style={{ backgroundColor: primaryColor }}
       >
         <Leaf className="h-8 w-8 mx-auto mb-3 opacity-60" />
+        <p className="mb-2">{content.footerMessage}</p>
         <p className="font-serif text-lg">
           {partner1Name} & {partner2Name}
         </p>
-        <p className="text-sm opacity-60 mt-1">Forever & Always</p>
       </footer>
     </div>
   );

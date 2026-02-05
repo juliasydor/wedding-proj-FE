@@ -2,6 +2,46 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Wedding, DressCode, WeddingTheme, BankingInfo } from '@/shared/types';
 
+// Customizable content for different sections
+export interface SiteContent {
+  // Hero section
+  heroTitle: string;
+  heroSubtitle: string;
+  // Our Story section
+  storyTitle: string;
+  storyContent: string;
+  storyImage: string | null;
+  showStorySection: boolean;
+  // Ceremony & Reception section
+  ceremonyTitle: string;
+  ceremonyTime: string;
+  ceremonyDescription: string;
+  receptionTitle: string;
+  receptionTime: string;
+  receptionDescription: string;
+  // Countdown section
+  countdownTitle: string;
+  showCountdown: boolean;
+  // RSVP section
+  rsvpTitle: string;
+  rsvpDescription: string;
+  showRsvpSection: boolean;
+  // Accommodations section
+  accommodationsTitle: string;
+  accommodationsContent: string;
+  showAccommodationsSection: boolean;
+  // Gift section
+  giftTitle: string;
+  giftDescription: string;
+  showGiftSection: boolean;
+  // Gallery section
+  galleryTitle: string;
+  galleryImages: string[];
+  showGallerySection: boolean;
+  // Footer
+  footerMessage: string;
+}
+
 interface OnboardingData {
   partner1Name: string;
   partner2Name: string;
@@ -15,6 +55,7 @@ interface OnboardingData {
   primaryColor: string | null;
   secondaryColor: string | null;
   heroImage: string | null;
+  siteContent: SiteContent;
 }
 
 interface WeddingState {
@@ -37,6 +78,36 @@ interface WeddingActions {
   reset: () => void;
 }
 
+const initialSiteContent: SiteContent = {
+  heroTitle: 'We\'re Getting Married',
+  heroSubtitle: 'Join us to celebrate our love',
+  storyTitle: 'Nossa História',
+  storyContent: 'Uma história de amor que começou...',
+  storyImage: null,
+  showStorySection: true,
+  ceremonyTitle: 'Cerimônia',
+  ceremonyTime: '17:00',
+  ceremonyDescription: 'A cerimônia será realizada ao ar livre',
+  receptionTitle: 'Recepção',
+  receptionTime: '19:00',
+  receptionDescription: 'Celebre conosco com música e boa comida',
+  countdownTitle: 'Contagem Regressiva',
+  showCountdown: true,
+  rsvpTitle: 'Confirme sua Presença',
+  rsvpDescription: 'Por favor, confirme sua presença até 30 dias antes do evento',
+  showRsvpSection: true,
+  accommodationsTitle: 'Hospedagem',
+  accommodationsContent: 'Sugerimos os seguintes hotéis próximos ao local do evento...',
+  showAccommodationsSection: false,
+  giftTitle: 'Lista de Presentes',
+  giftDescription: 'Sua presença é o nosso maior presente, mas se desejar nos presentear...',
+  showGiftSection: true,
+  galleryTitle: 'Nossa Galeria',
+  galleryImages: [],
+  showGallerySection: false,
+  footerMessage: 'Mal podemos esperar para celebrar com você!',
+};
+
 const initialOnboarding: OnboardingData = {
   partner1Name: '',
   partner2Name: '',
@@ -50,6 +121,7 @@ const initialOnboarding: OnboardingData = {
   primaryColor: null,
   secondaryColor: null,
   heroImage: null,
+  siteContent: initialSiteContent,
 };
 
 const initialState: WeddingState = {

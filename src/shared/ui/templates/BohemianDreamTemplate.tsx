@@ -1,8 +1,9 @@
 'use client';
 
-import { Heart, Calendar, MapPin, Sparkles, Sun, Moon } from 'lucide-react';
+import { Heart, Calendar, MapPin, Sparkles, Sun, Moon, Gift, Mail, Hotel, Camera, Clock } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
+import type { SiteContent } from '@/entities/wedding/model/store';
 
 interface BohemianDreamTemplateProps {
   partner1Name: string;
@@ -13,7 +14,38 @@ interface BohemianDreamTemplateProps {
   primaryColor?: string;
   secondaryColor?: string;
   isPreview?: boolean;
+  siteContent?: Partial<SiteContent>;
 }
+
+const defaultContent: SiteContent = {
+  heroTitle: 'Wild Souls in Love',
+  heroSubtitle: 'Celebrate With Us',
+  storyTitle: 'Nossa História',
+  storyContent: 'Duas almas livres que se encontraram...',
+  storyImage: null,
+  showStorySection: true,
+  ceremonyTitle: 'Cerimônia',
+  ceremonyTime: '16:00',
+  ceremonyDescription: 'Ao ar livre',
+  receptionTitle: 'Recepção',
+  receptionTime: '18:00',
+  receptionDescription: 'Festival de amor',
+  countdownTitle: 'Until Our Adventure Begins',
+  showCountdown: true,
+  rsvpTitle: 'Confirme sua Presença',
+  rsvpDescription: 'Venha fazer parte desta aventura.',
+  showRsvpSection: true,
+  accommodationsTitle: 'Hospedagem',
+  accommodationsContent: 'Opções de hospedagem...',
+  showAccommodationsSection: false,
+  giftTitle: 'Lista de Presentes',
+  giftDescription: 'Sua presença é o maior presente!',
+  showGiftSection: true,
+  galleryTitle: 'Nossa Galeria',
+  galleryImages: [],
+  showGallerySection: false,
+  footerMessage: 'Two Wild Hearts, One Adventure',
+};
 
 export function BohemianDreamTemplate({
   partner1Name,
@@ -24,7 +56,9 @@ export function BohemianDreamTemplate({
   primaryColor = '#d4a574',
   secondaryColor = '#c4956a',
   isPreview = false,
+  siteContent,
 }: BohemianDreamTemplateProps) {
+  const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
 
   return (
@@ -84,7 +118,7 @@ export function BohemianDreamTemplate({
           <div className="flex items-center gap-4 mb-6">
             <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
             <p className="text-sm uppercase tracking-[0.4em]" style={{ color: primaryColor }}>
-              Wild Souls in Love
+              {content.heroTitle}
             </p>
             <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
           </div>
@@ -123,7 +157,7 @@ export function BohemianDreamTemplate({
           {weddingDate && (
             <div className="mt-10">
               <p className="text-xs uppercase tracking-[0.3em] mb-2 opacity-70">
-                Celebrate With Us
+                {content.heroSubtitle}
               </p>
               <p
                 className="text-2xl font-serif"
@@ -158,7 +192,7 @@ export function BohemianDreamTemplate({
       </section>
 
       {/* Countdown Section */}
-      {weddingDate && (
+      {content.showCountdown && weddingDate && (
         <section className="py-16 px-4 text-center bg-[#fef9f3]">
           <div className="flex items-center justify-center gap-4 mb-8">
             <div
@@ -172,12 +206,37 @@ export function BohemianDreamTemplate({
             />
           </div>
           <h2 className="font-serif text-2xl mb-8 italic opacity-80">
-            Until Our Adventure Begins
+            {content.countdownTitle}
           </h2>
           <Countdown
             targetDate={weddingDate}
-            labels={{ days: 'Days', hours: 'Hours', minutes: 'Mins', seconds: 'Secs' }}
+            labels={{ days: 'Dias', hours: 'Horas', minutes: 'Min', seconds: 'Seg' }}
           />
+        </section>
+      )}
+
+      {/* Our Story Section */}
+      {content.showStorySection && (
+        <section className="py-16 px-4 bg-white">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl italic" style={{ color: primaryColor }}>
+                {content.storyTitle}
+              </h2>
+              <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
+            </div>
+            {content.storyImage && (
+              <img
+                src={content.storyImage}
+                alt="Nossa história"
+                className="w-full max-w-md mx-auto h-48 object-cover rounded-2xl mb-6"
+              />
+            )}
+            <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+              {content.storyContent}
+            </p>
+          </div>
         </section>
       )}
 
@@ -187,42 +246,100 @@ export function BohemianDreamTemplate({
         style={{ backgroundColor: `${primaryColor}15` }}
       >
         <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6 text-center">
-            <div className="p-6">
+          <div className="grid md:grid-cols-2 gap-6 text-center">
+            <div className="p-8 bg-white rounded-2xl">
               <div
                 className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: `${primaryColor}30` }}
               >
-                <Calendar className="h-8 w-8" style={{ color: primaryColor }} />
+                <Clock className="h-8 w-8" style={{ color: primaryColor }} />
               </div>
-              <h3 className="font-serif text-lg mb-1">When</h3>
-              <p className="text-sm opacity-70">Saturday, 4 PM</p>
+              <h3 className="font-serif text-xl mb-2">{content.ceremonyTitle}</h3>
+              <p className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>{content.ceremonyTime}</p>
+              <p className="text-sm opacity-70">{content.ceremonyDescription}</p>
             </div>
 
-            <div className="p-6">
-              <div
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{ backgroundColor: `${primaryColor}30` }}
-              >
-                <MapPin className="h-8 w-8" style={{ color: primaryColor }} />
-              </div>
-              <h3 className="font-serif text-lg mb-1">Where</h3>
-              <p className="text-sm opacity-70">{location || 'TBD'}</p>
-            </div>
-
-            <div className="p-6">
+            <div className="p-8 bg-white rounded-2xl">
               <div
                 className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: `${primaryColor}30` }}
               >
                 <Heart className="h-8 w-8" style={{ color: primaryColor }} />
               </div>
-              <h3 className="font-serif text-lg mb-1">Dress Code</h3>
-              <p className="text-sm opacity-70">Bohemian Chic</p>
+              <h3 className="font-serif text-xl mb-2">{content.receptionTitle}</h3>
+              <p className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>{content.receptionTime}</p>
+              <p className="text-sm opacity-70">{content.receptionDescription}</p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* RSVP Section */}
+      {content.showRsvpSection && (
+        <section className="py-16 px-4 text-center bg-[#fef9f3]">
+          <div className="max-w-xl mx-auto">
+            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h2 className="font-serif text-3xl mb-4 italic">{content.rsvpTitle}</h2>
+            <p className="mb-6 opacity-80">{content.rsvpDescription}</p>
+            <button
+              className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+              style={{ backgroundColor: primaryColor }}
+            >
+              Confirmar Presença
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* Gift Section */}
+      {content.showGiftSection && (
+        <section className="py-16 px-4 text-center" style={{ backgroundColor: `${primaryColor}15` }}>
+          <div className="max-w-xl mx-auto">
+            <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h2 className="font-serif text-3xl mb-4 italic">{content.giftTitle}</h2>
+            <p className="mb-6 opacity-80">{content.giftDescription}</p>
+            <button
+              className="px-8 py-3 rounded-full font-semibold transition-all hover:opacity-90 border-2"
+              style={{ borderColor: primaryColor, color: primaryColor }}
+            >
+              Ver Lista de Presentes
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* Accommodations Section */}
+      {content.showAccommodationsSection && (
+        <section className="py-16 px-4 text-center bg-[#fef9f3]">
+          <div className="max-w-xl mx-auto">
+            <Hotel className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h2 className="font-serif text-3xl mb-4 italic">{content.accommodationsTitle}</h2>
+            <p className="opacity-80 whitespace-pre-line">{content.accommodationsContent}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Gallery Section */}
+      {content.showGallerySection && content.galleryImages.length > 0 && (
+        <section className="py-16 px-4" style={{ backgroundColor: `${primaryColor}15` }}>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <Camera className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl italic">{content.galleryTitle}</h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {content.galleryImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt={`Gallery ${index + 1}`}
+                  className="w-full aspect-square object-cover rounded-2xl hover:scale-105 transition-transform"
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Footer */}
       <footer
@@ -234,10 +351,10 @@ export function BohemianDreamTemplate({
           <Heart className="h-6 w-6" style={{ color: primaryColor }} />
           <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
         </div>
+        <p className="mb-2">{content.footerMessage}</p>
         <p className="font-serif text-lg italic">
           {partner1Name} & {partner2Name}
         </p>
-        <p className="text-sm opacity-50 mt-1">Two Wild Hearts, One Adventure</p>
       </footer>
     </div>
   );
