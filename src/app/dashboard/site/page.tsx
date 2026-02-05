@@ -964,12 +964,12 @@ export default function SiteEditorPage() {
               {/* Preview Content */}
               <div className="bg-quaternary/50 p-3 flex items-center justify-center min-h-[500px]">
                 {previewMode === 'desktop' ? (
-                  <div className="w-full h-[480px] overflow-hidden rounded-lg border border-border/50 bg-white">
+                  <div className="w-full max-w-[340px] h-[500px] rounded-lg border border-border/50 bg-white overflow-hidden">
                     <div
-                      className="origin-top-left"
                       style={{
-                        width: '1200px',
-                        transform: 'scale(0.28)',
+                        width: '1280px',
+                        height: '1900px',
+                        transform: 'scale(0.265)',
                         transformOrigin: 'top left',
                       }}
                     >
@@ -987,10 +987,17 @@ export default function SiteEditorPage() {
                   </div>
                 ) : (
                   <div className="relative">
-                    <div className="w-[200px] h-[400px] bg-gray-900 rounded-[2rem] p-1.5 shadow-xl">
+                    <div className="w-[200px] h-[420px] bg-gray-900 rounded-[2rem] p-1.5 shadow-xl">
                       <div className="w-full h-full bg-white rounded-[1.5rem] overflow-hidden relative">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-gray-900 rounded-b-xl z-10" />
-                        <div className="h-full overflow-y-auto">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-gray-900 rounded-b-xl z-20" />
+                        <div
+                          style={{
+                            width: '390px',
+                            height: '850px',
+                            transform: 'scale(0.48)',
+                            transformOrigin: 'top left',
+                          }}
+                        >
                           <TemplateComponent
                             partner1Name={formData.partner1Name || 'Parceiro 1'}
                             partner2Name={formData.partner2Name || 'Parceiro 2'}
@@ -1008,6 +1015,11 @@ export default function SiteEditorPage() {
                   </div>
                 )}
               </div>
+
+              {/* Hint to use full preview */}
+              <p className="text-center text-xs text-subtitle mt-2">
+                Clique em "Preview" para ver o site completo com scroll
+              </p>
             </div>
           </div>
         </div>
@@ -1057,37 +1069,41 @@ export default function SiteEditorPage() {
                 </Button>
               </div>
             </div>
-            <div className="flex-1 overflow-auto bg-quaternary/50 flex items-center justify-center p-4">
+            <div className="flex-1 overflow-hidden bg-quaternary/50 flex items-center justify-center p-4">
               {previewMode === 'desktop' ? (
                 <div className="w-full max-w-6xl h-full overflow-auto rounded-lg border border-border/50 bg-white">
-                  <TemplateComponent
-                    partner1Name={formData.partner1Name || 'Parceiro 1'}
-                    partner2Name={formData.partner2Name || 'Parceiro 2'}
-                    date={formData.date || null}
-                    location={formData.location || 'Local do Casamento'}
-                    heroImage={heroImage}
-                    primaryColor={currentPalette.primary}
-                    secondaryColor={currentPalette.secondary}
-                    siteContent={siteContent}
-                  />
+                  <div style={{ minWidth: '1024px' }}>
+                    <TemplateComponent
+                      partner1Name={formData.partner1Name || 'Parceiro 1'}
+                      partner2Name={formData.partner2Name || 'Parceiro 2'}
+                      date={formData.date || null}
+                      location={formData.location || 'Local do Casamento'}
+                      heroImage={heroImage}
+                      primaryColor={currentPalette.primary}
+                      secondaryColor={currentPalette.secondary}
+                      siteContent={siteContent}
+                    />
+                  </div>
                 </div>
               ) : (
-                <div className="relative">
-                  <div className="w-[320px] h-[640px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
-                    <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-10" />
-                      <div className="h-full overflow-y-auto">
-                        <TemplateComponent
-                          partner1Name={formData.partner1Name || 'Parceiro 1'}
-                          partner2Name={formData.partner2Name || 'Parceiro 2'}
-                          date={formData.date || null}
-                          location={formData.location || 'Local do Casamento'}
-                          heroImage={heroImage}
-                          primaryColor={currentPalette.primary}
-                          secondaryColor={currentPalette.secondary}
-                          isPreview
-                          siteContent={siteContent}
-                        />
+                <div className="relative h-full flex items-center justify-center">
+                  <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl flex flex-col" style={{ width: '390px', height: 'min(95%, 844px)' }}>
+                    <div className="w-full flex-1 bg-white rounded-[2.5rem] overflow-hidden relative flex flex-col">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-gray-900 rounded-b-2xl z-10" />
+                      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                        <div style={{ width: '100%' }}>
+                          <TemplateComponent
+                            partner1Name={formData.partner1Name || 'Parceiro 1'}
+                            partner2Name={formData.partner2Name || 'Parceiro 2'}
+                            date={formData.date || null}
+                            location={formData.location || 'Local do Casamento'}
+                            heroImage={heroImage}
+                            primaryColor={currentPalette.primary}
+                            secondaryColor={currentPalette.secondary}
+                            isPreview
+                            siteContent={siteContent}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
