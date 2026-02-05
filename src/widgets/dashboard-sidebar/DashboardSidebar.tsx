@@ -21,6 +21,7 @@ import { Logo } from '@/shared/ui/atoms/Logo';
 import { ROUTES } from '@/shared/config';
 import { useWeddingStore } from '@/entities/wedding';
 import { useAuthStore } from '@/entities/user';
+import { ThemeToggle, ThemeToggleCompact } from '@/shared/ui/molecules/ThemeToggle';
 
 const navItems = [
   { href: ROUTES.dashboard, icon: LayoutDashboard, labelKey: 'overview' },
@@ -81,6 +82,14 @@ export function DashboardSidebar() {
         })}
       </nav>
 
+      {/* Theme Toggle */}
+      <div className="p-3 md:p-4 border-t border-border/50">
+        <div className="flex items-center justify-between px-3 md:px-4 py-2">
+          <span className="text-sm font-medium text-foreground/70">Tema</span>
+          <ThemeToggle size="sm" />
+        </div>
+      </div>
+
       {/* Quick Actions */}
       <div className="p-3 md:p-4 border-t border-border/50 space-y-1 md:space-y-2">
         {weddingSlug && (
@@ -123,12 +132,15 @@ export function DashboardSidebar() {
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border/50 px-4 py-3 flex items-center justify-between">
         <Logo size="sm" />
-        <button
-          onClick={() => setIsOpen(true)}
-          className="p-2 rounded-lg hover:bg-quaternary"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggleCompact />
+          <button
+            onClick={() => setIsOpen(true)}
+            className="p-2 rounded-lg hover:bg-quaternary"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
       </header>
 
       {/* Mobile Sidebar Overlay */}

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/shared/ui/atoms/Logo';
 import { ROUTES } from '@/shared/config';
+import { ThemeToggleCompact } from '@/shared/ui/molecules/ThemeToggle';
 
 interface NavbarProps {
   variant?: 'landing' | 'auth' | 'dashboard';
@@ -19,7 +20,8 @@ export function Navbar({ variant = 'landing' }: NavbarProps) {
         <Logo size="md" />
 
         {variant === 'landing' && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <ThemeToggleCompact />
             <Link
               href={ROUTES.login}
               className="text-sm font-medium text-foreground hover:text-secondary transition-colors"
@@ -36,7 +38,8 @@ export function Navbar({ variant = 'landing' }: NavbarProps) {
         )}
 
         {variant === 'dashboard' && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <ThemeToggleCompact />
             <Link
               href={ROUTES.giftList}
               className="text-sm font-medium text-foreground hover:text-secondary transition-colors"

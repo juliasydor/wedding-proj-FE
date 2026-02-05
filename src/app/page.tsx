@@ -15,6 +15,7 @@ import { StatCard } from '@/shared/ui/atoms/StatCard';
 import { FeatureCard } from '@/shared/ui/molecules/FeatureCard';
 import { BenefitCard } from '@/shared/ui/molecules/BenefitCard';
 import { HeartAnimation } from '@/shared/animations/HeartAnimation';
+import { HeroOverlay } from '@/shared/ui/atoms/HeroOverlay';
 import { ROUTES } from '@/shared/config';
 
 export default async function HomePage() {
@@ -105,7 +106,7 @@ export default async function HomePage() {
               sizes="(max-width: 768px) 100vw, 1200px"
               unoptimized
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+            <HeroOverlay />
 
             {/* Hero Content Overlay */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">

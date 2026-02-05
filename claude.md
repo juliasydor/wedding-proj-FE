@@ -75,6 +75,7 @@ The product will have distinct user journeys:
 
 ### Color palette (mandatory tokens)
 
+**Véu Theme (Default - Bride):**
 * Secondary color (e.g., buttons): **#ea2e5b**
 * Primary color (e.g., background): **#261516**
 * Tertiary color: **#F1557C**
@@ -82,6 +83,47 @@ The product will have distinct user journeys:
 * Subtitle text: **#8D968F**
 * Primary font color: **#FFFFFF**
 * Inputs: **#271C1E**
+
+**Gravata Theme (Groom - Light mode with Blue accents):**
+* Secondary color (e.g., buttons): **#0133E6**
+* Primary color (e.g., background): **#FFFFFF** (white)
+* Tertiary color: **#3B5EF0**
+* Quaternary color: **#F0F4FF** (light blue tint)
+* Subtitle text: **#64748b**
+* Primary font color: **#0A0524** (dark blue)
+* Inputs: **#F8FAFC**
+
+### Theme System (Véu & Gravata)
+
+The application supports two themes representing the couple:
+
+1. **Véu (Veil)** - Default theme for the bride
+   - Dark mode with pink/rose accents
+   - Heart cursor trail animation enabled
+   - Romantic, warm aesthetic
+
+2. **Gravata (Tie)** - Alternative theme for the groom
+   - Light mode (white background) with blue accents
+   - Heart cursor trail disabled
+   - Clean, elegant aesthetic
+
+**Implementation:**
+- Theme store: `src/shared/store/themeStore.ts`
+- Theme provider: `src/shared/providers/ThemeProvider.tsx`
+- Toggle component: `src/shared/ui/molecules/ThemeToggle.tsx`
+
+**Usage:**
+```typescript
+import { useThemeStore } from '@/shared/store/themeStore';
+
+const { mode, toggle } = useThemeStore();
+// mode: 'veu' | 'gravata'
+```
+
+The theme toggle appears in:
+- Main navbar (landing page)
+- Dashboard sidebar
+- Mobile header
 
 ---
 
