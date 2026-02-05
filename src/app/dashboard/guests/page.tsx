@@ -12,6 +12,7 @@ import {
   Mail,
   MoreVertical,
   ChevronDown,
+  UserPlus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,19 +26,21 @@ interface Guest {
   phone?: string;
   rsvpStatus: 'pending' | 'confirmed' | 'declined';
   plusOne: boolean;
+  plusOneName?: string;
+  plusOneAge?: number;
   dietaryRestrictions?: string;
   invitedAt: string;
 }
 
 const MOCK_GUESTS: Guest[] = [
-  { id: '1', name: 'Maria Silva', email: 'maria@email.com', rsvpStatus: 'confirmed', plusOne: true, invitedAt: '2024-01-15' },
+  { id: '1', name: 'Maria Silva', email: 'maria@email.com', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Carlos Silva', plusOneAge: 35, invitedAt: '2024-01-15' },
   { id: '2', name: 'João Santos', email: 'joao@email.com', rsvpStatus: 'confirmed', plusOne: false, invitedAt: '2024-01-15' },
-  { id: '3', name: 'Ana Costa', email: 'ana@email.com', rsvpStatus: 'pending', plusOne: true, invitedAt: '2024-01-16' },
+  { id: '3', name: 'Ana Costa', email: 'ana@email.com', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Roberto Costa', plusOneAge: 42, invitedAt: '2024-01-16' },
   { id: '4', name: 'Pedro Oliveira', email: 'pedro@email.com', rsvpStatus: 'declined', plusOne: false, invitedAt: '2024-01-16' },
-  { id: '5', name: 'Carla Mendes', email: 'carla@email.com', rsvpStatus: 'confirmed', plusOne: true, invitedAt: '2024-01-17' },
+  { id: '5', name: 'Carla Mendes', email: 'carla@email.com', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Felipe Mendes', plusOneAge: 28, invitedAt: '2024-01-17' },
   { id: '6', name: 'Lucas Ferreira', email: 'lucas@email.com', rsvpStatus: 'pending', plusOne: false, invitedAt: '2024-01-18' },
   { id: '7', name: 'Fernanda Lima', email: 'fernanda@email.com', rsvpStatus: 'confirmed', plusOne: false, invitedAt: '2024-01-18' },
-  { id: '8', name: 'Ricardo Alves', email: 'ricardo@email.com', rsvpStatus: 'pending', plusOne: true, invitedAt: '2024-01-19' },
+  { id: '8', name: 'Ricardo Alves', email: 'ricardo@email.com', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Juliana Alves', plusOneAge: 31, invitedAt: '2024-01-19' },
 ];
 
 const FILTERS = [
@@ -55,7 +58,8 @@ export default function GuestsPage() {
 
   const filteredGuests = MOCK_GUESTS.filter((guest) => {
     const matchesSearch = guest.name.toLowerCase().includes(search.toLowerCase()) ||
-      guest.email.toLowerCase().includes(search.toLowerCase());
+      guest.email.toLowerCase().includes(search.toLowerCase()) ||
+      (guest.plusOneName && guest.plusOneName.toLowerCase().includes(search.toLowerCase()));
     const matchesFilter = filter === 'all' || guest.rsvpStatus === filter;
     return matchesSearch && matchesFilter;
   });
@@ -155,7 +159,7 @@ export default function GuestsPage() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar convidados..."
+              placeholder="Buscar convidados ou acompanhantes..."
               className="pl-9 md:pl-10 bg-input-bg border-border rounded-full text-sm"
             />
           </div>
@@ -249,8 +253,22 @@ export default function GuestsPage() {
                     {getStatusLabel(guest.rsvpStatus)}
                   </span>
                 </td>
-                <td className="p-4 text-subtitle">
-                  {guest.plusOne ? 'Sim (+1)' : 'Não'}
+                <td className="p-4">
+                  {guest.plusOne && guest.plusOneName ? (
+                    <div className="flex items-center gap-2">
+                      <UserPlus className="h-4 w-4 text-tertiary" />
+                      <div>
+                        <p className="text-foreground text-sm">{guest.plusOneName}</p>
+                        {guest.plusOneAge && (
+                          <p className="text-subtitle text-xs">{guest.plusOneAge} anos</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : guest.plusOne ? (
+                    <span className="text-yellow-500 text-sm">Aguardando dados</span>
+                  ) : (
+                    <span className="text-subtitle text-sm">Sem acompanhante</span>
+                  )}
                 </td>
                 <td className="p-4 text-right">
                   <Button size="sm" variant="ghost" className="text-subtitle">
@@ -295,6 +313,28 @@ export default function GuestsPage() {
               </Button>
             </div>
 
+            {/* Companion Info */}
+            {guest.plusOne && (
+              <div className="mt-3 pt-3 border-t border-border/30">
+                {guest.plusOneName ? (
+                  <div className="flex items-center gap-2 bg-tertiary/10 rounded-lg p-2">
+                    <UserPlus className="h-4 w-4 text-tertiary shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-foreground text-sm font-medium truncate">{guest.plusOneName}</p>
+                      {guest.plusOneAge && (
+                        <p className="text-subtitle text-xs">{guest.plusOneAge} anos</p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-yellow-500 text-xs">
+                    <UserPlus className="h-4 w-4" />
+                    <span>Acompanhante - Aguardando dados</span>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30">
               <span
                 className={cn(
@@ -305,7 +345,7 @@ export default function GuestsPage() {
                 {getStatusLabel(guest.rsvpStatus)}
               </span>
               <span className="text-xs text-subtitle">
-                {guest.plusOne ? 'Com acompanhante (+1)' : 'Sem acompanhante'}
+                {guest.plusOne ? 'Com acompanhante' : 'Sem acompanhante'}
               </span>
             </div>
           </div>

@@ -166,9 +166,11 @@ interface Guest {
   weddingId: string;
   name: string;
   email: string;
+  phone?: string;
   status: 'pending' | 'confirmed' | 'declined';
   plusOne: boolean;
-  plusOneName?: string;
+  plusOneName?: string;           // Companion's full name
+  plusOneAge?: number;            // Companion's age
   dietaryRestrictions?: string;
   createdAt: string;
 }
