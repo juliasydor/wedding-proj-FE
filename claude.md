@@ -202,6 +202,226 @@ interface Contribution {
 
 ---
 
+## Wedding Template System Architecture
+
+### Overview
+
+The template system allows couples to choose from 4 pre-designed wedding website themes and customize them with their own colors and hero image. The templates are **rendered entirely on the frontend** using React components, with the backend only storing the configuration data.
+
+### Frontend Template Implementation
+
+#### File Structure
+```
+src/shared/ui/templates/
+├── index.ts                      # Exports all templates + TEMPLATE_CONFIG
+├── ModernEleganceTemplate.tsx    # Dark elegant theme (navy/deep blue)
+├── ClassicRomanceTemplate.tsx    # Classic cream/gold theme
+├── RusticGardenTemplate.tsx      # Natural green garden theme
+└── BohemianDreamTemplate.tsx     # Warm boho/terracotta theme
+```
+
+#### Template Component Interface
+Each template component receives the same props interface:
+
+```typescript
+interface TemplateProps {
+  partner1Name: string;        // First partner's name
+  partner2Name: string;        // Second partner's name
+  date: string | null;         // Wedding date (ISO string)
+  location: string;            // Wedding location/city
+  heroImage?: string | null;   // URL or base64 of hero image
+  primaryColor?: string;       // Main accent color (hex)
+  secondaryColor?: string;     // Secondary accent color (hex)
+  isPreview?: boolean;         // If true, renders in compact preview mode
+}
+```
+
+#### Template Configuration
+The `TEMPLATE_CONFIG` object defines metadata for each template:
+
+```typescript
+export const TEMPLATE_CONFIG = {
+  'modern-elegance': {
+    id: 'modern-elegance',
+    name: 'Modern Elegance',
+    category: 'modern',
+    defaultColors: { primary: '#ea2e5b', secondary: '#F1557C' },
+    preview: 'https://images.unsplash.com/...', // Preview thumbnail
+  },
+  'classic-romance': {
+    id: 'classic-romance',
+    name: 'Classic Romance',
+    category: 'classic',
+    defaultColors: { primary: '#c9a959', secondary: '#8b6914' },
+    preview: '...',
+  },
+  // ... rustic-garden, bohemian-dream
+};
+
+export type TemplateId = keyof typeof TEMPLATE_CONFIG;
+```
+
+#### How Templates Use Colors
+Templates dynamically apply colors using inline styles:
+
+```tsx
+// Example from ModernEleganceTemplate.tsx
+<Calendar className="h-5 w-5" style={{ color: primaryColor }} />
+
+<div style={{ backgroundColor: `${primaryColor}15` }}> // 15 = 15% opacity
+  ...
+</div>
+```
+
+Each template has its own fixed background colors and layout, but accent elements (icons, buttons, decorations, highlights) use the `primaryColor` and `secondaryColor` props.
+
+#### Template Selection Flow
+1. User selects template in `/onboarding/template`
+2. Frontend shows live preview with user's data
+3. User can change color palette (6 predefined palettes)
+4. On "Continue", data is saved to Zustand store:
+   ```typescript
+   updateOnboarding({
+     templateId: 'modern-elegance',
+     primaryColor: '#ea2e5b',
+     secondaryColor: '#F1557C',
+   });
+   ```
+5. Preview page (`/onboarding/preview`) renders the full template
+6. Public wedding site (`/wedding/[slug]`) fetches data from backend and renders template
+
+### Backend Requirements for Templates
+
+#### What the Backend Needs to Store
+
+The backend only needs to store the **configuration**, not the template HTML/CSS:
+
+```typescript
+// Wedding table/document should include:
+{
+  id: string,
+  slug: string,                    // URL-friendly identifier
+  partner1Name: string,
+  partner2Name: string,
+  date: string | null,
+  location: string,
+  venue: string,
+
+  // Template configuration (THIS IS WHAT MATTERS)
+  templateId: string,              // 'modern-elegance' | 'classic-romance' | etc.
+  primaryColor: string,            // Hex color, e.g., '#ea2e5b'
+  secondaryColor: string,          // Hex color, e.g., '#F1557C'
+  heroImageUrl: string | null,     // URL to uploaded image in storage
+
+  // Other fields...
+  dressCode: object | null,
+  createdAt: timestamp,
+  updatedAt: timestamp,
+}
+```
+
+#### Template-Related Endpoints
+
+| Endpoint | Method | Request Body | Response | Description |
+|----------|--------|--------------|----------|-------------|
+| `PUT /api/wedding/:id/template` | PUT | `{ templateId: string }` | `{ success: true }` | Update selected template |
+| `PUT /api/wedding/:id/colors` | PUT | `{ primaryColor: string, secondaryColor: string }` | `{ success: true }` | Update color palette |
+| `POST /api/wedding/:id/hero-image` | POST | `multipart/form-data` with `image` field | `{ imageUrl: string }` | Upload hero image |
+| `DELETE /api/wedding/:id/hero-image` | DELETE | - | `{ success: true }` | Remove hero image |
+
+#### Hero Image Upload Flow
+
+1. Frontend sends image as `multipart/form-data`
+2. Backend should:
+   - Validate file type (jpg, png, webp)
+   - Validate file size (max 5MB recommended)
+   - Resize/optimize image (recommended: max 1920px width)
+   - Upload to cloud storage (S3, Cloudinary, etc.)
+   - Return the public URL
+3. Frontend stores URL in wedding data and passes to template
+
+#### Validation Rules
+
+```typescript
+// templateId must be one of:
+const VALID_TEMPLATES = [
+  'modern-elegance',
+  'classic-romance',
+  'rustic-garden',
+  'bohemian-dream'
+];
+
+// Colors must be valid hex codes:
+const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
+
+// Example validation:
+if (!VALID_TEMPLATES.includes(templateId)) {
+  throw new Error('Invalid template ID');
+}
+if (!HEX_COLOR_REGEX.test(primaryColor)) {
+  throw new Error('Invalid primary color format');
+}
+```
+
+#### Public Wedding Site Rendering
+
+When a guest visits `/wedding/[slug]`:
+
+1. Frontend calls `GET /api/wedding/by-slug/:slug`
+2. Backend returns wedding data including template config
+3. Frontend dynamically imports the correct template:
+
+```typescript
+// Pseudo-code for dynamic rendering
+const templateComponents = {
+  'modern-elegance': ModernEleganceTemplate,
+  'classic-romance': ClassicRomanceTemplate,
+  'rustic-garden': RusticGardenTemplate,
+  'bohemian-dream': BohemianDreamTemplate,
+};
+
+const TemplateComponent = templateComponents[wedding.templateId];
+
+return (
+  <TemplateComponent
+    partner1Name={wedding.partner1Name}
+    partner2Name={wedding.partner2Name}
+    date={wedding.date}
+    location={wedding.location}
+    heroImage={wedding.heroImageUrl}
+    primaryColor={wedding.primaryColor}
+    secondaryColor={wedding.secondaryColor}
+  />
+);
+```
+
+### Adding New Templates (Future)
+
+To add a new template:
+
+1. **Frontend**: Create new component in `src/shared/ui/templates/`
+2. **Frontend**: Add to `TEMPLATE_CONFIG` in `index.ts`
+3. **Frontend**: Add to template selection grid
+4. **Backend**: Add new template ID to validation whitelist
+5. No database schema changes needed (templateId is just a string)
+
+### Color Palette System
+
+The frontend provides 6 predefined color palettes:
+
+| Palette | Primary | Secondary | Best For |
+|---------|---------|-----------|----------|
+| Rose | #ea2e5b | #F1557C | Modern, romantic |
+| Gold | #c9a959 | #8b6914 | Classic, elegant |
+| Sage | #5d7052 | #8fa67a | Rustic, natural |
+| Terracotta | #d4a574 | #c4956a | Boho, warm |
+| Navy | #2c3e50 | #34495e | Formal, sophisticated |
+| Burgundy | #722f37 | #8b3a42 | Rich, traditional |
+
+Users can also input custom hex colors in the dashboard site editor.
+
+---
+
 ## Final deliverables
 
 1. **Documentation of the backend endpoints** required:
