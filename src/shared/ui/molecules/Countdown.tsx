@@ -26,7 +26,7 @@ export function Countdown({ targetDate, labels = defaultLabels, className }: Cou
   const { days, hours, minutes, seconds } = useCountdown(targetDate);
 
   return (
-    <div className={cn('flex items-center gap-2 md:gap-4', className)}>
+    <div className={cn('flex items-center justify-center gap-2 md:gap-4', className)}>
       <CountdownUnit value={days} label={labels.days} />
       <CountdownUnit value={hours} label={labels.hours} />
       <CountdownUnit value={minutes} label={labels.minutes} />

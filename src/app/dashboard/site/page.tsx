@@ -962,15 +962,20 @@ export default function SiteEditorPage() {
               </div>
 
               {/* Preview Content */}
-              <div className="bg-quaternary/50 p-3 flex items-center justify-center min-h-[500px]">
+              <div className="bg-quaternary/50 p-3 flex items-start justify-center min-h-[500px]">
                 {previewMode === 'desktop' ? (
-                  <div className="w-full max-w-[340px] h-[500px] rounded-lg border border-border/50 bg-white overflow-hidden">
+                  <div
+                    className="w-full max-w-[340px] h-[500px] rounded-lg border border-border/50 bg-white"
+                    style={{
+                      overflow: 'scroll',
+                    }}
+                  >
                     <div
                       style={{
                         width: '1280px',
-                        height: '1900px',
-                        transform: 'scale(0.265)',
                         transformOrigin: 'top left',
+                        transform: 'scale(0.265)',
+                        marginBottom: '-75%', // Compensate for the scaled height
                       }}
                     >
                       <TemplateComponent
@@ -988,14 +993,20 @@ export default function SiteEditorPage() {
                 ) : (
                   <div className="relative">
                     <div className="w-[200px] h-[420px] bg-gray-900 rounded-[2rem] p-1.5 shadow-xl">
-                      <div className="w-full h-full bg-white rounded-[1.5rem] overflow-hidden relative">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-gray-900 rounded-b-xl z-20" />
+                      <div
+                        className="w-full h-full bg-white rounded-[1.5rem] relative"
+                        style={{
+                          overflow: 'scroll',
+                        }}
+                      >
+                        <div className="sticky top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-gray-900 rounded-b-xl z-20 mx-auto" />
                         <div
                           style={{
                             width: '390px',
-                            height: '850px',
-                            transform: 'scale(0.48)',
                             transformOrigin: 'top left',
+                            transform: 'scale(0.48)',
+                            marginBottom: '-52%', // Compensate for the scaled height
+                            marginTop: '-8px',
                           }}
                         >
                           <TemplateComponent
@@ -1015,11 +1026,6 @@ export default function SiteEditorPage() {
                   </div>
                 )}
               </div>
-
-              {/* Hint to use full preview */}
-              <p className="text-center text-xs text-subtitle mt-2">
-                Clique em "Preview" para ver o site completo com scroll
-              </p>
             </div>
           </div>
         </div>
