@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Search, Gift, Trash2, Edit2, DollarSign } from 'lucide-react';
+import { Plus, Search, Gift, Trash2, Edit2, DollarSign, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/shared/lib/utils';
@@ -72,6 +72,7 @@ export default function GiftsPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [gifts] = useState<GiftType[]>(MOCK_GIFTS);
+  const [showCategories, setShowCategories] = useState(false);
 
   const filteredGifts = gifts.filter((gift) => {
     const matchesSearch = gift.name.toLowerCase().includes(search.toLowerCase());
@@ -83,56 +84,69 @@ export default function GiftsPage() {
   const totalContributed = gifts.reduce((sum, gift) => sum + (gift.contributedAmount || 0), 0);
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <h1 className="text-heading-2 mb-2">Lista de Presentes</h1>
-          <p className="text-subtitle">Gerencie os presentes que você deseja receber</p>
+          <h1 className="text-xl md:text-heading-2 mb-1 md:mb-2">Lista de Presentes</h1>
+          <p className="text-subtitle text-sm md:text-base">Gerencie os presentes que você deseja receber</p>
         </div>
-        <Button className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+        <Button className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm" size="sm">
           <Plus className="mr-2 h-4 w-4" />
-          Adicionar Presente
+          <span className="hidden sm:inline">Adicionar Presente</span>
+          <span className="sm:hidden">Adicionar</span>
         </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-card rounded-2xl p-6 border border-border/50">
-          <div className="flex items-center gap-3 mb-2">
-            <Gift className="h-5 w-5 text-secondary" />
-            <span className="text-sm text-subtitle">Total de Presentes</span>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
+        <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border/50">
+          <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+            <Gift className="h-4 w-4 md:h-5 md:w-5 text-secondary" />
+            <span className="text-xs md:text-sm text-subtitle">Total de Presentes</span>
           </div>
-          <p className="text-3xl font-bold text-foreground">{gifts.length}</p>
+          <p className="text-2xl md:text-3xl font-bold text-foreground">{gifts.length}</p>
         </div>
-        <div className="bg-card rounded-2xl p-6 border border-border/50">
-          <div className="flex items-center gap-3 mb-2">
-            <DollarSign className="h-5 w-5 text-tertiary" />
-            <span className="text-sm text-subtitle">Valor Total</span>
+        <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border/50">
+          <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+            <DollarSign className="h-4 w-4 md:h-5 md:w-5 text-tertiary" />
+            <span className="text-xs md:text-sm text-subtitle">Valor Total</span>
           </div>
-          <p className="text-3xl font-bold text-foreground">R$ {totalValue.toLocaleString()}</p>
+          <p className="text-2xl md:text-3xl font-bold text-foreground">R$ {totalValue.toLocaleString()}</p>
         </div>
-        <div className="bg-card rounded-2xl p-6 border border-border/50">
-          <div className="flex items-center gap-3 mb-2">
-            <DollarSign className="h-5 w-5 text-secondary" />
-            <span className="text-sm text-subtitle">Arrecadado</span>
+        <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border/50">
+          <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+            <DollarSign className="h-4 w-4 md:h-5 md:w-5 text-secondary" />
+            <span className="text-xs md:text-sm text-subtitle">Arrecadado</span>
           </div>
-          <p className="text-3xl font-bold text-secondary">R$ {totalContributed.toLocaleString()}</p>
+          <p className="text-2xl md:text-3xl font-bold text-secondary">R$ {totalContributed.toLocaleString()}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-subtitle" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar presentes..."
-            className="pl-10 bg-input-bg border-border rounded-full"
-          />
+      <div className="flex flex-col gap-3 mb-4 md:mb-6">
+        <div className="flex gap-2 md:gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-subtitle" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar presentes..."
+              className="pl-9 md:pl-10 bg-input-bg border-border rounded-full text-sm"
+            />
+          </div>
+          {/* Mobile category toggle */}
+          <button
+            onClick={() => setShowCategories(!showCategories)}
+            className="md:hidden flex items-center gap-1 px-3 py-2 rounded-full bg-quaternary text-foreground/70 text-sm whitespace-nowrap"
+          >
+            Categorias
+            <ChevronDown className={cn('h-4 w-4 transition-transform', showCategories && 'rotate-180')} />
+          </button>
         </div>
-        <div className="flex gap-2 flex-wrap">
+
+        {/* Desktop categories */}
+        <div className="hidden md:flex gap-2 flex-wrap">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
@@ -148,10 +162,33 @@ export default function GiftsPage() {
             </button>
           ))}
         </div>
+
+        {/* Mobile categories */}
+        {showCategories && (
+          <div className="md:hidden flex flex-wrap gap-2">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setCategory(cat.id);
+                  setShowCategories(false);
+                }}
+                className={cn(
+                  'px-3 py-1.5 rounded-full text-xs font-medium transition-all',
+                  category === cat.id
+                    ? 'bg-secondary text-secondary-foreground'
+                    : 'bg-quaternary text-foreground/70'
+                )}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Gifts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {filteredGifts.map((gift) => {
           const progress = gift.contributedAmount
             ? Math.round((gift.contributedAmount / gift.price) * 100)
@@ -162,11 +199,11 @@ export default function GiftsPage() {
             <div
               key={gift.id}
               className={cn(
-                'bg-card rounded-2xl border overflow-hidden transition-all',
+                'bg-card rounded-xl md:rounded-2xl border overflow-hidden transition-all',
                 isComplete ? 'border-secondary/50' : 'border-border/50'
               )}
             >
-              <div className="relative h-40">
+              <div className="relative h-32 md:h-40">
                 <img
                   src={gift.imageUrl}
                   alt={gift.name}
@@ -174,22 +211,22 @@ export default function GiftsPage() {
                 />
                 {isComplete && (
                   <div className="absolute inset-0 bg-secondary/80 flex items-center justify-center">
-                    <span className="text-white font-semibold">Completo!</span>
+                    <span className="text-white font-semibold text-sm md:text-base">Completo!</span>
                   </div>
                 )}
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-foreground mb-1">{gift.name}</h3>
-                <p className="text-sm text-subtitle mb-3 line-clamp-2">{gift.description}</p>
+              <div className="p-3 md:p-4">
+                <h3 className="font-semibold text-foreground mb-1 text-sm md:text-base">{gift.name}</h3>
+                <p className="text-xs md:text-sm text-subtitle mb-2 md:mb-3 line-clamp-2">{gift.description}</p>
 
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-lg font-bold text-secondary">
+                  <span className="text-base md:text-lg font-bold text-secondary">
                     R$ {gift.price.toLocaleString()}
                   </span>
-                  <span className="text-sm text-subtitle">{progress}%</span>
+                  <span className="text-xs md:text-sm text-subtitle">{progress}%</span>
                 </div>
 
-                <div className="h-2 bg-quaternary rounded-full overflow-hidden mb-4">
+                <div className="h-1.5 md:h-2 bg-quaternary rounded-full overflow-hidden mb-3 md:mb-4">
                   <div
                     className="h-full bg-secondary rounded-full transition-all"
                     style={{ width: `${Math.min(progress, 100)}%` }}
@@ -200,9 +237,9 @@ export default function GiftsPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 rounded-full border-border"
+                    className="flex-1 rounded-full border-border text-xs md:text-sm"
                   >
-                    <Edit2 className="h-4 w-4 mr-1" />
+                    <Edit2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                     Editar
                   </Button>
                   <Button
@@ -210,7 +247,7 @@ export default function GiftsPage() {
                     variant="ghost"
                     className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                   </Button>
                 </div>
               </div>
@@ -218,6 +255,14 @@ export default function GiftsPage() {
           );
         })}
       </div>
+
+      {filteredGifts.length === 0 && (
+        <div className="bg-card rounded-xl md:rounded-2xl border border-border/50 p-8 md:p-12 text-center">
+          <Gift className="h-10 w-10 md:h-12 md:w-12 text-subtitle mx-auto mb-3 md:mb-4" />
+          <p className="text-foreground font-medium mb-1 md:mb-2 text-sm md:text-base">Nenhum presente encontrado</p>
+          <p className="text-subtitle text-xs md:text-sm">Tente ajustar os filtros de busca</p>
+        </div>
+      )}
     </div>
   );
 }

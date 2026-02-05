@@ -85,6 +85,123 @@ The product will have distinct user journeys:
 
 ---
 
+## Backend Integration Requirements
+
+### Authentication Endpoints
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `/api/auth/register` | POST | Register new couple account | `src/features/auth/api/register.ts` |
+| `/api/auth/login` | POST | Login with email/password | `src/features/auth/api/login.ts` |
+| `/api/auth/logout` | POST | Logout and invalidate session | `src/features/auth/api/logout.ts` |
+| `/api/auth/me` | GET | Get current user data | `src/entities/user/api/getUser.ts` |
+| `/api/auth/guest/register` | POST | Register guest account | `src/features/auth/api/guestRegister.ts` |
+
+### Wedding Site Endpoints
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `/api/wedding` | POST | Create wedding site | `src/entities/wedding/api/createWedding.ts` |
+| `/api/wedding/:id` | GET | Get wedding data | `src/entities/wedding/api/getWedding.ts` |
+| `/api/wedding/:id` | PUT | Update wedding info | `src/entities/wedding/api/updateWedding.ts` |
+| `/api/wedding/by-slug/:slug` | GET | Get wedding by public URL slug | `src/entities/wedding/api/getBySlug.ts` |
+
+### Template & Customization Endpoints
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `/api/wedding/:id/template` | PUT | Update selected template | `src/features/site-editor/api/updateTemplate.ts` |
+| `/api/wedding/:id/colors` | PUT | Update color palette (primaryColor, secondaryColor) | `src/features/site-editor/api/updateColors.ts` |
+| `/api/wedding/:id/hero-image` | POST | Upload hero image (multipart/form-data) | `src/features/site-editor/api/uploadHeroImage.ts` |
+| `/api/wedding/:id/hero-image` | DELETE | Remove hero image | `src/features/site-editor/api/deleteHeroImage.ts` |
+
+### Gift List Endpoints
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `/api/wedding/:id/gifts` | GET | Get all gifts for wedding | `src/entities/gift/api/getGifts.ts` |
+| `/api/wedding/:id/gifts` | POST | Add gift to list | `src/entities/gift/api/addGift.ts` |
+| `/api/wedding/:id/gifts/:giftId` | PUT | Update gift | `src/entities/gift/api/updateGift.ts` |
+| `/api/wedding/:id/gifts/:giftId` | DELETE | Remove gift | `src/entities/gift/api/deleteGift.ts` |
+| `/api/gifts/catalog` | GET | Get gift catalog/suggestions | `src/entities/gift/api/getCatalog.ts` |
+
+### Guest Management Endpoints
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `/api/wedding/:id/guests` | GET | Get guest list | `src/entities/guest/api/getGuests.ts` |
+| `/api/wedding/:id/guests` | POST | Add guest manually | `src/entities/guest/api/addGuest.ts` |
+| `/api/wedding/:id/guests/:guestId` | PUT | Update guest info/status | `src/entities/guest/api/updateGuest.ts` |
+| `/api/wedding/:id/guests/:guestId` | DELETE | Remove guest | `src/entities/guest/api/deleteGuest.ts` |
+| `/api/wedding/:id/rsvp` | POST | Guest RSVP response | `src/features/rsvp/api/submitRsvp.ts` |
+
+### Payment & Banking Endpoints
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `/api/wedding/:id/banking` | POST | Save banking info | `src/features/banking/api/saveBanking.ts` |
+| `/api/wedding/:id/banking` | GET | Get banking info | `src/features/banking/api/getBanking.ts` |
+| `/api/payments/checkout` | POST | Process gift payment | `src/features/checkout/api/processPayment.ts` |
+| `/api/payments/:paymentId/status` | GET | Check payment status | `src/features/checkout/api/getPaymentStatus.ts` |
+| `/api/wedding/:id/contributions` | GET | Get all gift contributions | `src/entities/contribution/api/getContributions.ts` |
+
+### Data Models
+
+```typescript
+// Wedding
+interface Wedding {
+  id: string;
+  slug: string;
+  partner1Name: string;
+  partner2Name: string;
+  date: string | null;
+  location: string;
+  venue: string;
+  templateId: 'modern-elegance' | 'classic-romance' | 'rustic-garden' | 'bohemian-dream';
+  primaryColor: string;
+  secondaryColor: string;
+  heroImageUrl: string | null;
+  dressCode: DressCode | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Guest
+interface Guest {
+  id: string;
+  weddingId: string;
+  name: string;
+  email: string;
+  status: 'pending' | 'confirmed' | 'declined';
+  plusOne: boolean;
+  plusOneName?: string;
+  dietaryRestrictions?: string;
+  createdAt: string;
+}
+
+// Gift
+interface Gift {
+  id: string;
+  weddingId: string;
+  name: string;
+  description?: string;
+  targetAmount: number;
+  currentAmount: number;
+  imageUrl?: string;
+  category: 'honeymoon' | 'kitchen' | 'bedroom' | 'dining' | 'other';
+  isActive: boolean;
+}
+
+// Contribution
+interface Contribution {
+  id: string;
+  giftId: string;
+  guestId: string;
+  guestName: string;
+  amount: number;
+  message?: string;
+  paymentMethod: 'pix' | 'credit_card' | 'boleto';
+  status: 'pending' | 'completed' | 'failed';
+  createdAt: string;
+}
+```
+
+---
+
 ## Final deliverables
 
 1. **Documentation of the backend endpoints** required:
@@ -92,7 +209,7 @@ The product will have distinct user journeys:
    * Complete list of endpoints
    * Responsibility of each endpoint
    * Where and how they will be consumed in the frontend (layer/service/hook)
-2. **Brief description of each page’s content**
+2. **Brief description of each page's content**
 3. **Suggested commit messages** following the pattern:
 
    * `git commit -m "feat: ..."`

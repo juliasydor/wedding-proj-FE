@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ChevronLeft, X, Palette, Check } from 'lucide-react';
+import { ChevronLeft, X, Palette, Check, Monitor, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { IconButton } from '@/shared/ui/atoms/IconButton';
@@ -104,6 +104,8 @@ function getTemplateComponent(templateId: TemplateId) {
   }
 }
 
+type PreviewMode = 'desktop' | 'mobile';
+
 export default function OnboardingTemplatePage() {
   const t = useTranslations('onboarding.template');
   const router = useRouter();
@@ -114,6 +116,7 @@ export default function OnboardingTemplatePage() {
     (onboarding.templateId as TemplateId) || null
   );
   const [showPreview, setShowPreview] = useState(false);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
   const [selectedPalette, setSelectedPalette] = useState<string>(
     COLOR_PALETTES.find(
       (p) => p.primary === onboarding.primaryColor
@@ -180,15 +183,15 @@ export default function OnboardingTemplatePage() {
       </div>
 
       {/* Content */}
-      <main className="flex-1 px-4 py-8 md:px-8 md:py-12 max-w-6xl mx-auto w-full">
+      <main className="flex-1 px-4 py-8 md:px-8 md:py-12 max-w-7xl mx-auto w-full">
         <div className="space-y-2 mb-8">
           <h1 className="text-heading-2">{t('title')}</h1>
           <p className="text-subtitle">{t('subtitle')}</p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-5 gap-8">
           {/* Left Column - Template Selection */}
-          <div>
+          <div className="lg:col-span-2">
             {/* Category Filters */}
             <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
               {CATEGORIES.map((category) => (
@@ -287,32 +290,94 @@ export default function OnboardingTemplatePage() {
           </div>
 
           {/* Right Column - Live Preview */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:block lg:col-span-3">
             <div className="sticky top-8">
               <div className="bg-card rounded-2xl border border-border overflow-hidden">
+                {/* Preview Header with Desktop/Mobile Toggle */}
                 <div className="p-3 border-b border-border flex items-center justify-between">
                   <span className="text-sm font-medium">{t('livePreview')}</span>
-                  {selectedTemplate && (
-                    <span className="text-xs text-subtitle">
-                      {TEMPLATES.find((t) => t.id === selectedTemplate)?.name}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1 bg-quaternary rounded-lg p-1">
+                    <button
+                      onClick={() => setPreviewMode('desktop')}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all',
+                        previewMode === 'desktop'
+                          ? 'bg-secondary text-white'
+                          : 'text-subtitle hover:text-foreground'
+                      )}
+                    >
+                      <Monitor className="h-3.5 w-3.5" />
+                      Desktop
+                    </button>
+                    <button
+                      onClick={() => setPreviewMode('mobile')}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all',
+                        previewMode === 'mobile'
+                          ? 'bg-secondary text-white'
+                          : 'text-subtitle hover:text-foreground'
+                      )}
+                    >
+                      <Smartphone className="h-3.5 w-3.5" />
+                      Mobile
+                    </button>
+                  </div>
                 </div>
-                <div className="aspect-[9/16] max-h-[600px] overflow-y-auto">
+
+                {/* Preview Content */}
+                <div className="bg-quaternary/50 p-4 flex items-center justify-center min-h-[600px]">
                   {selectedTemplate && TemplateComponent ? (
-                    <TemplateComponent
-                      partner1Name={onboarding.partner1Name || 'Partner 1'}
-                      partner2Name={onboarding.partner2Name || 'Partner 2'}
-                      date={onboarding.date}
-                      location={onboarding.location || 'Wedding Venue'}
-                      heroImage={onboarding.heroImage}
-                      primaryColor={currentPalette.primary}
-                      secondaryColor={currentPalette.secondary}
-                      isPreview
-                    />
+                    previewMode === 'desktop' ? (
+                      /* Desktop Preview - Scaled down full width view */
+                      <div className="w-full h-[580px] overflow-hidden rounded-lg border border-border/50 bg-white shadow-2xl">
+                        <div
+                          className="origin-top-left"
+                          style={{
+                            width: '1440px',
+                            transform: 'scale(0.38)',
+                            transformOrigin: 'top left',
+                          }}
+                        >
+                          <TemplateComponent
+                            partner1Name={onboarding.partner1Name || 'Partner 1'}
+                            partner2Name={onboarding.partner2Name || 'Partner 2'}
+                            date={onboarding.date}
+                            location={onboarding.location || 'Wedding Venue'}
+                            heroImage={onboarding.heroImage}
+                            primaryColor={currentPalette.primary}
+                            secondaryColor={currentPalette.secondary}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      /* Mobile Preview - Phone frame */
+                      <div className="relative">
+                        {/* Phone Frame */}
+                        <div className="w-[280px] h-[580px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
+                          {/* Screen */}
+                          <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
+                            {/* Notch */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-10" />
+                            {/* Content */}
+                            <div className="h-full overflow-y-auto">
+                              <TemplateComponent
+                                partner1Name={onboarding.partner1Name || 'Partner 1'}
+                                partner2Name={onboarding.partner2Name || 'Partner 2'}
+                                date={onboarding.date}
+                                location={onboarding.location || 'Wedding Venue'}
+                                heroImage={onboarding.heroImage}
+                                primaryColor={currentPalette.primary}
+                                secondaryColor={currentPalette.secondary}
+                                isPreview
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
                   ) : (
-                    <div className="h-full flex items-center justify-center text-subtitle">
-                      <p className="text-center px-8">
+                    <div className="text-center text-subtitle">
+                      <p className="px-8">
                         {t('selectTemplatePreview')}
                       </p>
                     </div>
@@ -329,29 +394,84 @@ export default function OnboardingTemplatePage() {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/80" onClick={() => setShowPreview(false)} />
           <div className="absolute inset-4 bg-card rounded-2xl overflow-hidden flex flex-col">
+            {/* Modal Header with Toggle */}
             <div className="p-3 border-b border-border flex items-center justify-between shrink-0">
               <span className="text-sm font-medium">{t('livePreview')}</span>
-              <IconButton
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowPreview(false)}
-                aria-label="Close preview"
-              >
-                <X className="h-4 w-4" />
-              </IconButton>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 bg-quaternary rounded-lg p-1">
+                  <button
+                    onClick={() => setPreviewMode('desktop')}
+                    className={cn(
+                      'flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all',
+                      previewMode === 'desktop'
+                        ? 'bg-secondary text-white'
+                        : 'text-subtitle'
+                    )}
+                  >
+                    <Monitor className="h-3 w-3" />
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('mobile')}
+                    className={cn(
+                      'flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all',
+                      previewMode === 'mobile'
+                        ? 'bg-secondary text-white'
+                        : 'text-subtitle'
+                    )}
+                  >
+                    <Smartphone className="h-3 w-3" />
+                  </button>
+                </div>
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPreview(false)}
+                  aria-label="Close preview"
+                >
+                  <X className="h-4 w-4" />
+                </IconButton>
+              </div>
             </div>
-            <div className="flex-1 overflow-y-auto">
-              <TemplateComponent
-                partner1Name={onboarding.partner1Name || 'Partner 1'}
-                partner2Name={onboarding.partner2Name || 'Partner 2'}
-                date={onboarding.date}
-                location={onboarding.location || 'Wedding Venue'}
-                heroImage={onboarding.heroImage}
-                primaryColor={currentPalette.primary}
-                secondaryColor={currentPalette.secondary}
-                isPreview
-              />
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-auto bg-quaternary/50 p-4 flex items-start justify-center">
+              {previewMode === 'desktop' ? (
+                <div className="w-full overflow-x-auto">
+                  <div
+                    className="origin-top-left"
+                    style={{
+                      width: '1200px',
+                      transform: 'scale(0.3)',
+                      transformOrigin: 'top left',
+                    }}
+                  >
+                    <TemplateComponent
+                      partner1Name={onboarding.partner1Name || 'Partner 1'}
+                      partner2Name={onboarding.partner2Name || 'Partner 2'}
+                      date={onboarding.date}
+                      location={onboarding.location || 'Wedding Venue'}
+                      heroImage={onboarding.heroImage}
+                      primaryColor={currentPalette.primary}
+                      secondaryColor={currentPalette.secondary}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full overflow-y-auto">
+                  <TemplateComponent
+                    partner1Name={onboarding.partner1Name || 'Partner 1'}
+                    partner2Name={onboarding.partner2Name || 'Partner 2'}
+                    date={onboarding.date}
+                    location={onboarding.location || 'Wedding Venue'}
+                    heroImage={onboarding.heroImage}
+                    primaryColor={currentPalette.primary}
+                    secondaryColor={currentPalette.secondary}
+                    isPreview
+                  />
+                </div>
+              )}
             </div>
+
             {/* Color Palette in Modal */}
             <div className="p-3 border-t border-border shrink-0">
               <div className="flex items-center gap-2 mb-2">
@@ -388,7 +508,7 @@ export default function OnboardingTemplatePage() {
 
       {/* Footer */}
       <footer className="sticky bottom-0 bg-background border-t border-border px-4 py-4 md:px-8">
-        <div className="max-w-6xl mx-auto flex gap-3">
+        <div className="max-w-7xl mx-auto flex gap-3">
           <Button
             variant="outline"
             className="lg:hidden h-14 rounded-full border-border px-6"

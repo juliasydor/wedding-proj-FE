@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -12,6 +13,8 @@ import {
   LogOut,
   QrCode,
   ExternalLink,
+  Menu,
+  X,
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Logo } from '@/shared/ui/atoms/Logo';
@@ -28,6 +31,7 @@ const navItems = [
 ];
 
 export function DashboardSidebar() {
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations('dashboard.nav');
   const { onboarding } = useWeddingStore();
@@ -37,15 +41,23 @@ export function DashboardSidebar() {
     ? `${onboarding.partner1Name.toLowerCase().replace(/\s/g, '')}and${onboarding.partner2Name.toLowerCase().replace(/\s/g, '')}`
     : null;
 
-  return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-border/50 flex flex-col z-40">
+  const closeSidebar = () => setIsOpen(false);
+
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
-      <div className="p-6 border-b border-border/50">
+      <div className="p-4 md:p-6 border-b border-border/50 flex items-center justify-between">
         <Logo size="md" />
+        <button
+          onClick={closeSidebar}
+          className="md:hidden p-2 rounded-lg hover:bg-quaternary"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-3 md:p-4 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
             (item.href !== ROUTES.dashboard && pathname?.startsWith(item.href));
@@ -54,8 +66,9 @@ export function DashboardSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={closeSidebar}
               className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
+                'flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-sm font-medium transition-all duration-200',
                 isActive
                   ? 'bg-secondary text-secondary-foreground shadow-lg shadow-secondary/20'
                   : 'text-foreground/70 hover:text-foreground hover:bg-quaternary'
@@ -69,20 +82,22 @@ export function DashboardSidebar() {
       </nav>
 
       {/* Quick Actions */}
-      <div className="p-4 border-t border-border/50 space-y-2">
+      <div className="p-3 md:p-4 border-t border-border/50 space-y-1 md:space-y-2">
         {weddingSlug && (
           <>
             <Link
               href={ROUTES.weddingSite(weddingSlug)}
               target="_blank"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-quaternary transition-all duration-200"
+              onClick={closeSidebar}
+              className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-quaternary transition-all duration-200"
             >
               <ExternalLink className="h-5 w-5" />
               {t('viewSite')}
             </Link>
             <Link
               href={ROUTES.onboarding.qrCode}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-quaternary transition-all duration-200"
+              onClick={closeSidebar}
+              className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-quaternary transition-all duration-200"
             >
               <QrCode className="h-5 w-5" />
               {t('shareQR')}
@@ -90,13 +105,54 @@ export function DashboardSidebar() {
           </>
         )}
         <button
-          onClick={() => logout()}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground/70 hover:text-secondary hover:bg-secondary/10 transition-all duration-200"
+          onClick={() => {
+            logout();
+            closeSidebar();
+          }}
+          className="w-full flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-sm font-medium text-foreground/70 hover:text-secondary hover:bg-secondary/10 transition-all duration-200"
         >
           <LogOut className="h-5 w-5" />
           {t('logout')}
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Header */}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border/50 px-4 py-3 flex items-center justify-between">
+        <Logo size="sm" />
+        <button
+          onClick={() => setIsOpen(true)}
+          className="p-2 rounded-lg hover:bg-quaternary"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      </header>
+
+      {/* Mobile Sidebar Overlay */}
+      {isOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-50 bg-black/50"
+          onClick={closeSidebar}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <aside
+        className={cn(
+          'md:hidden fixed top-0 left-0 bottom-0 w-72 bg-card z-50 flex flex-col transform transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        <SidebarContent />
+      </aside>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-border/50 flex-col z-40">
+        <SidebarContent />
+      </aside>
+    </>
   );
 }
