@@ -1,9 +1,9 @@
 'use client';
 
-import { Heart, Calendar, MapPin, Clock, Gift, Users, Hotel, Camera, Mail } from 'lucide-react';
+import { Heart, Calendar, MapPin, Clock, Gift, Users, Hotel, Camera, Mail, Type, Quote } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
-import type { SiteContent } from '@/entities/wedding/model/store';
+import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
 
 interface ModernEleganceTemplateProps {
   partner1Name: string;
@@ -15,6 +15,64 @@ interface ModernEleganceTemplateProps {
   secondaryColor?: string;
   isPreview?: boolean;
   siteContent?: Partial<SiteContent>;
+  customSections?: CustomSection[];
+}
+
+// Custom Section Renderer
+function renderCustomSection(section: CustomSection, primaryColor: string) {
+  switch (section.type) {
+    case 'text':
+      return (
+        <section key={section.id} className="py-16 px-4 bg-[#16213e]">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-serif mb-6" style={{ color: primaryColor }}>
+              {section.title}
+            </h2>
+            <p className="text-lg leading-relaxed opacity-90 whitespace-pre-line">
+              {section.content}
+            </p>
+          </div>
+        </section>
+      );
+    case 'image':
+      return (
+        <section key={section.id} className="py-16 px-4 bg-[#1a1a2e]">
+          <div className="max-w-4xl mx-auto text-center">
+            {section.title && (
+              <h2 className="text-3xl font-serif mb-6" style={{ color: primaryColor }}>
+                {section.title}
+              </h2>
+            )}
+            {section.imageUrl && (
+              <img
+                src={section.imageUrl}
+                alt={section.title || 'Custom image'}
+                className="w-full max-w-2xl mx-auto rounded-2xl"
+              />
+            )}
+            {section.content && (
+              <p className="mt-4 text-lg opacity-80">{section.content}</p>
+            )}
+          </div>
+        </section>
+      );
+    case 'quote':
+      return (
+        <section key={section.id} className="py-16 px-4 bg-[#0f3460]">
+          <div className="max-w-2xl mx-auto text-center">
+            <Quote className="h-8 w-8 mx-auto mb-4 opacity-50" style={{ color: primaryColor }} />
+            <blockquote className="text-2xl font-serif italic opacity-90">
+              "{section.content}"
+            </blockquote>
+            {section.title && (
+              <p className="mt-4 text-sm opacity-70">— {section.title}</p>
+            )}
+          </div>
+        </section>
+      );
+    default:
+      return null;
+  }
 }
 
 const defaultContent: SiteContent = {
@@ -57,6 +115,7 @@ export function ModernEleganceTemplate({
   secondaryColor = '#F1557C',
   isPreview = false,
   siteContent,
+  customSections = [],
 }: ModernEleganceTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
@@ -201,6 +260,9 @@ export function ModernEleganceTemplate({
           </div>
         </div>
       </section>
+
+      {/* Custom Sections */}
+      {customSections.map((section) => renderCustomSection(section, primaryColor))}
 
       {/* RSVP Section */}
       {content.showRsvpSection && (

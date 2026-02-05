@@ -1,9 +1,9 @@
 'use client';
 
-import { Heart, Calendar, MapPin, Leaf, Gift, Mail, Hotel, Camera, Clock } from 'lucide-react';
+import { Heart, Calendar, MapPin, Leaf, Gift, Mail, Hotel, Camera, Clock, Quote } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
-import type { SiteContent } from '@/entities/wedding/model/store';
+import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
 
 interface RusticGardenTemplateProps {
   partner1Name: string;
@@ -15,6 +15,68 @@ interface RusticGardenTemplateProps {
   secondaryColor?: string;
   isPreview?: boolean;
   siteContent?: Partial<SiteContent>;
+  customSections?: CustomSection[];
+}
+
+// Custom Section Renderer
+function renderCustomSection(section: CustomSection, primaryColor: string) {
+  switch (section.type) {
+    case 'text':
+      return (
+        <section key={section.id} className="py-16 px-4 bg-white">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <Leaf className="h-5 w-5 -rotate-45" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl" style={{ color: primaryColor }}>
+                {section.title}
+              </h2>
+              <Leaf className="h-5 w-5 rotate-45" style={{ color: primaryColor }} />
+            </div>
+            <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+              {section.content}
+            </p>
+          </div>
+        </section>
+      );
+    case 'image':
+      return (
+        <section key={section.id} className="py-16 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+          <div className="max-w-4xl mx-auto text-center">
+            {section.title && (
+              <h2 className="font-serif text-3xl mb-6" style={{ color: primaryColor }}>
+                {section.title}
+              </h2>
+            )}
+            {section.imageUrl && (
+              <img
+                src={section.imageUrl}
+                alt={section.title || 'Custom image'}
+                className="w-full max-w-2xl mx-auto rounded-2xl shadow-md"
+              />
+            )}
+            {section.content && (
+              <p className="mt-4 text-lg opacity-80">{section.content}</p>
+            )}
+          </div>
+        </section>
+      );
+    case 'quote':
+      return (
+        <section key={section.id} className="py-16 px-4" style={{ backgroundColor: `${primaryColor}10` }}>
+          <div className="max-w-2xl mx-auto text-center">
+            <Leaf className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
+            <blockquote className="text-2xl font-serif italic" style={{ color: primaryColor }}>
+              "{section.content}"
+            </blockquote>
+            {section.title && (
+              <p className="mt-4 text-sm opacity-70">— {section.title}</p>
+            )}
+          </div>
+        </section>
+      );
+    default:
+      return null;
+  }
 }
 
 const defaultContent: SiteContent = {
@@ -57,6 +119,7 @@ export function RusticGardenTemplate({
   secondaryColor = '#8fa67a',
   isPreview = false,
   siteContent,
+  customSections = [],
 }: RusticGardenTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
@@ -223,6 +286,9 @@ export function RusticGardenTemplate({
           </div>
         </div>
       </section>
+
+      {/* Custom Sections */}
+      {customSections.map((section) => renderCustomSection(section, primaryColor))}
 
       {/* RSVP Section */}
       {content.showRsvpSection && (

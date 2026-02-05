@@ -151,13 +151,27 @@ interface Wedding {
   date: string | null;
   location: string;
   venue: string;
-  templateId: 'modern-elegance' | 'classic-romance' | 'rustic-garden' | 'bohemian-dream';
+  templateId: 'modern-elegance' | 'classic-romance' | 'rustic-garden' | 'bohemian-dream' | 'beach-wedding' | 'church-wedding';
   primaryColor: string;
   secondaryColor: string;
   heroImageUrl: string | null;
   dressCode: DressCode | null;
+  siteContent: SiteContent;       // Customizable section content
+  customSections: CustomSection[]; // User-created custom sections
   createdAt: string;
   updatedAt: string;
+}
+
+// Custom Section (user-created content blocks)
+interface CustomSection {
+  id: string;
+  type: 'text' | 'image' | 'quote' | 'video' | 'map' | 'timeline';
+  title: string;
+  content: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  order: number;
+  isVisible: boolean;
 }
 
 // Guest
@@ -208,7 +222,7 @@ interface Contribution {
 
 ### Overview
 
-The template system allows couples to choose from 4 pre-designed wedding website themes and customize them with their own colors and hero image. The templates are **rendered entirely on the frontend** using React components, with the backend only storing the configuration data.
+The template system allows couples to choose from 6 pre-designed wedding website themes and customize them with their own colors, hero image, and custom content sections. The templates are **rendered entirely on the frontend** using React components, with the backend only storing the configuration data.
 
 ### Frontend Template Implementation
 
@@ -219,7 +233,9 @@ src/shared/ui/templates/
 ├── ModernEleganceTemplate.tsx    # Dark elegant theme (navy/deep blue)
 ├── ClassicRomanceTemplate.tsx    # Classic cream/gold theme
 ├── RusticGardenTemplate.tsx      # Natural green garden theme
-└── BohemianDreamTemplate.tsx     # Warm boho/terracotta theme
+├── BohemianDreamTemplate.tsx     # Warm boho/terracotta theme
+├── BeachWeddingTemplate.tsx      # Tropical beach theme (teal/cyan)
+└── ChurchWeddingTemplate.tsx     # Traditional church theme (burgundy/elegant)
 ```
 
 #### Template Component Interface
@@ -227,14 +243,16 @@ Each template component receives the same props interface:
 
 ```typescript
 interface TemplateProps {
-  partner1Name: string;        // First partner's name
-  partner2Name: string;        // Second partner's name
-  date: string | null;         // Wedding date (ISO string)
-  location: string;            // Wedding location/city
-  heroImage?: string | null;   // URL or base64 of hero image
-  primaryColor?: string;       // Main accent color (hex)
-  secondaryColor?: string;     // Secondary accent color (hex)
-  isPreview?: boolean;         // If true, renders in compact preview mode
+  partner1Name: string;              // First partner's name
+  partner2Name: string;              // Second partner's name
+  date: string | null;               // Wedding date (ISO string)
+  location: string;                  // Wedding location/city
+  heroImage?: string | null;         // URL or base64 of hero image
+  primaryColor?: string;             // Main accent color (hex)
+  secondaryColor?: string;           // Secondary accent color (hex)
+  isPreview?: boolean;               // If true, renders in compact preview mode
+  siteContent?: Partial<SiteContent>;// Customizable section content
+  customSections?: CustomSection[];  // User-created custom sections
 }
 ```
 
@@ -257,7 +275,34 @@ export const TEMPLATE_CONFIG = {
     defaultColors: { primary: '#c9a959', secondary: '#8b6914' },
     preview: '...',
   },
-  // ... rustic-garden, bohemian-dream
+  'rustic-garden': {
+    id: 'rustic-garden',
+    name: 'Rustic Garden',
+    category: 'rustic',
+    defaultColors: { primary: '#5d7052', secondary: '#8fa67a' },
+    preview: '...',
+  },
+  'bohemian-dream': {
+    id: 'bohemian-dream',
+    name: 'Bohemian Dream',
+    category: 'boho',
+    defaultColors: { primary: '#d4a574', secondary: '#c4956a' },
+    preview: '...',
+  },
+  'beach-wedding': {
+    id: 'beach-wedding',
+    name: 'Beach Wedding',
+    category: 'beach',
+    defaultColors: { primary: '#0891b2', secondary: '#06b6d4' },
+    preview: '...',
+  },
+  'church-wedding': {
+    id: 'church-wedding',
+    name: 'Church Wedding',
+    category: 'traditional',
+    defaultColors: { primary: '#722f37', secondary: '#8b3a42' },
+    preview: '...',
+  },
 };
 
 export type TemplateId = keyof typeof TEMPLATE_CONFIG;
@@ -350,11 +395,16 @@ const VALID_TEMPLATES = [
   'modern-elegance',
   'classic-romance',
   'rustic-garden',
-  'bohemian-dream'
+  'bohemian-dream',
+  'beach-wedding',
+  'church-wedding'
 ];
 
 // Colors must be valid hex codes:
 const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
+
+// Custom section types:
+const VALID_SECTION_TYPES = ['text', 'image', 'quote', 'video', 'map', 'timeline'];
 
 // Example validation:
 if (!VALID_TEMPLATES.includes(templateId)) {
@@ -406,6 +456,149 @@ To add a new template:
 3. **Frontend**: Add to template selection grid
 4. **Backend**: Add new template ID to validation whitelist
 5. No database schema changes needed (templateId is just a string)
+
+---
+
+## Custom Sections System (Block Editor)
+
+### Overview
+
+The custom sections system allows couples to add personalized content blocks to their wedding site, similar to a simplified WordPress block editor. Users can add, edit, reorder, and toggle visibility of custom sections.
+
+### Available Section Types
+
+| Type | Description | Fields |
+|------|-------------|--------|
+| `text` | Text block with title and content | title, content |
+| `image` | Image with optional caption | title, imageUrl, content (caption) |
+| `quote` | Highlighted quote/phrase | title (author), content (quote text) |
+| `video` | Embedded YouTube/Vimeo video | title, videoUrl |
+| `map` | Location map embed | title, content (address) |
+| `timeline` | Event timeline | title, content (timeline items) |
+
+### Custom Section Data Model
+
+```typescript
+interface CustomSection {
+  id: string;                    // Unique identifier (e.g., "section-1234567890-abc123")
+  type: CustomSectionType;       // 'text' | 'image' | 'quote' | 'video' | 'map' | 'timeline'
+  title: string;                 // Section title
+  content: string;               // Main content (text, quote, address, etc.)
+  imageUrl?: string;             // For image sections
+  videoUrl?: string;             // For video sections (YouTube/Vimeo URL)
+  order: number;                 // Display order (0-indexed)
+  isVisible: boolean;            // Toggle visibility without deleting
+}
+```
+
+### Frontend Components
+
+#### SectionBlockEditor Component
+
+Located at `src/shared/ui/molecules/SectionBlockEditor.tsx`
+
+Features:
+- Add new sections via popup menu
+- Edit section content inline
+- Reorder sections with up/down buttons
+- Toggle visibility with eye icon
+- Delete sections
+- Drag handle for future drag-and-drop support
+
+```typescript
+interface SectionBlockEditorProps {
+  sections: CustomSection[];
+  onChange: (sections: CustomSection[]) => void;
+  primaryColor?: string;  // For styling consistency
+}
+```
+
+### Backend API Requirements for Custom Sections
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `PUT /api/wedding/:id/custom-sections` | PUT | Save all custom sections (replaces existing) |
+| `PATCH /api/wedding/:id/custom-sections/:sectionId` | PATCH | Update single section |
+| `POST /api/wedding/:id/custom-sections` | POST | Add new section |
+| `DELETE /api/wedding/:id/custom-sections/:sectionId` | DELETE | Remove section |
+| `PUT /api/wedding/:id/custom-sections/reorder` | PUT | Update section order |
+
+### Request/Response Examples
+
+**Save All Sections**
+```typescript
+// PUT /api/wedding/:id/custom-sections
+{
+  sections: [
+    {
+      id: "section-123",
+      type: "text",
+      title: "Sobre a Cerimônia",
+      content: "A cerimônia será ao ar livre...",
+      order: 0,
+      isVisible: true
+    },
+    {
+      id: "section-456",
+      type: "quote",
+      title: "Ruth 1:16",
+      content: "Onde você for, eu irei...",
+      order: 1,
+      isVisible: true
+    }
+  ]
+}
+```
+
+**Add New Section**
+```typescript
+// POST /api/wedding/:id/custom-sections
+{
+  type: "image",
+  title: "Nossa Família",
+  content: "Conheça nossos pais e padrinhos",
+  imageUrl: "https://...",
+  order: 2,
+  isVisible: true
+}
+
+// Response
+{
+  id: "section-789",  // Generated by backend
+  type: "image",
+  title: "Nossa Família",
+  content: "Conheça nossos pais e padrinhos",
+  imageUrl: "https://...",
+  order: 2,
+  isVisible: true
+}
+```
+
+### Image Upload for Custom Sections
+
+For image-type sections, the frontend sends base64-encoded images. Backend should:
+
+1. Decode base64 image
+2. Validate file type (jpg, png, webp)
+3. Optimize/resize (max 1200px width recommended)
+4. Upload to cloud storage
+5. Return public URL
+
+Alternative: Accept `multipart/form-data` with separate endpoint:
+```
+POST /api/wedding/:id/custom-sections/upload-image
+```
+
+### Template Rendering of Custom Sections
+
+All templates include a `renderCustomSection` function that renders each section type appropriately with the template's styling:
+
+```typescript
+// Example from template
+{customSections.map((section) => renderCustomSection(section, primaryColor))}
+```
+
+Custom sections are rendered between the Ceremony/Reception section and the RSVP section for optimal placement in the page flow.
 
 ---
 
@@ -598,10 +791,17 @@ function getTemplateComponent(templateId: TemplateId | string | null) {
       return RusticGardenTemplate;
     case 'bohemian-dream':
       return BohemianDreamTemplate;
+    case 'beach-wedding':
+      return BeachWeddingTemplate;
+    case 'church-wedding':
+      return ChurchWeddingTemplate;
     default:
       return ModernEleganceTemplate;
   }
 }
+
+// Filter visible custom sections
+const customSections = weddingData.customSections.filter(s => s.isVisible);
 
 // Render with couple's customizations
 <TemplateComponent
@@ -612,7 +812,8 @@ function getTemplateComponent(templateId: TemplateId | string | null) {
   heroImage={weddingData.heroImageUrl}
   primaryColor={weddingData.primaryColor}
   secondaryColor={weddingData.secondaryColor}
-  siteContent={weddingData.siteContent}  // Custom texts and section visibility
+  siteContent={weddingData.siteContent}   // Custom texts and section visibility
+  customSections={customSections}          // User-created custom sections
 />
 ```
 
@@ -771,6 +972,17 @@ The frontend provides 6 predefined color palettes:
 | Terracotta | #d4a574 | #c4956a | Boho, warm |
 | Navy | #2c3e50 | #34495e | Formal, sophisticated |
 | Burgundy | #722f37 | #8b3a42 | Rich, traditional |
+
+**Template Default Colors:**
+
+| Template | Primary | Secondary |
+|----------|---------|-----------|
+| Modern Elegance | #ea2e5b | #F1557C |
+| Classic Romance | #c9a959 | #8b6914 |
+| Rustic Garden | #5d7052 | #8fa67a |
+| Bohemian Dream | #d4a574 | #c4956a |
+| Beach Wedding | #0891b2 | #06b6d4 |
+| Church Wedding | #722f37 | #8b3a42 |
 
 Users can also input custom hex colors in the dashboard site editor.
 

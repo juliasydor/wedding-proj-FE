@@ -28,16 +28,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/shared/lib/utils';
-import { useWeddingStore, type SiteContent } from '@/entities/wedding';
+import { useWeddingStore, type SiteContent, type CustomSection } from '@/entities/wedding';
 import { toast } from 'sonner';
 import {
   ModernEleganceTemplate,
   ClassicRomanceTemplate,
   RusticGardenTemplate,
   BohemianDreamTemplate,
+  BeachWeddingTemplate,
+  ChurchWeddingTemplate,
   TEMPLATE_CONFIG,
   type TemplateId,
 } from '@/shared/ui/templates';
+import { SectionBlockEditor } from '@/shared/ui/molecules/SectionBlockEditor';
 
 type TabId = 'template' | 'colors' | 'content' | 'info' | 'images';
 type PreviewMode = 'desktop' | 'mobile';
@@ -76,6 +79,18 @@ const TEMPLATES = [
     category: 'boho',
     preview: TEMPLATE_CONFIG['bohemian-dream'].preview,
   },
+  {
+    id: 'beach-wedding' as TemplateId,
+    name: 'Beach Wedding',
+    category: 'beach',
+    preview: TEMPLATE_CONFIG['beach-wedding'].preview,
+  },
+  {
+    id: 'church-wedding' as TemplateId,
+    name: 'Church Wedding',
+    category: 'traditional',
+    preview: TEMPLATE_CONFIG['church-wedding'].preview,
+  },
 ];
 
 function getTemplateComponent(templateId: TemplateId) {
@@ -88,6 +103,10 @@ function getTemplateComponent(templateId: TemplateId) {
       return RusticGardenTemplate;
     case 'bohemian-dream':
       return BohemianDreamTemplate;
+    case 'beach-wedding':
+      return BeachWeddingTemplate;
+    case 'church-wedding':
+      return ChurchWeddingTemplate;
     default:
       return ModernEleganceTemplate;
   }
@@ -213,7 +232,13 @@ export default function SiteEditorPage() {
     accommodations: false,
     gallery: false,
     footer: false,
+    custom: false,
   });
+
+  // Custom sections state
+  const [customSections, setCustomSections] = useState<CustomSection[]>(
+    onboarding.customSections || []
+  );
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -237,6 +262,7 @@ export default function SiteEditorPage() {
       secondaryColor: currentPalette.secondary,
       heroImage,
       siteContent,
+      customSections,
     });
     toast.success('Alterações salvas com sucesso!');
   };
@@ -761,6 +787,24 @@ export default function SiteEditorPage() {
                     />
                   </div>
                 </CollapsibleSection>
+
+                {/* Custom Sections */}
+                <CollapsibleSection
+                  title="Seções Personalizadas"
+                  isOpen={openSections.custom}
+                  onToggle={() => toggleSection('custom')}
+                >
+                  <div className="space-y-4">
+                    <p className="text-sm text-subtitle">
+                      Adicione seções personalizadas ao seu site. Você pode adicionar textos, imagens, citações e mais.
+                    </p>
+                    <SectionBlockEditor
+                      sections={customSections}
+                      onChange={setCustomSections}
+                      primaryColor={currentPalette.primary}
+                    />
+                  </div>
+                </CollapsibleSection>
               </div>
             )}
 
@@ -987,6 +1031,7 @@ export default function SiteEditorPage() {
                         primaryColor={currentPalette.primary}
                         secondaryColor={currentPalette.secondary}
                         siteContent={siteContent}
+                        customSections={customSections.filter(s => s.isVisible)}
                       />
                     </div>
                   </div>
@@ -1019,6 +1064,7 @@ export default function SiteEditorPage() {
                             secondaryColor={currentPalette.secondary}
                             isPreview
                             siteContent={siteContent}
+                            customSections={customSections.filter(s => s.isVisible)}
                           />
                         </div>
                       </div>
@@ -1088,6 +1134,7 @@ export default function SiteEditorPage() {
                       primaryColor={currentPalette.primary}
                       secondaryColor={currentPalette.secondary}
                       siteContent={siteContent}
+                      customSections={customSections.filter(s => s.isVisible)}
                     />
                   </div>
                 </div>
@@ -1108,6 +1155,7 @@ export default function SiteEditorPage() {
                             secondaryColor={currentPalette.secondary}
                             isPreview
                             siteContent={siteContent}
+                            customSections={customSections.filter(s => s.isVisible)}
                           />
                         </div>
                       </div>

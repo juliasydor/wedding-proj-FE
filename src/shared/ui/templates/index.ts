@@ -2,6 +2,8 @@ export { ModernEleganceTemplate } from './ModernEleganceTemplate';
 export { ClassicRomanceTemplate } from './ClassicRomanceTemplate';
 export { RusticGardenTemplate } from './RusticGardenTemplate';
 export { BohemianDreamTemplate } from './BohemianDreamTemplate';
+export { BeachWeddingTemplate } from './BeachWeddingTemplate';
+export { ChurchWeddingTemplate } from './ChurchWeddingTemplate';
 
 export const TEMPLATE_CONFIG = {
   'modern-elegance': {
@@ -31,6 +33,20 @@ export const TEMPLATE_CONFIG = {
     category: 'boho',
     defaultColors: { primary: '#d4a574', secondary: '#c4956a' },
     preview: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=300&fit=crop',
+  },
+  'beach-wedding': {
+    id: 'beach-wedding',
+    name: 'Beach Wedding',
+    category: 'beach',
+    defaultColors: { primary: '#0891b2', secondary: '#06b6d4' },
+    preview: 'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?w=400&h=300&fit=crop',
+  },
+  'church-wedding': {
+    id: 'church-wedding',
+    name: 'Church Wedding',
+    category: 'traditional',
+    defaultColors: { primary: '#722f37', secondary: '#8b3a42' },
+    preview: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=300&fit=crop',
   },
 } as const;
 

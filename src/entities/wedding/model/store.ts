@@ -2,6 +2,20 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Wedding, DressCode, WeddingTheme, BankingInfo } from '@/shared/types';
 
+// Custom section types for user-created content blocks
+export type CustomSectionType = 'text' | 'image' | 'quote' | 'video' | 'map' | 'timeline';
+
+export interface CustomSection {
+  id: string;
+  type: CustomSectionType;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  order: number;
+  isVisible: boolean;
+}
+
 // Customizable content for different sections
 export interface SiteContent {
   // Hero section
@@ -56,6 +70,7 @@ interface OnboardingData {
   secondaryColor: string | null;
   heroImage: string | null;
   siteContent: SiteContent;
+  customSections: CustomSection[];
 }
 
 interface WeddingState {
@@ -122,6 +137,7 @@ const initialOnboarding: OnboardingData = {
   secondaryColor: null,
   heroImage: null,
   siteContent: initialSiteContent,
+  customSections: [],
 };
 
 const initialState: WeddingState = {

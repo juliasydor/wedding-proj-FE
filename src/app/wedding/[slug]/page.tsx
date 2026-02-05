@@ -7,6 +7,8 @@ import {
   ClassicRomanceTemplate,
   RusticGardenTemplate,
   BohemianDreamTemplate,
+  BeachWeddingTemplate,
+  ChurchWeddingTemplate,
   TEMPLATE_CONFIG,
   type TemplateId,
 } from '@/shared/ui/templates';
@@ -21,6 +23,10 @@ function getTemplateComponent(templateId: TemplateId | string | null) {
       return RusticGardenTemplate;
     case 'bohemian-dream':
       return BohemianDreamTemplate;
+    case 'beach-wedding':
+      return BeachWeddingTemplate;
+    case 'church-wedding':
+      return ChurchWeddingTemplate;
     default:
       return ModernEleganceTemplate;
   }
@@ -50,6 +56,10 @@ export default function WeddingPage() {
 
   const TemplateComponent = getTemplateComponent(templateId);
 
+  // Get custom sections and filter visible ones
+  const customSections = ((weddingData as any)?.customSections || onboarding.customSections || [])
+    .filter((s: any) => s.isVisible);
+
   return (
     <TemplateComponent
       partner1Name={(weddingData as any)?.partner1Name || onboarding.partner1Name || 'Partner 1'}
@@ -60,6 +70,7 @@ export default function WeddingPage() {
       primaryColor={primaryColor}
       secondaryColor={secondaryColor}
       siteContent={(weddingData as any)?.siteContent || onboarding.siteContent}
+      customSections={customSections}
     />
   );
 }

@@ -1,9 +1,9 @@
 'use client';
 
-import { Heart, Calendar, MapPin, Clock, Gift, Mail, Hotel, Camera } from 'lucide-react';
+import { Heart, Calendar, MapPin, Clock, Gift, Mail, Hotel, Camera, Quote } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
-import type { SiteContent } from '@/entities/wedding/model/store';
+import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
 
 interface ClassicRomanceTemplateProps {
   partner1Name: string;
@@ -15,6 +15,71 @@ interface ClassicRomanceTemplateProps {
   secondaryColor?: string;
   isPreview?: boolean;
   siteContent?: Partial<SiteContent>;
+  customSections?: CustomSection[];
+}
+
+// Custom Section Renderer
+function renderCustomSection(section: CustomSection, primaryColor: string) {
+  switch (section.type) {
+    case 'text':
+      return (
+        <section key={section.id} className="py-16 px-4 bg-[#faf8f5]">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
+              <Heart className="h-4 w-4" style={{ color: primaryColor }} />
+              <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
+            </div>
+            <h2 className="font-serif text-3xl mb-6" style={{ color: primaryColor }}>
+              {section.title}
+            </h2>
+            <p className="text-lg leading-relaxed opacity-80 whitespace-pre-line">
+              {section.content}
+            </p>
+          </div>
+        </section>
+      );
+    case 'image':
+      return (
+        <section key={section.id} className="py-16 px-4 bg-white">
+          <div className="max-w-4xl mx-auto text-center">
+            {section.title && (
+              <h2 className="font-serif text-3xl mb-6" style={{ color: primaryColor }}>
+                {section.title}
+              </h2>
+            )}
+            {section.imageUrl && (
+              <div className="border-4 rounded-lg inline-block" style={{ borderColor: `${primaryColor}30` }}>
+                <img
+                  src={section.imageUrl}
+                  alt={section.title || 'Custom image'}
+                  className="max-w-full rounded"
+                />
+              </div>
+            )}
+            {section.content && (
+              <p className="mt-4 text-lg opacity-80">{section.content}</p>
+            )}
+          </div>
+        </section>
+      );
+    case 'quote':
+      return (
+        <section key={section.id} className="py-16 px-4" style={{ backgroundColor: `${primaryColor}10` }}>
+          <div className="max-w-2xl mx-auto text-center">
+            <Quote className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
+            <blockquote className="text-2xl font-serif italic" style={{ color: primaryColor }}>
+              "{section.content}"
+            </blockquote>
+            {section.title && (
+              <p className="mt-4 text-sm opacity-70">— {section.title}</p>
+            )}
+          </div>
+        </section>
+      );
+    default:
+      return null;
+  }
 }
 
 const defaultContent: SiteContent = {
@@ -57,6 +122,7 @@ export function ClassicRomanceTemplate({
   secondaryColor = '#8b6914',
   isPreview = false,
   siteContent,
+  customSections = [],
 }: ClassicRomanceTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
@@ -204,6 +270,9 @@ export function ClassicRomanceTemplate({
           </div>
         </div>
       </section>
+
+      {/* Custom Sections */}
+      {customSections.map((section) => renderCustomSection(section, primaryColor))}
 
       {/* RSVP Section */}
       {content.showRsvpSection && (
