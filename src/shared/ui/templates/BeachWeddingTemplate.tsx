@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Calendar, MapPin, Anchor, Shell, Waves, Gift, Mail, Hotel, Camera, Clock, Sun } from 'lucide-react';
+import { Heart, Calendar, MapPin, Anchor, Shell, Plane, Hotel, Gift, Mail, Camera, Clock, ChevronDown, ExternalLink, Utensils } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent } from '@/entities/wedding/model/store';
@@ -22,95 +23,53 @@ interface BeachWeddingTemplateProps {
 }
 
 const defaultContent: SiteContent = {
-  heroTitle: 'Toes in the Sand',
-  heroSubtitle: 'Love in Our Hearts',
-  storyTitle: 'Nossa História',
-  storyContent: 'Como ondas do mar, nosso amor chegou suavemente...',
+  heroTitle: 'Join us in',
+  heroSubtitle: 'Pack your bags!',
+  storyTitle: 'Pack your bags!',
+  storyContent: 'We can\'t wait to celebrate with you. We\'re turning everything you need to know about the event into a comprehensive guide that covers all the details. Come join us!',
   storyImage: null,
   showStorySection: true,
-  ceremonyTitle: 'Cerimônia',
-  ceremonyTime: '17:00',
-  ceremonyDescription: 'Na praia ao pôr do sol',
-  receptionTitle: 'Recepção',
-  receptionTime: '19:00',
-  receptionDescription: 'Festa na areia',
-  countdownTitle: 'Until We Say I Do by the Sea',
+  weddingPartyTitle: 'The Wedding Party',
+  weddingParty: [],
+  showWeddingPartySection: false,
+  timelineTitle: 'The Journey',
+  timelineSubtitle: '',
+  timelineEvents: [
+    { id: '1', title: 'Welcome Drinks at Sunset', time: '6:00 PM', description: 'Join us for welcome drinks with stunning views' },
+    { id: '2', title: 'The Ceremony', time: '5:00 PM', description: 'Watch us tie the knot' },
+    { id: '3', title: 'Reception Dinner', time: '7:00 PM', description: 'Dinner, dancing, and celebration' },
+    { id: '4', title: 'Farewell Brunch', time: '10:00 AM', description: 'One last goodbye before we part' },
+  ],
+  showTimelineSection: true,
+  ceremonyTitle: 'The Ceremony',
+  ceremonyTime: '5:00 PM',
+  ceremonyDescription: 'Beachfront ceremony',
+  receptionTitle: 'Reception',
+  receptionTime: '7:00 PM',
+  receptionDescription: 'Dinner & Dancing',
+  countdownTitle: 'Days Until Paradise',
   showCountdown: true,
-  rsvpTitle: 'Confirme sua Presença',
-  rsvpDescription: 'Venha celebrar conosco à beira-mar.',
+  rsvpTitle: 'See you at the altar!',
+  rsvpDescription: 'Your response means everything to us. Please let us know if you can make it.',
   showRsvpSection: true,
-  accommodationsTitle: 'Hospedagem',
-  accommodationsContent: 'Resorts e pousadas próximas...',
-  showAccommodationsSection: false,
-  giftTitle: 'Lista de Presentes',
-  giftDescription: 'Sua presença é o maior presente!',
+  travelTipsTitle: 'Getting There',
+  travelTips: [],
+  showTravelTipsSection: true,
+  accommodationsTitle: 'Where to Stay',
+  accommodationsContent: 'We\'ve secured special rates at these beautiful hotels near the venue.',
+  accommodations: [],
+  showAccommodationsSection: true,
+  giftTitle: 'Registry',
+  giftDescription: 'Your presence is the greatest gift of all.',
+  registryLinks: [],
   showGiftSection: true,
-  galleryTitle: 'Nossa Galeria',
+  galleryTitle: 'Local Gems',
   galleryImages: [],
-  showGallerySection: false,
-  footerMessage: 'Love as Deep as the Ocean',
+  showGallerySection: true,
+  weddingHashtag: 'WEREGOINGTOGREECE24',
+  showHashtagSection: true,
+  footerMessage: 'See you at the altar!',
 };
-
-// Custom Section Renderer
-function renderCustomSection(section: CustomSection, primaryColor: string) {
-  switch (section.type) {
-    case 'text':
-      return (
-        <section key={section.id} className="py-16 px-4 bg-white">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <Shell className="h-5 w-5" style={{ color: primaryColor }} />
-              <h2 className="font-serif text-3xl" style={{ color: primaryColor }}>
-                {section.title}
-              </h2>
-              <Shell className="h-5 w-5" style={{ color: primaryColor }} />
-            </div>
-            <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
-              {section.content}
-            </p>
-          </div>
-        </section>
-      );
-    case 'image':
-      return (
-        <section key={section.id} className="py-16 px-4" style={{ backgroundColor: `${primaryColor}10` }}>
-          <div className="max-w-4xl mx-auto text-center">
-            {section.title && (
-              <h2 className="font-serif text-3xl mb-6" style={{ color: primaryColor }}>
-                {section.title}
-              </h2>
-            )}
-            {section.imageUrl && (
-              <img
-                src={section.imageUrl}
-                alt={section.title || 'Custom image'}
-                className="w-full max-w-2xl mx-auto rounded-2xl shadow-lg"
-              />
-            )}
-            {section.content && (
-              <p className="mt-4 text-lg opacity-80">{section.content}</p>
-            )}
-          </div>
-        </section>
-      );
-    case 'quote':
-      return (
-        <section key={section.id} className="py-16 px-4" style={{ backgroundColor: `${primaryColor}15` }}>
-          <div className="max-w-2xl mx-auto text-center">
-            <Waves className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
-            <blockquote className="text-2xl font-serif italic" style={{ color: primaryColor }}>
-              "{section.content}"
-            </blockquote>
-            {section.title && (
-              <p className="mt-4 text-sm opacity-70">— {section.title}</p>
-            )}
-          </div>
-        </section>
-      );
-    default:
-      return null;
-  }
-}
 
 export function BeachWeddingTemplate({
   partner1Name,
@@ -131,308 +90,339 @@ export function BeachWeddingTemplate({
   return (
     <div
       className={cn(
-        'bg-gradient-to-b from-sky-50 to-cyan-50 text-gray-800 overflow-hidden',
+        'bg-white text-gray-800 overflow-hidden',
         isPreview ? 'rounded-xl' : 'min-h-screen'
       )}
     >
-      {/* Hero Section */}
-      <section className="relative min-h-[70vh]">
+      {/* Hero Section - Destination Style */}
+      <section className="relative h-[70vh] min-h-[500px]">
         {/* Background */}
         <div className="absolute inset-0">
           {heroImage ? (
             <img
               src={heroImage}
-              alt="Wedding"
+              alt="Destination"
               className="w-full h-full object-cover"
             />
           ) : (
             <div
               className="w-full h-full"
               style={{
-                background: `linear-gradient(180deg, #e0f2fe 0%, ${primaryColor}30 50%, ${secondaryColor}40 100%)`,
+                background: `linear-gradient(180deg, #e0f2fe 0%, ${primaryColor}40 100%)`,
               }}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-white/40" />
-        </div>
-
-        {/* Decorative Sun */}
-        <div className="absolute top-8 right-8">
-          <Sun className="h-16 w-16 opacity-30" style={{ color: '#fbbf24' }} />
-        </div>
-
-        {/* Wave decoration at top */}
-        <div className="absolute top-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" className="w-full rotate-180">
-            <path
-              d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z"
-              fill={`${primaryColor}20`}
-            />
-          </svg>
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
         </div>
 
         {/* Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 py-24">
-          {/* Anchor decoration */}
-          <div className="flex items-center gap-4 mb-6">
-            <Anchor className="h-6 w-6" style={{ color: primaryColor }} />
-            <p className="text-sm uppercase tracking-[0.4em]" style={{ color: primaryColor }}>
-              {content.heroTitle}
-            </p>
-            <Anchor className="h-6 w-6" style={{ color: primaryColor }} />
-          </div>
-
-          <h1 className="font-serif text-5xl md:text-7xl mb-2 text-gray-800">
-            {partner1Name || 'Partner 1'}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
+          <p className="text-sm uppercase tracking-[0.3em] text-white/90 mb-2">
+            {content.heroTitle}
+          </p>
+          <h1
+            className="font-serif text-5xl md:text-7xl lg:text-8xl text-white drop-shadow-lg mb-4"
+            style={{ textShadow: '0 4px 30px rgba(0,0,0,0.3)' }}
+          >
+            {location || 'Paradise'}
           </h1>
-
-          <div className="flex items-center justify-center my-6">
-            <div className="flex items-center gap-4">
-              <Waves className="h-6 w-6" style={{ color: primaryColor }} />
-              <Heart
-                className="h-10 w-10"
-                style={{ color: primaryColor, fill: `${primaryColor}50` }}
-              />
-              <Waves className="h-6 w-6" style={{ color: primaryColor }} />
-            </div>
-          </div>
-
-          <h1 className="font-serif text-5xl md:text-7xl text-gray-800">
-            {partner2Name || 'Partner 2'}
-          </h1>
-
-          <p className="mt-6 text-lg italic opacity-70">{content.heroSubtitle}</p>
 
           {weddingDate && (
             <div
-              className="mt-10 px-8 py-4 rounded-full border-2"
-              style={{ borderColor: primaryColor, backgroundColor: 'white' }}
+              className="mt-4 px-6 py-2 rounded-full text-sm"
+              style={{ backgroundColor: primaryColor }}
             >
-              <p className="font-serif text-xl" style={{ color: primaryColor }}>
-                {weddingDate.toLocaleDateString('pt-BR', {
-                  day: 'numeric',
+              <span className="text-white font-medium">
+                {weddingDate.toLocaleDateString('en-US', {
                   month: 'long',
+                  day: 'numeric',
                   year: 'numeric',
                 })}
-              </p>
+              </span>
             </div>
           )}
 
-          {location && (
-            <div className="flex items-center gap-2 mt-4">
-              <MapPin className="h-4 w-4" style={{ color: primaryColor }} />
-              <span className="text-sm opacity-80">{location}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom wave decoration */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" className="w-full">
-            <path
-              d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z"
-              fill="white"
-            />
-            <path
-              d="M0,80 C360,120 720,40 1080,80 C1260,100 1380,90 1440,80 L1440,120 L0,120 Z"
-              fill={`${primaryColor}15`}
-            />
-          </svg>
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-3 mt-8">
+            {weddingSlug && (
+              <Link
+                href={`/wedding/${weddingSlug}/rsvp`}
+                className="px-6 py-3 rounded-full font-medium text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                <span className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Send Your Reply
+                </span>
+              </Link>
+            )}
+            <button
+              className="px-6 py-3 rounded-full font-medium bg-white text-gray-800 transition-all hover:bg-gray-100"
+            >
+              <span className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                Directions
+              </span>
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Countdown Section */}
-      {content.showCountdown && weddingDate && (
-        <section className="py-16 px-4 text-center bg-white">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <Shell className="h-6 w-6" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-2xl">{content.countdownTitle}</h2>
-            <Shell className="h-6 w-6" style={{ color: primaryColor }} />
-          </div>
-          <Countdown
-            targetDate={weddingDate}
-            labels={{ days: 'Dias', hours: 'Horas', minutes: 'Min', seconds: 'Seg' }}
-          />
-        </section>
-      )}
-
-      {/* Our Story Section */}
+      {/* Intro Section */}
       {content.showStorySection && (
-        <section className="py-16 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <Waves className="h-5 w-5" style={{ color: primaryColor }} />
-              <h2 className="font-serif text-3xl" style={{ color: primaryColor }}>
-                {content.storyTitle}
-              </h2>
-              <Waves className="h-5 w-5" style={{ color: primaryColor }} />
-            </div>
-            {content.storyImage && (
-              <img
-                src={content.storyImage}
-                alt="Nossa história"
-                className="w-full max-w-md mx-auto h-48 object-cover rounded-2xl mb-6 shadow-lg"
-              />
-            )}
-            <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+        <section className="py-16 px-4 text-center">
+          <div className="max-w-3xl mx-auto">
+            <Shell className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
+            <h2 className="font-serif text-3xl md:text-4xl mb-6 text-gray-900">
+              {content.storyTitle}
+            </h2>
+            <p className="text-gray-600 leading-relaxed">
               {content.storyContent}
             </p>
           </div>
         </section>
       )}
 
-      {/* Details Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-6 text-center">
-            <div
-              className="p-8 rounded-2xl border-2"
-              style={{ borderColor: `${primaryColor}30`, backgroundColor: `${primaryColor}05` }}
-            >
+      {/* Timeline/Journey Section */}
+      {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
+        <section className="py-16 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
               <div
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{ backgroundColor: `${primaryColor}20` }}
+                className="inline-block px-6 py-2 rounded-full text-sm font-medium mb-6"
+                style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}
               >
-                <Clock className="h-8 w-8" style={{ color: primaryColor }} />
+                {content.timelineTitle}
               </div>
-              <h3 className="font-serif text-xl mb-2">{content.ceremonyTitle}</h3>
-              <p className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>{content.ceremonyTime}</p>
-              <p className="text-sm opacity-70">{content.ceremonyDescription}</p>
             </div>
 
-            <div
-              className="p-8 rounded-2xl border-2"
-              style={{ borderColor: `${primaryColor}30`, backgroundColor: `${primaryColor}05` }}
-            >
+            {/* Timeline with pins */}
+            <div className="relative">
+              {/* Vertical line */}
               <div
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{ backgroundColor: `${primaryColor}20` }}
-              >
-                <Heart className="h-8 w-8" style={{ color: primaryColor }} />
+                className="absolute left-6 md:left-8 top-0 bottom-0 w-0.5"
+                style={{ backgroundColor: `${primaryColor}30` }}
+              />
+
+              <div className="space-y-6">
+                {content.timelineEvents.map((event, index) => (
+                  <div key={event.id} className="relative flex gap-6">
+                    {/* Pin/Dot */}
+                    <div
+                      className="relative z-10 w-12 md:w-16 h-12 md:h-16 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: primaryColor }}
+                    >
+                      <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                    </div>
+
+                    {/* Content Card */}
+                    <div className="flex-1 bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                      <div className="flex flex-wrap items-center gap-3 mb-2">
+                        <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                        <span
+                          className="text-xs px-2 py-1 rounded-full"
+                          style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}
+                        >
+                          {event.time}
+                        </span>
+                      </div>
+                      {event.description && (
+                        <p className="text-sm text-gray-600">{event.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h3 className="font-serif text-xl mb-2">{content.receptionTitle}</h3>
-              <p className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>{content.receptionTime}</p>
-              <p className="text-sm opacity-70">{content.receptionDescription}</p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Custom Sections */}
-      {customSections.map((section) => renderCustomSection(section, primaryColor))}
+      {/* Where to Stay Section */}
+      {content.showAccommodationsSection && (
+        <section className="py-16 px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-serif text-2xl md:text-3xl text-gray-900">
+                {content.accommodationsTitle}
+              </h2>
+              <a
+                href="#"
+                className="text-sm flex items-center gap-1"
+                style={{ color: primaryColor }}
+              >
+                View Full Map <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+
+            <p className="text-gray-600 mb-8">{content.accommodationsContent}</p>
+
+            {/* Hotel Cards Grid */}
+            {content.accommodations && content.accommodations.length > 0 ? (
+              <div className="grid md:grid-cols-3 gap-6">
+                {content.accommodations.map((hotel) => (
+                  <div key={hotel.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                    {hotel.imageUrl && (
+                      <img
+                        src={hotel.imageUrl}
+                        alt={hotel.name}
+                        className="w-full h-40 object-cover"
+                      />
+                    )}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 mb-1">{hotel.name}</h3>
+                      {hotel.distance && (
+                        <p className="text-xs text-gray-500 mb-2">{hotel.distance}</p>
+                      )}
+                      {hotel.priceRange && (
+                        <p className="text-sm" style={{ color: primaryColor }}>{hotel.priceRange}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* Placeholder cards */}
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-gray-100 rounded-xl p-6 text-center">
+                    <Hotel className="h-8 w-8 mx-auto mb-3 text-gray-400" />
+                    <p className="text-sm text-gray-500">Hotel {i}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Map placeholder */}
+            <div className="mt-8 bg-gray-100 rounded-xl h-64 flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <MapPin className="h-8 w-8 mx-auto mb-2" />
+                <p className="text-sm">Interactive map coming soon</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Getting There Section */}
+      {content.showTravelTipsSection && (
+        <section className="py-16 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-8">
+              <Plane className="h-6 w-6" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-2xl md:text-3xl text-gray-900">
+                {content.travelTipsTitle}
+              </h2>
+            </div>
+
+            {content.travelTips && content.travelTips.length > 0 ? (
+              <div className="space-y-4">
+                {content.travelTips.map((tip) => (
+                  <div key={tip.id} className="bg-white rounded-xl p-5 shadow-sm">
+                    <h3 className="font-semibold text-gray-900 mb-2">{tip.title}</h3>
+                    <p className="text-sm text-gray-600">{tip.content}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-6">
+                <p className="text-gray-600">Travel information will be added soon.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Local Gems / Gallery Section */}
+      {content.showGallerySection && (
+        <section className="py-16 px-4">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="font-serif text-2xl md:text-3xl text-gray-900 mb-8">
+              {content.galleryTitle}
+            </h2>
+
+            {content.galleryImages && content.galleryImages.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {content.galleryImages.map((img, index) => (
+                  <div key={index} className="relative rounded-xl overflow-hidden group">
+                    <img
+                      src={img}
+                      alt={`Local spot ${index + 1}`}
+                      className="w-full h-32 md:h-40 object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="bg-gray-100 rounded-xl h-32 md:h-40 flex items-center justify-center">
+                    <Utensils className="h-6 w-6 text-gray-400" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* RSVP Section */}
       {content.showRsvpSection && (
-        <section className="py-16 px-4 text-center" style={{ backgroundColor: `${primaryColor}10` }}>
-          <div className="max-w-xl mx-auto">
-            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl mb-4">{content.rsvpTitle}</h2>
-            <p className="mb-6 opacity-80">{content.rsvpDescription}</p>
+        <section
+          className="py-20 px-4 text-white"
+          style={{ backgroundColor: '#0c4a6e' }}
+        >
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="font-serif text-3xl md:text-4xl mb-4">{content.rsvpTitle}</h2>
+            <p className="text-white/80 mb-8">{content.rsvpDescription}</p>
+
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                className="inline-block px-8 py-3 rounded-full font-medium text-white transition-all hover:opacity-90"
                 style={{ backgroundColor: primaryColor }}
               >
-                Confirmar Presença
+                RSVP Now
               </Link>
             ) : (
               <button
-                className="px-8 py-3 rounded-full font-semibold text-white transition-all hover:opacity-90"
+                className="px-8 py-3 rounded-full font-medium text-white transition-all hover:opacity-90"
                 style={{ backgroundColor: primaryColor }}
               >
-                Confirmar Presença
+                RSVP Now
               </button>
             )}
           </div>
         </section>
       )}
 
-      {/* Gift Section */}
-      {content.showGiftSection && (
-        <section className="py-16 px-4 text-center bg-white">
-          <div className="max-w-xl mx-auto">
-            <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl mb-4">{content.giftTitle}</h2>
-            <p className="mb-6 opacity-80">{content.giftDescription}</p>
-            {weddingSlug ? (
-              <Link
-                href={`/wedding/${weddingSlug}/gifts`}
-                className="inline-block px-8 py-3 rounded-full font-semibold transition-all hover:opacity-90 border-2"
-                style={{ borderColor: primaryColor, color: primaryColor }}
-              >
-                Ver Lista de Presentes
-              </Link>
-            ) : (
-              <button
-                className="px-8 py-3 rounded-full font-semibold transition-all hover:opacity-90 border-2"
-                style={{ borderColor: primaryColor, color: primaryColor }}
-              >
-                Ver Lista de Presentes
-              </button>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* Accommodations Section */}
-      {content.showAccommodationsSection && (
-        <section className="py-16 px-4 text-center" style={{ backgroundColor: `${primaryColor}08` }}>
-          <div className="max-w-xl mx-auto">
-            <Hotel className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl mb-4">{content.accommodationsTitle}</h2>
-            <p className="opacity-80 whitespace-pre-line">{content.accommodationsContent}</p>
-          </div>
-        </section>
-      )}
-
-      {/* Gallery Section */}
-      {content.showGallerySection && content.galleryImages.length > 0 && (
-        <section className="py-16 px-4 bg-white">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-10">
-              <Camera className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-              <h2 className="font-serif text-3xl">{content.galleryTitle}</h2>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {content.galleryImages.map((img, index) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`Gallery ${index + 1}`}
-                  className="w-full aspect-square object-cover rounded-2xl hover:scale-105 transition-transform shadow-md"
-                />
-              ))}
-            </div>
+      {/* Hashtag Section */}
+      {content.showHashtagSection && content.weddingHashtag && (
+        <section className="py-12 px-4 bg-gray-50">
+          <div className="max-w-2xl mx-auto flex flex-wrap items-center justify-center gap-4">
+            <a href="#" className="text-gray-500 hover:text-gray-700">Instagram</a>
+            <a href="#" className="text-gray-500 hover:text-gray-700">TikTok</a>
+            <a href="#" className="text-gray-500 hover:text-gray-700">Registry</a>
+            <span
+              className="px-4 py-2 rounded-full text-sm font-medium"
+              style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}
+            >
+              #{content.weddingHashtag}
+            </span>
           </div>
         </section>
       )}
 
       {/* Footer */}
       <footer
-        className="py-12 text-center text-white relative overflow-hidden"
-        style={{ backgroundColor: primaryColor }}
+        className="py-12 text-center text-white"
+        style={{ backgroundColor: '#0c4a6e' }}
       >
-        {/* Wave decoration */}
-        <div className="absolute top-0 left-0 right-0">
-          <svg viewBox="0 0 1440 40" fill="none" className="w-full">
-            <path
-              d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,25 1440,20 L1440,0 L0,0 Z"
-              fill="white"
-            />
-          </svg>
-        </div>
-        <div className="relative z-10 pt-4">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <Shell className="h-5 w-5 opacity-70" />
-            <Heart className="h-6 w-6" />
-            <Shell className="h-5 w-5 opacity-70" />
-          </div>
-          <p className="mb-2 opacity-90">{content.footerMessage}</p>
-          <p className="font-serif text-lg">
-            {partner1Name} & {partner2Name}
-          </p>
-        </div>
+        <Anchor className="h-8 w-8 mx-auto mb-4 opacity-50" />
+        <p className="font-serif text-xl mb-2">
+          {partner1Name} & {partner2Name}
+        </p>
+        <p className="text-sm opacity-70">{content.footerMessage}</p>
       </footer>
     </div>
   );

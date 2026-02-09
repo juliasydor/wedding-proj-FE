@@ -208,7 +208,9 @@
         "modern": "Moderno",
         "classic": "Clássico",
         "rustic": "Rústico",
-        "boho": "Boho"
+        "boho": "Boho",
+        "beach": "Praia",
+        "traditional": "Tradicional"
       },
       "selectTemplate": "Selecionar Template",
       "previewDesign": "Visualizar Design",

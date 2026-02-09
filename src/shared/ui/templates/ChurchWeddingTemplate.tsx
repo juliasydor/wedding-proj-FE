@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Calendar, MapPin, Cross, Church, Gift, Mail, Hotel, Camera, Clock, BookOpen } from 'lucide-react';
+import { Heart, MapPin, Cross, Church, Gift, Mail, Hotel, Camera, Clock, BookOpen, Users, ChevronDown, ExternalLink } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent } from '@/entities/wedding/model/store';
@@ -24,100 +25,50 @@ interface ChurchWeddingTemplateProps {
 const defaultContent: SiteContent = {
   heroTitle: 'United in Faith & Love',
   heroSubtitle: 'Before God and Our Loved Ones',
-  storyTitle: 'Nossa História',
-  storyContent: 'Uma bênção que Deus colocou em nossos caminhos...',
+  storyTitle: 'Our Story',
+  storyContent: 'A blessing that God placed in our paths...',
   storyImage: null,
   showStorySection: true,
-  ceremonyTitle: 'Cerimônia Religiosa',
-  ceremonyTime: '15:00',
-  ceremonyDescription: 'Igreja Matriz',
-  receptionTitle: 'Recepção',
-  receptionTime: '18:00',
-  receptionDescription: 'Salão de Festas',
-  countdownTitle: 'Até o Nosso Grande Dia',
+  weddingPartyTitle: 'Wedding Party',
+  weddingParty: [],
+  showWeddingPartySection: false,
+  timelineTitle: 'Order of Events',
+  timelineSubtitle: 'A sacred celebration',
+  timelineEvents: [
+    { id: '1', title: 'Church Ceremony', time: '3:00 PM', description: 'Holy Matrimony' },
+    { id: '2', title: 'Photo Session', time: '4:30 PM', description: 'At the church gardens' },
+    { id: '3', title: 'Reception', time: '6:00 PM', description: 'Dinner and celebration' },
+  ],
+  showTimelineSection: true,
+  ceremonyTitle: 'Religious Ceremony',
+  ceremonyTime: '3:00 PM',
+  ceremonyDescription: 'At the Cathedral',
+  receptionTitle: 'Reception',
+  receptionTime: '6:00 PM',
+  receptionDescription: 'Ballroom',
+  countdownTitle: 'Until Our Sacred Day',
   showCountdown: true,
-  rsvpTitle: 'Confirme sua Presença',
-  rsvpDescription: 'Será uma honra ter você conosco neste momento sagrado.',
+  rsvpTitle: 'RSVP',
+  rsvpDescription: 'It will be an honor to have you with us in this sacred moment.',
   showRsvpSection: true,
-  accommodationsTitle: 'Hospedagem',
-  accommodationsContent: 'Hotéis próximos à igreja...',
+  travelTipsTitle: 'Travel Information',
+  travelTips: [],
+  showTravelTipsSection: false,
+  accommodationsTitle: 'Accommodations',
+  accommodationsContent: 'Hotels near the church.',
+  accommodations: [],
   showAccommodationsSection: false,
-  giftTitle: 'Lista de Presentes',
-  giftDescription: 'Sua presença é o maior presente!',
+  giftTitle: 'Gift Registry',
+  giftDescription: 'Your presence is the greatest gift!',
+  registryLinks: [],
   showGiftSection: true,
-  galleryTitle: 'Nossa Galeria',
+  galleryTitle: 'Our Gallery',
   galleryImages: [],
   showGallerySection: false,
-  footerMessage: 'O que Deus uniu, o homem não separe',
+  weddingHashtag: '',
+  showHashtagSection: false,
+  footerMessage: 'What God has joined, let no one separate',
 };
-
-// Custom Section Renderer
-function renderCustomSection(section: CustomSection, primaryColor: string) {
-  switch (section.type) {
-    case 'text':
-      return (
-        <section key={section.id} className="py-16 px-4 bg-[#faf9f7]">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
-              <Cross className="h-5 w-5" style={{ color: primaryColor }} />
-              <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
-            </div>
-            <h2 className="font-serif text-3xl mb-4" style={{ color: primaryColor }}>
-              {section.title}
-            </h2>
-            <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
-              {section.content}
-            </p>
-          </div>
-        </section>
-      );
-    case 'image':
-      return (
-        <section key={section.id} className="py-16 px-4 bg-white">
-          <div className="max-w-4xl mx-auto text-center">
-            {section.title && (
-              <h2 className="font-serif text-3xl mb-6" style={{ color: primaryColor }}>
-                {section.title}
-              </h2>
-            )}
-            {section.imageUrl && (
-              <div className="relative">
-                <div
-                  className="absolute inset-0 border-8 rounded-lg"
-                  style={{ borderColor: `${primaryColor}20` }}
-                />
-                <img
-                  src={section.imageUrl}
-                  alt={section.title || 'Custom image'}
-                  className="w-full max-w-2xl mx-auto rounded-lg shadow-xl"
-                />
-              </div>
-            )}
-            {section.content && (
-              <p className="mt-4 text-lg opacity-80">{section.content}</p>
-            )}
-          </div>
-        </section>
-      );
-    case 'quote':
-      return (
-        <section key={section.id} className="py-16 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
-          <div className="max-w-2xl mx-auto text-center">
-            <BookOpen className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
-            <blockquote className="text-2xl font-serif italic" style={{ color: primaryColor }}>
-              "{section.content}"
-            </blockquote>
-            {section.title && (
-              <p className="mt-4 text-sm opacity-70">— {section.title}</p>
-            )}
-          </div>
-        </section>
-      );
-    default:
-      return null;
-  }
-}
 
 export function ChurchWeddingTemplate({
   partner1Name,
@@ -134,6 +85,7 @@ export function ChurchWeddingTemplate({
 }: ChurchWeddingTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
+  const [openTravelTip, setOpenTravelTip] = useState<string | null>(null);
 
   return (
     <div
@@ -143,7 +95,7 @@ export function ChurchWeddingTemplate({
       )}
     >
       {/* Hero Section */}
-      <section className="relative min-h-[70vh]">
+      <section className="relative h-[85vh] min-h-[600px]">
         {/* Background */}
         <div className="absolute inset-0">
           {heroImage ? (
@@ -160,35 +112,35 @@ export function ChurchWeddingTemplate({
               }}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#faf9f7] via-transparent to-transparent" />
         </div>
 
         {/* Decorative arch pattern at top */}
-        <div className="absolute top-0 left-0 right-0 h-8 flex justify-center">
-          <div className="flex">
-            {[...Array(15)].map((_, i) => (
+        <div className="absolute top-0 left-0 right-0 h-12 overflow-hidden">
+          <div className="flex justify-center">
+            {[...Array(20)].map((_, i) => (
               <div
                 key={i}
-                className="w-8 h-8 border-t-2 border-l-2 border-r-2 rounded-t-full"
-                style={{ borderColor: `${primaryColor}30` }}
+                className="w-12 h-12 border-t-2 border-l-2 border-r-2 rounded-t-full flex-shrink-0"
+                style={{ borderColor: `${primaryColor}20` }}
               />
             ))}
           </div>
         </div>
 
         {/* Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 py-24">
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
           {/* Cross decoration */}
           <div className="mb-8">
             <div
-              className="w-20 h-20 rounded-full border-2 flex items-center justify-center"
-              style={{ borderColor: primaryColor, backgroundColor: 'white' }}
+              className="w-24 h-24 rounded-full border-3 flex items-center justify-center bg-white/90 backdrop-blur-sm shadow-lg"
+              style={{ borderColor: primaryColor }}
             >
-              <Cross className="h-10 w-10" style={{ color: primaryColor }} />
+              <Cross className="h-12 w-12" style={{ color: primaryColor }} />
             </div>
           </div>
 
-          <p className="text-sm uppercase tracking-[0.4em] mb-4" style={{ color: primaryColor }}>
+          <p className="text-sm uppercase tracking-[0.4em] mb-6" style={{ color: primaryColor }}>
             {content.heroTitle}
           </p>
 
@@ -198,12 +150,12 @@ export function ChurchWeddingTemplate({
 
           <div className="flex items-center justify-center my-6">
             <div className="flex items-center gap-6">
-              <div className="h-px w-16" style={{ backgroundColor: primaryColor }} />
+              <div className="h-px w-20" style={{ backgroundColor: primaryColor }} />
               <Heart
                 className="h-8 w-8"
                 style={{ color: primaryColor, fill: primaryColor }}
               />
-              <div className="h-px w-16" style={{ backgroundColor: primaryColor }} />
+              <div className="h-px w-20" style={{ backgroundColor: primaryColor }} />
             </div>
           </div>
 
@@ -216,27 +168,35 @@ export function ChurchWeddingTemplate({
           {weddingDate && (
             <div className="mt-10">
               <div
-                className="px-10 py-5 bg-white shadow-lg"
-                style={{
-                  clipPath: 'polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%)',
-                }}
+                className="px-12 py-6 bg-white/90 backdrop-blur-sm shadow-lg rounded-sm"
               >
                 <p className="font-serif text-xl" style={{ color: primaryColor }}>
-                  {weddingDate.toLocaleDateString('pt-BR', {
+                  {weddingDate.toLocaleDateString('en-US', {
+                    weekday: 'long',
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',
                   })}
                 </p>
+                {location && (
+                  <div className="flex items-center justify-center gap-2 mt-3 opacity-80">
+                    <Church className="h-4 w-4" style={{ color: primaryColor }} />
+                    <span className="text-sm">{location}</span>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          {location && (
-            <div className="flex items-center gap-2 mt-6">
-              <Church className="h-4 w-4" style={{ color: primaryColor }} />
-              <span className="text-sm opacity-80">{location}</span>
-            </div>
+          {/* RSVP Button */}
+          {weddingSlug && (
+            <Link
+              href={`/wedding/${weddingSlug}/rsvp`}
+              className="mt-8 px-10 py-4 font-medium text-white transition-all hover:opacity-90 shadow-md"
+              style={{ backgroundColor: primaryColor }}
+            >
+              RSVP
+            </Link>
           )}
         </div>
 
@@ -263,97 +223,362 @@ export function ChurchWeddingTemplate({
           </div>
           <Countdown
             targetDate={weddingDate}
-            labels={{ days: 'Dias', hours: 'Horas', minutes: 'Min', seconds: 'Seg' }}
+            labels={{ days: 'Days', hours: 'Hours', minutes: 'Min', seconds: 'Sec' }}
           />
         </section>
       )}
 
       {/* Our Story Section */}
       {content.showStorySection && (
-        <section className="py-16 px-4 bg-white">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <BookOpen className="h-6 w-6" style={{ color: primaryColor }} />
-              <h2 className="font-serif text-3xl italic" style={{ color: primaryColor }}>
-                {content.storyTitle}
-              </h2>
-              <BookOpen className="h-6 w-6" style={{ color: primaryColor }} />
-            </div>
-            {content.storyImage && (
-              <div className="relative w-full max-w-md mx-auto mb-6">
-                <div
-                  className="absolute -inset-2 border-2 rounded-lg"
-                  style={{ borderColor: `${primaryColor}30` }}
-                />
-                <img
-                  src={content.storyImage}
-                  alt="Nossa história"
-                  className="w-full h-48 object-cover rounded-lg relative z-10"
-                />
+        <section className="py-20 px-4 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Image */}
+              <div className="order-2 md:order-1">
+                {content.storyImage ? (
+                  <div className="relative">
+                    <div
+                      className="absolute -inset-3 border-2"
+                      style={{ borderColor: `${primaryColor}30` }}
+                    />
+                    <img
+                      src={content.storyImage}
+                      alt="Our Story"
+                      className="w-full h-80 object-cover relative z-10"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-80 flex items-center justify-center"
+                    style={{ backgroundColor: `${primaryColor}10` }}
+                  >
+                    <Cross className="h-16 w-16" style={{ color: `${primaryColor}30` }} />
+                  </div>
+                )}
               </div>
-            )}
-            <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
-              {content.storyContent}
-            </p>
+
+              {/* Text */}
+              <div className="order-1 md:order-2">
+                <div className="flex items-center gap-4 mb-6">
+                  <BookOpen className="h-6 w-6" style={{ color: primaryColor }} />
+                  <h2 className="font-serif text-3xl italic" style={{ color: primaryColor }}>
+                    {content.storyTitle}
+                  </h2>
+                </div>
+                <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+                  {content.storyContent}
+                </p>
+              </div>
+            </div>
           </div>
         </section>
       )}
 
-      {/* Details Section */}
-      <section className="py-16 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 text-center">
-            <div className="p-8 bg-white rounded-lg shadow-md">
-              <div
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border-2"
-                style={{ borderColor: primaryColor }}
-              >
-                <Church className="h-8 w-8" style={{ color: primaryColor }} />
+      {/* Timeline Section */}
+      {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
+        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
+                <Cross className="h-5 w-5" style={{ color: primaryColor }} />
+                <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
               </div>
-              <h3 className="font-serif text-xl mb-2 italic">{content.ceremonyTitle}</h3>
-              <p className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>{content.ceremonyTime}</p>
-              <p className="text-sm opacity-70">{content.ceremonyDescription}</p>
+              <h2 className="font-serif text-3xl italic mb-2" style={{ color: primaryColor }}>
+                {content.timelineTitle}
+              </h2>
+              {content.timelineSubtitle && (
+                <p className="text-gray-600">{content.timelineSubtitle}</p>
+              )}
             </div>
 
-            <div className="p-8 bg-white rounded-lg shadow-md">
+            {/* Timeline with Cards */}
+            <div className="relative">
+              {/* Center line */}
               <div
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border-2"
-                style={{ borderColor: primaryColor }}
-              >
-                <Heart className="h-8 w-8" style={{ color: primaryColor }} />
+                className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 hidden md:block"
+                style={{ backgroundColor: `${primaryColor}30` }}
+              />
+
+              <div className="space-y-8">
+                {content.timelineEvents.map((event, index) => (
+                  <div
+                    key={event.id}
+                    className={cn(
+                      'relative flex items-center gap-8',
+                      index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                    )}
+                  >
+                    {/* Dot marker */}
+                    <div
+                      className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full items-center justify-center bg-white border-2 z-10"
+                      style={{ borderColor: primaryColor }}
+                    >
+                      <Cross className="h-4 w-4" style={{ color: primaryColor }} />
+                    </div>
+
+                    {/* Card */}
+                    <div
+                      className={cn(
+                        'w-full md:w-[calc(50%-2rem)] p-6 bg-white rounded-lg shadow-md',
+                        index % 2 === 0 ? 'md:mr-auto' : 'md:ml-auto'
+                      )}
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <span
+                          className="px-3 py-1 rounded text-sm font-medium text-white"
+                          style={{ backgroundColor: primaryColor }}
+                        >
+                          {event.time}
+                        </span>
+                      </div>
+                      <h3 className="font-serif text-xl mb-1 italic">{event.title}</h3>
+                      {event.description && (
+                        <p className="text-sm text-gray-600">{event.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h3 className="font-serif text-xl mb-2 italic">{content.receptionTitle}</h3>
-              <p className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>{content.receptionTime}</p>
-              <p className="text-sm opacity-70">{content.receptionDescription}</p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Custom Sections */}
-      {customSections.map((section) => renderCustomSection(section, primaryColor))}
+      {/* Wedding Party Section */}
+      {content.showWeddingPartySection && content.weddingParty && content.weddingParty.length > 0 && (
+        <section className="py-20 px-4 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
+                <Users className="h-6 w-6" style={{ color: primaryColor }} />
+                <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
+              </div>
+              <h2 className="font-serif text-3xl italic" style={{ color: primaryColor }}>
+                {content.weddingPartyTitle}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {content.weddingParty.map((member) => (
+                <div key={member.id} className="text-center">
+                  <div
+                    className="w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden border-3 shadow-md"
+                    style={{ borderColor: primaryColor }}
+                  >
+                    {member.imageUrl ? (
+                      <img
+                        src={member.imageUrl}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center text-2xl font-serif text-white"
+                        style={{ backgroundColor: primaryColor }}
+                      >
+                        {member.name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-serif text-lg italic">{member.name}</h3>
+                  <p className="text-sm opacity-70">{member.role}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Travel Tips Section */}
+      {content.showTravelTipsSection && content.travelTips && content.travelTips.length > 0 && (
+        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="font-serif text-3xl italic mb-2" style={{ color: primaryColor }}>
+                {content.travelTipsTitle}
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              {content.travelTips.map((tip) => (
+                <div
+                  key={tip.id}
+                  className="bg-white rounded-lg overflow-hidden shadow-sm border"
+                  style={{ borderColor: `${primaryColor}20` }}
+                >
+                  <button
+                    className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                    onClick={() => setOpenTravelTip(openTravelTip === tip.id ? null : tip.id)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Cross className="h-4 w-4" style={{ color: primaryColor }} />
+                      <span className="font-medium">{tip.title}</span>
+                    </div>
+                    <ChevronDown
+                      className={cn(
+                        'h-5 w-5 transition-transform',
+                        openTravelTip === tip.id && 'rotate-180'
+                      )}
+                      style={{ color: primaryColor }}
+                    />
+                  </button>
+                  {openTravelTip === tip.id && (
+                    <div
+                      className="px-6 py-4 border-t"
+                      style={{ borderColor: `${primaryColor}15` }}
+                    >
+                      <p className="text-gray-700">{tip.content}</p>
+                      {tip.links && tip.links.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {tip.links.map((link, i) => (
+                            <a
+                              key={i}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-sm hover:underline"
+                              style={{ color: primaryColor }}
+                            >
+                              {link.label}
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Accommodations Section */}
+      {content.showAccommodationsSection && (
+        <section className="py-20 px-4 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <Hotel className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl italic mb-2" style={{ color: primaryColor }}>
+                {content.accommodationsTitle}
+              </h2>
+              <p className="text-gray-600">{content.accommodationsContent}</p>
+            </div>
+
+            {content.accommodations && content.accommodations.length > 0 ? (
+              <div className="grid md:grid-cols-3 gap-6">
+                {content.accommodations.map((hotel) => (
+                  <div
+                    key={hotel.id}
+                    className="bg-[#faf9f7] rounded-lg overflow-hidden shadow-sm border"
+                    style={{ borderColor: `${primaryColor}20` }}
+                  >
+                    {hotel.imageUrl && (
+                      <img
+                        src={hotel.imageUrl}
+                        alt={hotel.name}
+                        className="w-full h-40 object-cover"
+                      />
+                    )}
+                    <div className="p-5">
+                      <h3 className="font-serif text-lg mb-1 italic">{hotel.name}</h3>
+                      {hotel.distance && (
+                        <p className="text-xs text-gray-500 mb-2">{hotel.distance}</p>
+                      )}
+                      {hotel.priceRange && (
+                        <p className="text-sm font-medium" style={{ color: primaryColor }}>
+                          {hotel.priceRange}
+                        </p>
+                      )}
+                      {hotel.bookingUrl && (
+                        <a
+                          href={hotel.bookingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 mt-3 text-sm hover:underline"
+                          style={{ color: primaryColor }}
+                        >
+                          Book Now <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-[#faf9f7] rounded-lg p-8 text-center border"
+                    style={{ borderColor: `${primaryColor}20` }}
+                  >
+                    <Hotel className="h-8 w-8 mx-auto mb-3" style={{ color: `${primaryColor}40` }} />
+                    <p className="text-sm text-gray-500">Hotel {i}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Gallery Section */}
+      {content.showGallerySection && content.galleryImages && content.galleryImages.length > 0 && (
+        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <Camera className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl italic" style={{ color: primaryColor }}>
+                {content.galleryTitle}
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {content.galleryImages.map((img, index) => (
+                <div key={index} className="relative group">
+                  <div
+                    className="absolute -inset-1 border rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ borderColor: `${primaryColor}30` }}
+                  />
+                  <img
+                    src={img}
+                    alt={`Gallery ${index + 1}`}
+                    className="w-full aspect-square object-cover rounded hover:scale-105 transition-transform"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* RSVP Section */}
       {content.showRsvpSection && (
-        <section className="py-16 px-4 text-center bg-white">
+        <section
+          className="py-20 px-4 text-center text-white"
+          style={{ backgroundColor: primaryColor }}
+        >
           <div className="max-w-xl mx-auto">
-            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
+            <Mail className="h-10 w-10 mx-auto mb-4 opacity-80" />
             <h2 className="font-serif text-3xl mb-4 italic">{content.rsvpTitle}</h2>
-            <p className="mb-6 opacity-80">{content.rsvpDescription}</p>
+            <p className="mb-8 opacity-80">{content.rsvpDescription}</p>
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-8 py-3 rounded-sm font-semibold text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="inline-block px-10 py-4 font-semibold bg-white transition-all hover:opacity-90"
+                style={{ color: primaryColor }}
               >
-                Confirmar Presença
+                RSVP Now
               </Link>
             ) : (
               <button
-                className="px-8 py-3 rounded-sm font-semibold text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="px-10 py-4 font-semibold bg-white transition-all hover:opacity-90"
+                style={{ color: primaryColor }}
               >
-                Confirmar Presença
+                RSVP Now
               </button>
             )}
           </div>
@@ -362,65 +587,46 @@ export function ChurchWeddingTemplate({
 
       {/* Gift Section */}
       {content.showGiftSection && (
-        <section className="py-16 px-4 text-center" style={{ backgroundColor: `${primaryColor}08` }}>
+        <section className="py-20 px-4 text-center bg-white">
           <div className="max-w-xl mx-auto">
             <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl mb-4 italic">{content.giftTitle}</h2>
-            <p className="mb-6 opacity-80">{content.giftDescription}</p>
+            <h2 className="font-serif text-3xl mb-4 italic" style={{ color: primaryColor }}>
+              {content.giftTitle}
+            </h2>
+            <p className="mb-8 opacity-80">{content.giftDescription}</p>
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/gifts`}
-                className="inline-block px-8 py-3 rounded-sm font-semibold transition-all hover:opacity-90 border-2"
+                className="inline-block px-8 py-3 font-semibold transition-all hover:opacity-90 border-2"
                 style={{ borderColor: primaryColor, color: primaryColor }}
               >
-                Ver Lista de Presentes
+                View Registry
               </Link>
             ) : (
               <button
-                className="px-8 py-3 rounded-sm font-semibold transition-all hover:opacity-90 border-2"
+                className="px-8 py-3 font-semibold transition-all hover:opacity-90 border-2"
                 style={{ borderColor: primaryColor, color: primaryColor }}
               >
-                Ver Lista de Presentes
+                View Registry
               </button>
             )}
           </div>
         </section>
       )}
 
-      {/* Accommodations Section */}
-      {content.showAccommodationsSection && (
-        <section className="py-16 px-4 text-center bg-white">
-          <div className="max-w-xl mx-auto">
-            <Hotel className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl mb-4 italic">{content.accommodationsTitle}</h2>
-            <p className="opacity-80 whitespace-pre-line">{content.accommodationsContent}</p>
-          </div>
-        </section>
-      )}
-
-      {/* Gallery Section */}
-      {content.showGallerySection && content.galleryImages.length > 0 && (
-        <section className="py-16 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-10">
-              <Camera className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-              <h2 className="font-serif text-3xl italic">{content.galleryTitle}</h2>
+      {/* Hashtag Section */}
+      {content.showHashtagSection && content.weddingHashtag && (
+        <section className="py-12 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-4 mb-2">
+              <div className="h-px w-8" style={{ backgroundColor: primaryColor }} />
+              <Camera className="h-5 w-5" style={{ color: primaryColor }} />
+              <div className="h-px w-8" style={{ backgroundColor: primaryColor }} />
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {content.galleryImages.map((img, index) => (
-                <div key={index} className="relative">
-                  <div
-                    className="absolute -inset-1 border rounded"
-                    style={{ borderColor: `${primaryColor}20` }}
-                  />
-                  <img
-                    src={img}
-                    alt={`Gallery ${index + 1}`}
-                    className="w-full aspect-square object-cover rounded relative z-10 hover:scale-105 transition-transform"
-                  />
-                </div>
-              ))}
-            </div>
+            <p className="text-sm text-gray-600 mb-2">Share your photos with</p>
+            <p className="font-serif text-2xl italic" style={{ color: primaryColor }}>
+              #{content.weddingHashtag}
+            </p>
           </div>
         </section>
       )}
@@ -431,7 +637,7 @@ export function ChurchWeddingTemplate({
         style={{ backgroundColor: primaryColor }}
       >
         {/* Decorative top border */}
-        <div className="absolute top-0 left-0 right-0 h-2" style={{ backgroundColor: secondaryColor }} />
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: secondaryColor }} />
 
         <div className="pt-4">
           <div className="flex items-center justify-center gap-3 mb-3">

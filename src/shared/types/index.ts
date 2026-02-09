@@ -40,6 +40,39 @@ export interface DressCode {
   };
 }
 
+export interface WeddingPartyMember {
+  id: string;
+  name: string;
+  role: string;
+  imageUrl?: string;
+  description?: string;
+}
+
+export interface TimelineEvent {
+  id: string;
+  title: string;
+  time: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface TravelTip {
+  id: string;
+  title: string;
+  content: string;
+  links?: { label: string; url: string }[];
+}
+
+export interface Accommodation {
+  id: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  priceRange?: string;
+  bookingUrl?: string;
+  distance?: string;
+}
+
 export interface WeddingTheme {
   id: string;
   name: string;

@@ -208,7 +208,9 @@
         "modern": "Modern",
         "classic": "Classic",
         "rustic": "Rustic",
-        "boho": "Boho"
+        "boho": "Boho",
+        "beach": "Beach",
+        "traditional": "Traditional"
       },
       "selectTemplate": "Select Template",
       "previewDesign": "Preview Design",
