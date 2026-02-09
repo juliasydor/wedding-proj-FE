@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Calendar, MapPin, Leaf, Gift, Mail, Hotel, Camera, Clock, Users, ChevronDown, ExternalLink } from 'lucide-react';
+import { Heart, Calendar, MapPin, Leaf, Gift, Mail, Hotel, Camera, Clock, Users, ChevronDown, ExternalLink, Shirt } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
+import type { DressCode } from '@/shared/types';
 
 interface RusticGardenTemplateProps {
   partner1Name: string;
@@ -19,6 +20,7 @@ interface RusticGardenTemplateProps {
   siteContent?: Partial<SiteContent>;
   customSections?: CustomSection[];
   weddingSlug?: string;
+  dressCode?: DressCode | null;
 }
 
 const defaultContent: SiteContent = {
@@ -83,6 +85,7 @@ export function RusticGardenTemplate({
   siteContent,
   customSections = [],
   weddingSlug,
+  dressCode,
 }: RusticGardenTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
@@ -316,6 +319,113 @@ export function RusticGardenTemplate({
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Dress Code Section */}
+      {content.showDressCodeSection && dressCode && (dressCode.guests?.enabled || dressCode.bridesmaids?.enabled || dressCode.groomsmen?.enabled) && (
+        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}10` }}>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <Leaf className="h-5 w-5 -rotate-45" style={{ color: primaryColor }} />
+                <Shirt className="h-6 w-6" style={{ color: primaryColor }} />
+                <Leaf className="h-5 w-5 rotate-45" style={{ color: primaryColor }} />
+              </div>
+              <h2 className="font-serif text-3xl" style={{ color: primaryColor }}>
+                {content.dressCodeTitle || 'Dress Code'}
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {dressCode.guests?.enabled && (
+                <div className="bg-white rounded-2xl p-6 text-center shadow-sm border" style={{ borderColor: `${primaryColor}30` }}>
+                  <h3 className="font-serif text-lg mb-4" style={{ color: primaryColor }}>Guests</h3>
+                  {dressCode.guests.palette && dressCode.guests.palette.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <div className="flex justify-center gap-2 flex-wrap">
+                        {dressCode.guests.palette.map((color, i) => (
+                          <div
+                            key={i}
+                            className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dressCode.guests.lengths && dressCode.guests.lengths.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Dress Length</p>
+                      <p className="text-sm text-gray-700">
+                        {dressCode.guests.lengths.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(', ')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {dressCode.bridesmaids?.enabled && (
+                <div className="bg-white rounded-2xl p-6 text-center shadow-sm border" style={{ borderColor: `${primaryColor}30` }}>
+                  <h3 className="font-serif text-lg mb-4" style={{ color: primaryColor }}>Bridesmaids</h3>
+                  {dressCode.bridesmaids.palette && dressCode.bridesmaids.palette.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <div className="flex justify-center gap-2 flex-wrap">
+                        {dressCode.bridesmaids.palette.map((color, i) => (
+                          <div
+                            key={i}
+                            className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dressCode.bridesmaids.lengths && dressCode.bridesmaids.lengths.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Dress Length</p>
+                      <p className="text-sm text-gray-700">
+                        {dressCode.bridesmaids.lengths.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(', ')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {dressCode.groomsmen?.enabled && (
+                <div className="bg-white rounded-2xl p-6 text-center shadow-sm border" style={{ borderColor: `${primaryColor}30` }}>
+                  <h3 className="font-serif text-lg mb-4" style={{ color: primaryColor }}>Groomsmen</h3>
+                  {dressCode.groomsmen.palette && dressCode.groomsmen.palette.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <div className="flex justify-center gap-2 flex-wrap">
+                        {dressCode.groomsmen.palette.map((color, i) => (
+                          <div
+                            key={i}
+                            className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dressCode.groomsmen.style && (
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Style</p>
+                      <p className="text-sm text-gray-700">
+                        {dressCode.groomsmen.style.charAt(0).toUpperCase() + dressCode.groomsmen.style.slice(1).replace('-', ' ')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </section>
