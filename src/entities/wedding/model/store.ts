@@ -70,6 +70,9 @@ export interface SiteContent {
   // Hashtag section
   weddingHashtag: string;
   showHashtagSection: boolean;
+  // Dress Code section
+  dressCodeTitle: string;
+  showDressCodeSection: boolean;
   // Footer
   footerMessage: string;
 }
@@ -159,6 +162,8 @@ const initialSiteContent: SiteContent = {
   showGallerySection: false,
   weddingHashtag: '',
   showHashtagSection: false,
+  dressCodeTitle: 'Dress Code',
+  showDressCodeSection: true,
   footerMessage: 'Mal podemos esperar para celebrar com você!',
 };
 

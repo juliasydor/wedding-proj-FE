@@ -25,19 +25,20 @@ export interface Wedding {
   updatedAt: Date;
 }
 
+export type DressLength = 'short' | 'midi' | 'long';
+export type GroomsmenStyle = 'suit' | 'tuxedo' | 'casual' | 'semi-formal';
+
+export interface DressCodeGroup {
+  palette: string[];
+  lengths?: DressLength[];
+  style?: GroomsmenStyle;
+  enabled: boolean;
+}
+
 export interface DressCode {
-  guests: {
-    palette: string[];
-    length: 'short' | 'midi' | 'long';
-  };
-  bridesmaids?: {
-    palette: string[];
-    length: 'short' | 'midi' | 'long';
-  };
-  groomsmen?: {
-    palette: string[];
-    style: string;
-  };
+  guests?: DressCodeGroup;
+  bridesmaids?: DressCodeGroup;
+  groomsmen?: DressCodeGroup;
 }
 
 export interface WeddingPartyMember {

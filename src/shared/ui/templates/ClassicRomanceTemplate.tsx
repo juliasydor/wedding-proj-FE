@@ -66,6 +66,8 @@ const defaultContent: SiteContent = {
   showGallerySection: false,
   weddingHashtag: '',
   showHashtagSection: false,
+  dressCodeTitle: 'Dress Code',
+  showDressCodeSection: true,
   footerMessage: 'We can\'t wait to celebrate with you!',
 };
 

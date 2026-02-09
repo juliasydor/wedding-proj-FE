@@ -60,6 +60,9 @@ export default function WeddingPage() {
   const customSections = ((weddingData as any)?.customSections || onboarding.customSections || [])
     .filter((s: any) => s.isVisible);
 
+  // Get dress code
+  const dressCode = (weddingData as any)?.dressCode || onboarding.dressCode;
+
   return (
     <TemplateComponent
       partner1Name={(weddingData as any)?.partner1Name || onboarding.partner1Name || 'Partner 1'}
@@ -72,6 +75,7 @@ export default function WeddingPage() {
       siteContent={(weddingData as any)?.siteContent || onboarding.siteContent}
       customSections={customSections}
       weddingSlug={slug}
+      dressCode={dressCode}
     />
   );
 }

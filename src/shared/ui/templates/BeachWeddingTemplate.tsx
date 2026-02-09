@@ -68,6 +68,8 @@ const defaultContent: SiteContent = {
   showGallerySection: true,
   weddingHashtag: 'WEREGOINGTOGREECE24',
   showHashtagSection: true,
+  dressCodeTitle: 'Dress Code',
+  showDressCodeSection: true,
   footerMessage: 'See you at the altar!',
 };
 

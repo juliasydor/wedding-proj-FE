@@ -67,6 +67,8 @@ const defaultContent: SiteContent = {
   showGallerySection: false,
   weddingHashtag: '',
   showHashtagSection: false,
+  dressCodeTitle: 'Dress Code',
+  showDressCodeSection: true,
   footerMessage: 'What God has joined, let no one separate',
 };
 

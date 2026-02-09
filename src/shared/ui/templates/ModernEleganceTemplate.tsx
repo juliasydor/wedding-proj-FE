@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Calendar, MapPin, Clock, Gift, Mail, Hotel, Camera, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { Heart, Calendar, MapPin, Clock, Gift, Mail, Hotel, Camera, ChevronDown, ChevronUp, ExternalLink, Shirt } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
+import type { DressCode } from '@/shared/types';
 
 interface ModernEleganceTemplateProps {
   partner1Name: string;
@@ -19,6 +20,7 @@ interface ModernEleganceTemplateProps {
   siteContent?: Partial<SiteContent>;
   customSections?: CustomSection[];
   weddingSlug?: string;
+  dressCode?: DressCode | null;
 }
 
 // Accordion component for Travel Tips
@@ -107,6 +109,8 @@ const defaultContent: SiteContent = {
   showGallerySection: true,
   weddingHashtag: '',
   showHashtagSection: false,
+  dressCodeTitle: 'Dress Code',
+  showDressCodeSection: true,
   footerMessage: 'We can\'t wait to celebrate with you!',
 };
 
@@ -122,6 +126,7 @@ export function ModernEleganceTemplate({
   siteContent,
   customSections = [],
   weddingSlug,
+  dressCode,
 }: ModernEleganceTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
@@ -310,6 +315,112 @@ export function ModernEleganceTemplate({
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Dress Code Section */}
+      {content.showDressCodeSection && dressCode && (dressCode.guests?.enabled || dressCode.bridesmaids?.enabled || dressCode.groomsmen?.enabled) && (
+        <section className="py-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <Shirt className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
+              <h2 className="font-serif text-3xl md:text-4xl text-gray-900">
+                {content.dressCodeTitle || 'Dress Code'}
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Guests */}
+              {dressCode.guests?.enabled && (
+                <div className="bg-gray-50 rounded-xl p-6 text-center">
+                  <h3 className="font-semibold text-gray-900 mb-4">Guests</h3>
+                  {dressCode.guests.palette && dressCode.guests.palette.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <div className="flex justify-center gap-2 flex-wrap">
+                        {dressCode.guests.palette.map((color, i) => (
+                          <div
+                            key={i}
+                            className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dressCode.guests.lengths && dressCode.guests.lengths.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Dress Length</p>
+                      <p className="text-sm text-gray-700">
+                        {dressCode.guests.lengths.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(', ')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Bridesmaids */}
+              {dressCode.bridesmaids?.enabled && (
+                <div className="bg-gray-50 rounded-xl p-6 text-center">
+                  <h3 className="font-semibold text-gray-900 mb-4">Bridesmaids</h3>
+                  {dressCode.bridesmaids.palette && dressCode.bridesmaids.palette.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <div className="flex justify-center gap-2 flex-wrap">
+                        {dressCode.bridesmaids.palette.map((color, i) => (
+                          <div
+                            key={i}
+                            className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dressCode.bridesmaids.lengths && dressCode.bridesmaids.lengths.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Dress Length</p>
+                      <p className="text-sm text-gray-700">
+                        {dressCode.bridesmaids.lengths.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(', ')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Groomsmen */}
+              {dressCode.groomsmen?.enabled && (
+                <div className="bg-gray-50 rounded-xl p-6 text-center">
+                  <h3 className="font-semibold text-gray-900 mb-4">Groomsmen</h3>
+                  {dressCode.groomsmen.palette && dressCode.groomsmen.palette.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <div className="flex justify-center gap-2 flex-wrap">
+                        {dressCode.groomsmen.palette.map((color, i) => (
+                          <div
+                            key={i}
+                            className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dressCode.groomsmen.style && (
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Style</p>
+                      <p className="text-sm text-gray-700">
+                        {dressCode.groomsmen.style.charAt(0).toUpperCase() + dressCode.groomsmen.style.slice(1).replace('-', ' ')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </section>
