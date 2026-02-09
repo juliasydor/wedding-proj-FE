@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
-import type { DressCode } from '@/shared/types';
+import type { DressCode, SectionColors } from '@/shared/types';
 
 interface ClassicRomanceTemplateProps {
   partner1Name: string;
@@ -21,6 +21,7 @@ interface ClassicRomanceTemplateProps {
   customSections?: CustomSection[];
   weddingSlug?: string;
   dressCode?: DressCode | null;
+  sectionColors?: SectionColors | null;
 }
 
 const defaultContent: SiteContent = {
@@ -86,10 +87,22 @@ export function ClassicRomanceTemplate({
   customSections = [],
   weddingSlug,
   dressCode,
+  sectionColors,
 }: ClassicRomanceTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
   const [openTravelTip, setOpenTravelTip] = useState<string | null>(null);
+
+  // Helper to get section color with fallback to default
+  const getColor = (section: keyof SectionColors, key: string, fallback: string) => {
+    if (sectionColors && sectionColors[section]) {
+      const sectionConfig = sectionColors[section] as Record<string, string | number>;
+      if (sectionConfig[key]) {
+        return sectionConfig[key] as string;
+      }
+    }
+    return fallback;
+  };
 
   return (
     <div
@@ -124,22 +137,22 @@ export function ClassicRomanceTemplate({
           {/* Decorative Frame */}
           <div className="bg-white/90 backdrop-blur-sm p-10 md:p-16 rounded-sm shadow-xl max-w-xl">
             <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="h-px w-16" style={{ backgroundColor: primaryColor }} />
-              <Heart className="h-5 w-5" style={{ color: primaryColor }} />
-              <div className="h-px w-16" style={{ backgroundColor: primaryColor }} />
+              <div className="h-px w-16" style={{ backgroundColor: getColor('hero', 'accentColor', primaryColor) }} />
+              <Heart className="h-5 w-5" style={{ color: getColor('hero', 'accentColor', primaryColor) }} />
+              <div className="h-px w-16" style={{ backgroundColor: getColor('hero', 'accentColor', primaryColor) }} />
             </div>
 
-            <p className="text-xs uppercase tracking-[0.4em] mb-4" style={{ color: primaryColor }}>
+            <p className="text-xs uppercase tracking-[0.4em] mb-4" style={{ color: getColor('hero', 'subtitleColor', primaryColor) }}>
               {content.heroTitle}
             </p>
 
-            <h1 className="font-serif text-4xl md:text-5xl mb-2 italic" style={{ color: '#2c2c2c' }}>
+            <h1 className="font-serif text-4xl md:text-5xl mb-2 italic" style={{ color: getColor('hero', 'titleColor', '#2c2c2c') }}>
               {partner1Name || 'Partner 1'}
             </h1>
 
-            <p className="text-2xl font-serif my-3" style={{ color: primaryColor }}>&</p>
+            <p className="text-2xl font-serif my-3" style={{ color: getColor('hero', 'accentColor', primaryColor) }}>&</p>
 
-            <h1 className="font-serif text-4xl md:text-5xl italic" style={{ color: '#2c2c2c' }}>
+            <h1 className="font-serif text-4xl md:text-5xl italic" style={{ color: getColor('hero', 'titleColor', '#2c2c2c') }}>
               {partner2Name || 'Partner 2'}
             </h1>
 
@@ -191,7 +204,7 @@ export function ClassicRomanceTemplate({
 
       {/* Our Story Section */}
       {content.showStorySection && (
-        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('story', 'backgroundColor', `${primaryColor}08`) }}>
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               {/* Image */}
@@ -200,7 +213,7 @@ export function ClassicRomanceTemplate({
                   <div className="relative">
                     <div
                       className="absolute -inset-4 border-2"
-                      style={{ borderColor: primaryColor }}
+                      style={{ borderColor: getColor('story', 'accentColor', primaryColor) }}
                     />
                     <img
                       src={content.storyImage}
@@ -211,9 +224,9 @@ export function ClassicRomanceTemplate({
                 ) : (
                   <div
                     className="w-full h-80 flex items-center justify-center"
-                    style={{ backgroundColor: `${primaryColor}15` }}
+                    style={{ backgroundColor: `${getColor('story', 'accentColor', primaryColor)}15` }}
                   >
-                    <Heart className="h-16 w-16" style={{ color: `${primaryColor}40` }} />
+                    <Heart className="h-16 w-16" style={{ color: `${getColor('story', 'accentColor', primaryColor)}40` }} />
                   </div>
                 )}
               </div>
@@ -221,13 +234,13 @@ export function ClassicRomanceTemplate({
               {/* Text */}
               <div>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
-                  <Heart className="h-4 w-4" style={{ color: primaryColor }} />
+                  <div className="h-px w-12" style={{ backgroundColor: getColor('story', 'accentColor', primaryColor) }} />
+                  <Heart className="h-4 w-4" style={{ color: getColor('story', 'accentColor', primaryColor) }} />
                 </div>
-                <h2 className="font-serif text-3xl mb-6 italic" style={{ color: primaryColor }}>
+                <h2 className="font-serif text-3xl mb-6 italic" style={{ color: getColor('story', 'titleColor', primaryColor) }}>
                   {content.storyTitle}
                 </h2>
-                <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+                <p className="text-lg leading-relaxed whitespace-pre-line" style={{ color: getColor('story', 'textColor', '#2c2c2c'), opacity: 0.8 }}>
                   {content.storyContent}
                 </p>
               </div>
@@ -238,14 +251,14 @@ export function ClassicRomanceTemplate({
 
       {/* Timeline Section */}
       {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
-        <section className="py-20 px-4 bg-white">
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('timeline', 'backgroundColor', '#FFFFFF') }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="font-serif text-3xl italic mb-2" style={{ color: primaryColor }}>
+              <h2 className="font-serif text-3xl italic mb-2" style={{ color: getColor('timeline', 'titleColor', primaryColor) }}>
                 {content.timelineTitle}
               </h2>
               {content.timelineSubtitle && (
-                <p className="text-gray-600">{content.timelineSubtitle}</p>
+                <p style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{content.timelineSubtitle}</p>
               )}
             </div>
 
@@ -254,7 +267,7 @@ export function ClassicRomanceTemplate({
               {/* Center Line */}
               <div
                 className="absolute left-1/2 top-0 bottom-0 w-px hidden md:block"
-                style={{ backgroundColor: `${primaryColor}30` }}
+                style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}30` }}
               />
 
               <div className="space-y-8">
@@ -268,15 +281,15 @@ export function ClassicRomanceTemplate({
                   >
                     {/* Content */}
                     <div className={cn('text-center md:text-right', index % 2 === 1 && 'md:text-left md:order-2')}>
-                      <h3 className="font-serif text-xl mb-1">{event.title}</h3>
-                      <p className="text-sm text-gray-600">{event.description}</p>
+                      <h3 className="font-serif text-xl mb-1" style={{ color: getColor('timeline', 'titleColor', '#1a1a2e') }}>{event.title}</h3>
+                      <p className="text-sm" style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{event.description}</p>
                     </div>
 
                     {/* Time Badge - Center */}
                     <div className={cn('flex justify-center md:absolute md:left-1/2 md:-translate-x-1/2', index % 2 === 1 && 'md:order-1')}>
                       <div
                         className="px-4 py-2 rounded-full text-white font-medium text-sm"
-                        style={{ backgroundColor: primaryColor }}
+                        style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }}
                       >
                         {event.time}
                       </div>
@@ -609,25 +622,31 @@ export function ClassicRomanceTemplate({
       {/* RSVP Section */}
       {content.showRsvpSection && (
         <section
-          className="py-20 px-4 text-center text-white"
-          style={{ backgroundColor: '#2c2c2c' }}
+          className="py-20 px-4 text-center"
+          style={{ backgroundColor: getColor('rsvp', 'backgroundColor', '#2c2c2c') }}
         >
           <div className="max-w-xl mx-auto">
-            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl mb-4 italic">{content.rsvpTitle}</h2>
-            <p className="mb-8 opacity-80">{content.rsvpDescription}</p>
+            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: getColor('rsvp', 'accentColor', primaryColor) }} />
+            <h2 className="font-serif text-3xl mb-4 italic" style={{ color: getColor('rsvp', 'titleColor', '#FFFFFF') }}>{content.rsvpTitle}</h2>
+            <p className="mb-8 opacity-80" style={{ color: getColor('rsvp', 'textColor', '#FFFFFF') }}>{content.rsvpDescription}</p>
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-10 py-4 font-semibold text-[#2c2c2c] transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="inline-block px-10 py-4 font-semibold transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#2c2c2c')
+                }}
               >
                 RSVP Now
               </Link>
             ) : (
               <button
-                className="px-10 py-4 font-semibold text-[#2c2c2c] transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="px-10 py-4 font-semibold transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#2c2c2c')
+                }}
               >
                 RSVP Now
               </button>
@@ -681,14 +700,14 @@ export function ClassicRomanceTemplate({
       )}
 
       {/* Footer */}
-      <footer className="py-12 text-center" style={{ backgroundColor: '#2c2c2c', color: '#faf8f5' }}>
+      <footer className="py-12 text-center" style={{ backgroundColor: getColor('footer', 'backgroundColor', '#2c2c2c') }}>
         <div className="flex items-center justify-center gap-2 mb-4">
-          <div className="h-px w-8" style={{ backgroundColor: primaryColor }} />
-          <Heart className="h-5 w-5" style={{ color: primaryColor }} />
-          <div className="h-px w-8" style={{ backgroundColor: primaryColor }} />
+          <div className="h-px w-8" style={{ backgroundColor: getColor('footer', 'accentColor', primaryColor) }} />
+          <Heart className="h-5 w-5" style={{ color: getColor('footer', 'accentColor', primaryColor) }} />
+          <div className="h-px w-8" style={{ backgroundColor: getColor('footer', 'accentColor', primaryColor) }} />
         </div>
-        <p className="mb-2 opacity-90">{content.footerMessage}</p>
-        <p className="font-serif italic opacity-80">
+        <p className="mb-2 opacity-90" style={{ color: getColor('footer', 'textColor', '#faf8f5') }}>{content.footerMessage}</p>
+        <p className="font-serif italic opacity-80" style={{ color: getColor('footer', 'textColor', '#faf8f5') }}>
           {partner1Name} & {partner2Name}
         </p>
       </footer>

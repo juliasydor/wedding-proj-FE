@@ -95,6 +95,7 @@ model Wedding {
   // Conteúdo do site
   siteContent     Json?     // Objeto com todos os textos customizáveis
   customSections  Json?     // Seções customizadas adicionadas pelo casal
+  sectionColors   Json?     // Cores personalizadas por seção do template
 
   // Dados bancários (para receber presentes)
   bankName        String?
@@ -679,6 +680,112 @@ git commit -m "feat: add PIX payment support"
 git commit -m "feat: add image upload to S3"
 git commit -m "feat: add rate limiting and security middleware"
 git commit -m "docs: add API documentation with Swagger"
+```
+
+---
+
+## Estruturas JSON
+
+### SectionColors (Cores Personalizadas por Seção)
+
+O campo `sectionColors` do Wedding permite personalizar as cores de cada seção do template:
+
+```typescript
+interface SectionColors {
+  hero: {
+    titleColor?: string;      // Cor do título principal (nomes do casal)
+    subtitleColor?: string;   // Cor do subtítulo
+    overlayColor?: string;    // Cor da sobreposição sobre a imagem
+    overlayOpacity?: number;  // Opacidade da sobreposição (0-100)
+  };
+  dateBar: {
+    titleColor?: string;      // Cor do texto
+    backgroundColor?: string; // Cor de fundo
+    accentColor?: string;     // Cor dos ícones
+  };
+  story: {
+    titleColor?: string;      // Cor do título
+    textColor?: string;       // Cor do texto
+    backgroundColor?: string; // Cor de fundo
+    accentColor?: string;     // Cor de destaques
+  };
+  timeline: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+    accentColor?: string;     // Cor dos pontos/linha do timeline
+  };
+  dressCode: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+    accentColor?: string;     // Cor de fundo dos cards
+  };
+  weddingParty: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+    accentColor?: string;
+  };
+  gallery: {
+    titleColor?: string;
+    backgroundColor?: string;
+  };
+  accommodations: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+  };
+  gifts: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+  };
+  travelTips: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+  };
+  rsvp: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+    buttonColor?: string;      // Cor do botão de RSVP
+    buttonTextColor?: string;  // Cor do texto do botão
+  };
+  hashtag: {
+    titleColor?: string;
+    accentColor?: string;      // Cor da hashtag
+    backgroundColor?: string;
+  };
+  footer: {
+    textColor?: string;
+    backgroundColor?: string;
+    accentColor?: string;      // Cor do ícone/detalhe
+  };
+}
+```
+
+### DressCode (Código de Vestimenta)
+
+```typescript
+interface DressCode {
+  guests?: {
+    palette: string[];         // Array de cores hex
+    lengths?: ('short' | 'midi' | 'long')[];
+    enabled: boolean;
+  };
+  bridesmaids?: {
+    palette: string[];
+    lengths?: ('short' | 'midi' | 'long')[];
+    enabled: boolean;
+  };
+  groomsmen?: {
+    palette: string[];
+    style?: 'suit' | 'tuxedo' | 'casual' | 'semi-formal';
+    enabled: boolean;
+  };
+}
 ```
 
 ---

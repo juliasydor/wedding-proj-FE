@@ -7,7 +7,7 @@ import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent } from '@/entities/wedding/model/store';
 import type { CustomSection } from '@/entities/wedding/model/store';
-import type { DressCode } from '@/shared/types';
+import type { DressCode, SectionColors } from '@/shared/types';
 
 interface ChurchWeddingTemplateProps {
   partner1Name: string;
@@ -22,6 +22,7 @@ interface ChurchWeddingTemplateProps {
   customSections?: CustomSection[];
   weddingSlug?: string;
   dressCode?: DressCode | null;
+  sectionColors?: SectionColors | null;
 }
 
 const defaultContent: SiteContent = {
@@ -87,10 +88,22 @@ export function ChurchWeddingTemplate({
   customSections = [],
   weddingSlug,
   dressCode,
+  sectionColors,
 }: ChurchWeddingTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
   const [openTravelTip, setOpenTravelTip] = useState<string | null>(null);
+
+  // Helper to get section color with fallback to default
+  const getColor = (section: keyof SectionColors, key: string, fallback: string) => {
+    if (sectionColors && sectionColors[section]) {
+      const sectionConfig = sectionColors[section] as Record<string, string | number>;
+      if (sectionConfig[key]) {
+        return sectionConfig[key] as string;
+      }
+    }
+    return fallback;
+  };
 
   return (
     <div
@@ -145,30 +158,30 @@ export function ChurchWeddingTemplate({
             </div>
           </div>
 
-          <p className="text-sm uppercase tracking-[0.4em] mb-6" style={{ color: primaryColor }}>
+          <p className="text-sm uppercase tracking-[0.4em] mb-6" style={{ color: getColor('hero', 'subtitleColor', primaryColor) }}>
             {content.heroTitle}
           </p>
 
-          <h1 className="font-serif text-5xl md:text-7xl mb-2 italic">
+          <h1 className="font-serif text-5xl md:text-7xl mb-2 italic" style={{ color: getColor('hero', 'titleColor', '#1a1a2e') }}>
             {partner1Name || 'Partner 1'}
           </h1>
 
           <div className="flex items-center justify-center my-6">
             <div className="flex items-center gap-6">
-              <div className="h-px w-20" style={{ backgroundColor: primaryColor }} />
+              <div className="h-px w-20" style={{ backgroundColor: getColor('hero', 'accentColor', primaryColor) }} />
               <Heart
                 className="h-8 w-8"
-                style={{ color: primaryColor, fill: primaryColor }}
+                style={{ color: getColor('hero', 'accentColor', primaryColor), fill: getColor('hero', 'accentColor', primaryColor) }}
               />
-              <div className="h-px w-20" style={{ backgroundColor: primaryColor }} />
+              <div className="h-px w-20" style={{ backgroundColor: getColor('hero', 'accentColor', primaryColor) }} />
             </div>
           </div>
 
-          <h1 className="font-serif text-5xl md:text-7xl italic">
+          <h1 className="font-serif text-5xl md:text-7xl italic" style={{ color: getColor('hero', 'titleColor', '#1a1a2e') }}>
             {partner2Name || 'Partner 2'}
           </h1>
 
-          <p className="mt-6 text-lg italic opacity-70">{content.heroSubtitle}</p>
+          <p className="mt-6 text-lg italic opacity-70" style={{ color: getColor('hero', 'subtitleColor', '#1a1a2e') }}>{content.heroSubtitle}</p>
 
           {weddingDate && (
             <div className="mt-10">
@@ -235,7 +248,7 @@ export function ChurchWeddingTemplate({
 
       {/* Our Story Section */}
       {content.showStorySection && (
-        <section className="py-20 px-4 bg-white">
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('story', 'backgroundColor', '#FFFFFF') }}>
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               {/* Image */}
@@ -244,7 +257,7 @@ export function ChurchWeddingTemplate({
                   <div className="relative">
                     <div
                       className="absolute -inset-3 border-2"
-                      style={{ borderColor: `${primaryColor}30` }}
+                      style={{ borderColor: `${getColor('story', 'accentColor', primaryColor)}30` }}
                     />
                     <img
                       src={content.storyImage}
@@ -255,9 +268,9 @@ export function ChurchWeddingTemplate({
                 ) : (
                   <div
                     className="w-full h-80 flex items-center justify-center"
-                    style={{ backgroundColor: `${primaryColor}10` }}
+                    style={{ backgroundColor: `${getColor('story', 'accentColor', primaryColor)}10` }}
                   >
-                    <Cross className="h-16 w-16" style={{ color: `${primaryColor}30` }} />
+                    <Cross className="h-16 w-16" style={{ color: `${getColor('story', 'accentColor', primaryColor)}30` }} />
                   </div>
                 )}
               </div>
@@ -265,12 +278,12 @@ export function ChurchWeddingTemplate({
               {/* Text */}
               <div className="order-1 md:order-2">
                 <div className="flex items-center gap-4 mb-6">
-                  <BookOpen className="h-6 w-6" style={{ color: primaryColor }} />
-                  <h2 className="font-serif text-3xl italic" style={{ color: primaryColor }}>
+                  <BookOpen className="h-6 w-6" style={{ color: getColor('story', 'accentColor', primaryColor) }} />
+                  <h2 className="font-serif text-3xl italic" style={{ color: getColor('story', 'titleColor', primaryColor) }}>
                     {content.storyTitle}
                   </h2>
                 </div>
-                <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+                <p className="text-lg leading-relaxed whitespace-pre-line" style={{ color: getColor('story', 'textColor', '#1a1a2e'), opacity: 0.8 }}>
                   {content.storyContent}
                 </p>
               </div>
@@ -281,19 +294,19 @@ export function ChurchWeddingTemplate({
 
       {/* Timeline Section */}
       {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
-        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}08` }}>
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('timeline', 'backgroundColor', `${primaryColor}08`) }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-4 mb-4">
-                <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
-                <Cross className="h-5 w-5" style={{ color: primaryColor }} />
-                <div className="h-px w-12" style={{ backgroundColor: primaryColor }} />
+                <div className="h-px w-12" style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }} />
+                <Cross className="h-5 w-5" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
+                <div className="h-px w-12" style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }} />
               </div>
-              <h2 className="font-serif text-3xl italic mb-2" style={{ color: primaryColor }}>
+              <h2 className="font-serif text-3xl italic mb-2" style={{ color: getColor('timeline', 'titleColor', primaryColor) }}>
                 {content.timelineTitle}
               </h2>
               {content.timelineSubtitle && (
-                <p className="text-gray-600">{content.timelineSubtitle}</p>
+                <p style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{content.timelineSubtitle}</p>
               )}
             </div>
 
@@ -302,7 +315,7 @@ export function ChurchWeddingTemplate({
               {/* Center line */}
               <div
                 className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 hidden md:block"
-                style={{ backgroundColor: `${primaryColor}30` }}
+                style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}30` }}
               />
 
               <div className="space-y-8">
@@ -317,9 +330,9 @@ export function ChurchWeddingTemplate({
                     {/* Dot marker */}
                     <div
                       className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full items-center justify-center bg-white border-2 z-10"
-                      style={{ borderColor: primaryColor }}
+                      style={{ borderColor: getColor('timeline', 'accentColor', primaryColor) }}
                     >
-                      <Cross className="h-4 w-4" style={{ color: primaryColor }} />
+                      <Cross className="h-4 w-4" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
                     </div>
 
                     {/* Card */}
@@ -332,14 +345,14 @@ export function ChurchWeddingTemplate({
                       <div className="flex items-center gap-3 mb-2">
                         <span
                           className="px-3 py-1 rounded text-sm font-medium text-white"
-                          style={{ backgroundColor: primaryColor }}
+                          style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }}
                         >
                           {event.time}
                         </span>
                       </div>
-                      <h3 className="font-serif text-xl mb-1 italic">{event.title}</h3>
+                      <h3 className="font-serif text-xl mb-1 italic" style={{ color: getColor('timeline', 'titleColor', '#1a1a2e') }}>{event.title}</h3>
                       {event.description && (
-                        <p className="text-sm text-gray-600">{event.description}</p>
+                        <p className="text-sm" style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{event.description}</p>
                       )}
                     </div>
                   </div>
@@ -670,25 +683,31 @@ export function ChurchWeddingTemplate({
       {/* RSVP Section */}
       {content.showRsvpSection && (
         <section
-          className="py-20 px-4 text-center text-white"
-          style={{ backgroundColor: primaryColor }}
+          className="py-20 px-4 text-center"
+          style={{ backgroundColor: getColor('rsvp', 'backgroundColor', primaryColor) }}
         >
           <div className="max-w-xl mx-auto">
-            <Mail className="h-10 w-10 mx-auto mb-4 opacity-80" />
-            <h2 className="font-serif text-3xl mb-4 italic">{content.rsvpTitle}</h2>
-            <p className="mb-8 opacity-80">{content.rsvpDescription}</p>
+            <Mail className="h-10 w-10 mx-auto mb-4 opacity-80" style={{ color: getColor('rsvp', 'titleColor', '#FFFFFF') }} />
+            <h2 className="font-serif text-3xl mb-4 italic" style={{ color: getColor('rsvp', 'titleColor', '#FFFFFF') }}>{content.rsvpTitle}</h2>
+            <p className="mb-8 opacity-80" style={{ color: getColor('rsvp', 'textColor', '#FFFFFF') }}>{content.rsvpDescription}</p>
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-10 py-4 font-semibold bg-white transition-all hover:opacity-90"
-                style={{ color: primaryColor }}
+                className="inline-block px-10 py-4 font-semibold transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', '#FFFFFF'),
+                  color: getColor('rsvp', 'buttonTextColor', primaryColor)
+                }}
               >
                 RSVP Now
               </Link>
             ) : (
               <button
-                className="px-10 py-4 font-semibold bg-white transition-all hover:opacity-90"
-                style={{ color: primaryColor }}
+                className="px-10 py-4 font-semibold transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', '#FFFFFF'),
+                  color: getColor('rsvp', 'buttonTextColor', primaryColor)
+                }}
               >
                 RSVP Now
               </button>
@@ -745,20 +764,20 @@ export function ChurchWeddingTemplate({
 
       {/* Footer */}
       <footer
-        className="py-12 text-center text-white relative"
-        style={{ backgroundColor: primaryColor }}
+        className="py-12 text-center relative"
+        style={{ backgroundColor: getColor('footer', 'backgroundColor', primaryColor) }}
       >
         {/* Decorative top border */}
-        <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: secondaryColor }} />
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: getColor('footer', 'accentColor', secondaryColor) }} />
 
         <div className="pt-4">
           <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="h-px w-12 bg-white/50" />
-            <Cross className="h-6 w-6 opacity-80" />
-            <div className="h-px w-12 bg-white/50" />
+            <div className="h-px w-12" style={{ backgroundColor: `${getColor('footer', 'textColor', '#FFFFFF')}50` }} />
+            <Cross className="h-6 w-6 opacity-80" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }} />
+            <div className="h-px w-12" style={{ backgroundColor: `${getColor('footer', 'textColor', '#FFFFFF')}50` }} />
           </div>
-          <p className="mb-2 opacity-90 font-serif italic">{content.footerMessage}</p>
-          <p className="font-serif text-lg">
+          <p className="mb-2 opacity-90 font-serif italic" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>{content.footerMessage}</p>
+          <p className="font-serif text-lg" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>
             {partner1Name} & {partner2Name}
           </p>
         </div>

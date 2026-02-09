@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
-import type { DressCode } from '@/shared/types';
+import type { DressCode, SectionColors } from '@/shared/types';
 
 interface ModernEleganceTemplateProps {
   partner1Name: string;
@@ -21,6 +21,7 @@ interface ModernEleganceTemplateProps {
   customSections?: CustomSection[];
   weddingSlug?: string;
   dressCode?: DressCode | null;
+  sectionColors?: SectionColors | null;
 }
 
 // Accordion component for Travel Tips
@@ -127,10 +128,22 @@ export function ModernEleganceTemplate({
   customSections = [],
   weddingSlug,
   dressCode,
+  sectionColors,
 }: ModernEleganceTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
   const [openTip, setOpenTip] = useState<string | null>(null);
+
+  // Helper to get section color with fallback to default
+  const getColor = (section: keyof SectionColors, key: string, fallback: string) => {
+    if (sectionColors && sectionColors[section]) {
+      const sectionConfig = sectionColors[section] as Record<string, string | number>;
+      if (sectionConfig[key]) {
+        return sectionConfig[key] as string;
+      }
+    }
+    return fallback;
+  };
 
   return (
     <div
@@ -155,22 +168,42 @@ export function ModernEleganceTemplate({
               style={{ background: `linear-gradient(135deg, #1a1a2e 0%, ${primaryColor}30 100%)` }}
             />
           )}
-          <div className="absolute inset-0 bg-black/30" />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: getColor('hero', 'overlayColor', '#000000'),
+              opacity: (sectionColors?.hero?.overlayOpacity ?? 30) / 100
+            }}
+          />
         </div>
 
         {/* Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4">
-          <p className="text-sm uppercase tracking-[0.4em] mb-8 opacity-80">
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
+          <p
+            className="text-sm uppercase tracking-[0.4em] mb-8 opacity-80"
+            style={{ color: getColor('hero', 'subtitleColor', '#FFFFFF') }}
+          >
             {content.heroTitle}
           </p>
 
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl mb-4">
+          <h1
+            className="font-serif text-5xl md:text-7xl lg:text-8xl mb-4"
+            style={{ color: getColor('hero', 'titleColor', '#FFFFFF') }}
+          >
             {partner1Name || 'Sophia'}
           </h1>
 
-          <div className="text-4xl md:text-5xl font-serif italic opacity-70 my-2">&</div>
+          <div
+            className="text-4xl md:text-5xl font-serif italic opacity-70 my-2"
+            style={{ color: getColor('hero', 'titleColor', '#FFFFFF') }}
+          >
+            &
+          </div>
 
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl mb-8">
+          <h1
+            className="font-serif text-5xl md:text-7xl lg:text-8xl mb-8"
+            style={{ color: getColor('hero', 'titleColor', '#FFFFFF') }}
+          >
             {partner2Name || 'Alexander'}
           </h1>
 
@@ -194,12 +227,15 @@ export function ModernEleganceTemplate({
 
       {/* Date & Location Bar */}
       {(weddingDate || location) && (
-        <div className="py-6 px-4 bg-gray-50 border-y border-gray-100">
+        <div
+          className="py-6 px-4 border-y border-gray-100"
+          style={{ backgroundColor: getColor('dateBar', 'backgroundColor', '#f9fafb') }}
+        >
           <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-sm">
             {weddingDate && (
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" style={{ color: primaryColor }} />
-                <span>
+                <Calendar className="h-4 w-4" style={{ color: getColor('dateBar', 'accentColor', primaryColor) }} />
+                <span style={{ color: getColor('dateBar', 'titleColor', '#1a1a2e') }}>
                   {weddingDate.toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
@@ -211,8 +247,8 @@ export function ModernEleganceTemplate({
             )}
             {location && (
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" style={{ color: primaryColor }} />
-                <span>{location}</span>
+                <MapPin className="h-4 w-4" style={{ color: getColor('dateBar', 'accentColor', primaryColor) }} />
+                <span style={{ color: getColor('dateBar', 'titleColor', '#1a1a2e') }}>{location}</span>
               </div>
             )}
           </div>
@@ -221,7 +257,10 @@ export function ModernEleganceTemplate({
 
       {/* Our Story Section */}
       {content.showStorySection && (
-        <section className="py-20 px-4">
+        <section
+          className="py-20 px-4"
+          style={{ backgroundColor: getColor('story', 'backgroundColor', '#FFFFFF') }}
+        >
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               {/* Image */}
@@ -235,20 +274,29 @@ export function ModernEleganceTemplate({
                 ) : (
                   <div
                     className="w-full h-[400px] rounded-lg"
-                    style={{ backgroundColor: `${primaryColor}15` }}
+                    style={{ backgroundColor: `${getColor('story', 'accentColor', primaryColor)}15` }}
                   />
                 )}
               </div>
 
               {/* Text */}
               <div>
-                <p className="text-sm uppercase tracking-[0.2em] mb-2" style={{ color: primaryColor }}>
+                <p
+                  className="text-sm uppercase tracking-[0.2em] mb-2"
+                  style={{ color: getColor('story', 'accentColor', primaryColor) }}
+                >
                   Our Story
                 </p>
-                <h2 className="font-serif text-3xl md:text-4xl mb-6 text-gray-900">
+                <h2
+                  className="font-serif text-3xl md:text-4xl mb-6"
+                  style={{ color: getColor('story', 'titleColor', '#111827') }}
+                >
                   {content.storyTitle}
                 </h2>
-                <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                <p
+                  className="leading-relaxed whitespace-pre-line"
+                  style={{ color: getColor('story', 'textColor', '#4b5563') }}
+                >
                   {content.storyContent}
                 </p>
               </div>
@@ -259,17 +307,28 @@ export function ModernEleganceTemplate({
 
       {/* Timeline Section */}
       {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
-        <section className="py-20 px-4 bg-gray-50">
+        <section
+          className="py-20 px-4"
+          style={{ backgroundColor: getColor('timeline', 'backgroundColor', '#f9fafb') }}
+        >
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <p className="text-sm uppercase tracking-[0.2em] mb-2" style={{ color: primaryColor }}>
+              <p
+                className="text-sm uppercase tracking-[0.2em] mb-2"
+                style={{ color: getColor('timeline', 'accentColor', primaryColor) }}
+              >
                 The Schedule
               </p>
-              <h2 className="font-serif text-3xl md:text-4xl text-gray-900">
+              <h2
+                className="font-serif text-3xl md:text-4xl"
+                style={{ color: getColor('timeline', 'titleColor', '#111827') }}
+              >
                 {content.timelineTitle}
               </h2>
               {content.timelineSubtitle && (
-                <p className="mt-3 text-gray-600">{content.timelineSubtitle}</p>
+                <p className="mt-3" style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>
+                  {content.timelineSubtitle}
+                </p>
               )}
             </div>
 
@@ -278,7 +337,7 @@ export function ModernEleganceTemplate({
               {/* Vertical line */}
               <div
                 className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px"
-                style={{ backgroundColor: `${primaryColor}30` }}
+                style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}30` }}
               />
 
               <div className="space-y-8">
@@ -293,7 +352,7 @@ export function ModernEleganceTemplate({
                     {/* Dot */}
                     <div
                       className="absolute left-4 md:left-1/2 w-3 h-3 rounded-full -translate-x-1/2 mt-2"
-                      style={{ backgroundColor: primaryColor }}
+                      style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }}
                     />
 
                     {/* Content */}
@@ -303,13 +362,20 @@ export function ModernEleganceTemplate({
                     )}>
                       <div
                         className="text-sm font-medium mb-1"
-                        style={{ color: primaryColor }}
+                        style={{ color: getColor('timeline', 'accentColor', primaryColor) }}
                       >
                         {event.time}
                       </div>
-                      <h3 className="font-semibold text-gray-900 mb-1">{event.title}</h3>
+                      <h3
+                        className="font-semibold mb-1"
+                        style={{ color: getColor('timeline', 'titleColor', '#111827') }}
+                      >
+                        {event.title}
+                      </h3>
                       {event.description && (
-                        <p className="text-sm text-gray-600">{event.description}</p>
+                        <p className="text-sm" style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>
+                          {event.description}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -322,11 +388,20 @@ export function ModernEleganceTemplate({
 
       {/* Dress Code Section */}
       {content.showDressCodeSection && dressCode && (dressCode.guests?.enabled || dressCode.bridesmaids?.enabled || dressCode.groomsmen?.enabled) && (
-        <section className="py-20 px-4">
+        <section
+          className="py-20 px-4"
+          style={{ backgroundColor: getColor('dressCode', 'backgroundColor', '#FFFFFF') }}
+        >
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <Shirt className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
-              <h2 className="font-serif text-3xl md:text-4xl text-gray-900">
+              <Shirt
+                className="h-8 w-8 mx-auto mb-4"
+                style={{ color: getColor('dressCode', 'accentColor', primaryColor) }}
+              />
+              <h2
+                className="font-serif text-3xl md:text-4xl"
+                style={{ color: getColor('dressCode', 'titleColor', '#111827') }}
+              >
                 {content.dressCodeTitle || 'Dress Code'}
               </h2>
             </div>
@@ -334,11 +409,24 @@ export function ModernEleganceTemplate({
             <div className="grid md:grid-cols-3 gap-6">
               {/* Guests */}
               {dressCode.guests?.enabled && (
-                <div className="bg-gray-50 rounded-xl p-6 text-center">
-                  <h3 className="font-semibold text-gray-900 mb-4">Guests</h3>
+                <div
+                  className="rounded-xl p-6 text-center"
+                  style={{ backgroundColor: getColor('dressCode', 'accentColor', '#f9fafb') }}
+                >
+                  <h3
+                    className="font-semibold mb-4"
+                    style={{ color: getColor('dressCode', 'titleColor', '#111827') }}
+                  >
+                    Guests
+                  </h3>
                   {dressCode.guests.palette && dressCode.guests.palette.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <p
+                        className="text-xs uppercase tracking-wider mb-2"
+                        style={{ color: getColor('dressCode', 'textColor', '#6b7280') }}
+                      >
+                        Colors
+                      </p>
                       <div className="flex justify-center gap-2 flex-wrap">
                         {dressCode.guests.palette.map((color, i) => (
                           <div
@@ -353,8 +441,13 @@ export function ModernEleganceTemplate({
                   )}
                   {dressCode.guests.lengths && dressCode.guests.lengths.length > 0 && (
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Dress Length</p>
-                      <p className="text-sm text-gray-700">
+                      <p
+                        className="text-xs uppercase tracking-wider mb-2"
+                        style={{ color: getColor('dressCode', 'textColor', '#6b7280') }}
+                      >
+                        Dress Length
+                      </p>
+                      <p className="text-sm" style={{ color: getColor('dressCode', 'textColor', '#4b5563') }}>
                         {dressCode.guests.lengths.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(', ')}
                       </p>
                     </div>
@@ -364,11 +457,24 @@ export function ModernEleganceTemplate({
 
               {/* Bridesmaids */}
               {dressCode.bridesmaids?.enabled && (
-                <div className="bg-gray-50 rounded-xl p-6 text-center">
-                  <h3 className="font-semibold text-gray-900 mb-4">Bridesmaids</h3>
+                <div
+                  className="rounded-xl p-6 text-center"
+                  style={{ backgroundColor: getColor('dressCode', 'accentColor', '#f9fafb') }}
+                >
+                  <h3
+                    className="font-semibold mb-4"
+                    style={{ color: getColor('dressCode', 'titleColor', '#111827') }}
+                  >
+                    Bridesmaids
+                  </h3>
                   {dressCode.bridesmaids.palette && dressCode.bridesmaids.palette.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <p
+                        className="text-xs uppercase tracking-wider mb-2"
+                        style={{ color: getColor('dressCode', 'textColor', '#6b7280') }}
+                      >
+                        Colors
+                      </p>
                       <div className="flex justify-center gap-2 flex-wrap">
                         {dressCode.bridesmaids.palette.map((color, i) => (
                           <div
@@ -383,8 +489,13 @@ export function ModernEleganceTemplate({
                   )}
                   {dressCode.bridesmaids.lengths && dressCode.bridesmaids.lengths.length > 0 && (
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Dress Length</p>
-                      <p className="text-sm text-gray-700">
+                      <p
+                        className="text-xs uppercase tracking-wider mb-2"
+                        style={{ color: getColor('dressCode', 'textColor', '#6b7280') }}
+                      >
+                        Dress Length
+                      </p>
+                      <p className="text-sm" style={{ color: getColor('dressCode', 'textColor', '#4b5563') }}>
                         {dressCode.bridesmaids.lengths.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(', ')}
                       </p>
                     </div>
@@ -394,11 +505,24 @@ export function ModernEleganceTemplate({
 
               {/* Groomsmen */}
               {dressCode.groomsmen?.enabled && (
-                <div className="bg-gray-50 rounded-xl p-6 text-center">
-                  <h3 className="font-semibold text-gray-900 mb-4">Groomsmen</h3>
+                <div
+                  className="rounded-xl p-6 text-center"
+                  style={{ backgroundColor: getColor('dressCode', 'accentColor', '#f9fafb') }}
+                >
+                  <h3
+                    className="font-semibold mb-4"
+                    style={{ color: getColor('dressCode', 'titleColor', '#111827') }}
+                  >
+                    Groomsmen
+                  </h3>
                   {dressCode.groomsmen.palette && dressCode.groomsmen.palette.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Colors</p>
+                      <p
+                        className="text-xs uppercase tracking-wider mb-2"
+                        style={{ color: getColor('dressCode', 'textColor', '#6b7280') }}
+                      >
+                        Colors
+                      </p>
                       <div className="flex justify-center gap-2 flex-wrap">
                         {dressCode.groomsmen.palette.map((color, i) => (
                           <div
@@ -413,8 +537,13 @@ export function ModernEleganceTemplate({
                   )}
                   {dressCode.groomsmen.style && (
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Style</p>
-                      <p className="text-sm text-gray-700">
+                      <p
+                        className="text-xs uppercase tracking-wider mb-2"
+                        style={{ color: getColor('dressCode', 'textColor', '#6b7280') }}
+                      >
+                        Style
+                      </p>
+                      <p className="text-sm" style={{ color: getColor('dressCode', 'textColor', '#4b5563') }}>
                         {dressCode.groomsmen.style.charAt(0).toUpperCase() + dressCode.groomsmen.style.slice(1).replace('-', ' ')}
                       </p>
                     </div>
@@ -598,25 +727,41 @@ export function ModernEleganceTemplate({
       {/* RSVP Section */}
       {content.showRsvpSection && (
         <section
-          className="py-20 px-4 text-white"
-          style={{ backgroundColor: '#1a1a2e' }}
+          className="py-20 px-4"
+          style={{ backgroundColor: getColor('rsvp', 'backgroundColor', '#1a1a2e') }}
         >
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl mb-4">{content.rsvpTitle}</h2>
-            <p className="text-white/80 mb-8">{content.rsvpDescription}</p>
+            <h2
+              className="font-serif text-3xl md:text-4xl mb-4"
+              style={{ color: getColor('rsvp', 'titleColor', '#FFFFFF') }}
+            >
+              {content.rsvpTitle}
+            </h2>
+            <p
+              className="mb-8 opacity-80"
+              style={{ color: getColor('rsvp', 'textColor', '#FFFFFF') }}
+            >
+              {content.rsvpDescription}
+            </p>
 
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-8 py-3 rounded-full font-medium text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="inline-block px-8 py-3 rounded-full font-medium transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#FFFFFF')
+                }}
               >
                 RSVP Now
               </Link>
             ) : (
               <button
-                className="px-8 py-3 rounded-full font-medium text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="px-8 py-3 rounded-full font-medium transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#FFFFFF')
+                }}
               >
                 RSVP Now
               </button>
@@ -627,12 +772,20 @@ export function ModernEleganceTemplate({
 
       {/* Hashtag Section */}
       {content.showHashtagSection && content.weddingHashtag && (
-        <section className="py-12 px-4 bg-gray-50">
+        <section
+          className="py-12 px-4"
+          style={{ backgroundColor: getColor('hashtag', 'backgroundColor', '#f9fafb') }}
+        >
           <div className="text-center">
-            <p className="text-sm text-gray-500 mb-2">Share your photos with</p>
+            <p
+              className="text-sm mb-2"
+              style={{ color: getColor('hashtag', 'titleColor', '#6b7280') }}
+            >
+              Share your photos with
+            </p>
             <p
               className="text-2xl font-medium"
-              style={{ color: primaryColor }}
+              style={{ color: getColor('hashtag', 'accentColor', primaryColor) }}
             >
               #{content.weddingHashtag}
             </p>
@@ -642,14 +795,25 @@ export function ModernEleganceTemplate({
 
       {/* Footer */}
       <footer
-        className="py-12 text-center text-white"
-        style={{ backgroundColor: '#1a1a2e' }}
+        className="py-12 text-center"
+        style={{ backgroundColor: getColor('footer', 'backgroundColor', '#1a1a2e') }}
       >
-        <div className="font-serif text-3xl mb-3">
+        <div
+          className="font-serif text-3xl mb-3"
+          style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}
+        >
           {partner1Name?.charAt(0) || 'S'} & {partner2Name?.charAt(0) || 'A'}
         </div>
-        <p className="opacity-70 text-sm mb-4">{content.footerMessage}</p>
-        <Heart className="h-5 w-5 mx-auto opacity-50" style={{ color: primaryColor }} />
+        <p
+          className="opacity-70 text-sm mb-4"
+          style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}
+        >
+          {content.footerMessage}
+        </p>
+        <Heart
+          className="h-5 w-5 mx-auto opacity-50"
+          style={{ color: getColor('footer', 'accentColor', primaryColor) }}
+        />
       </footer>
     </div>
   );

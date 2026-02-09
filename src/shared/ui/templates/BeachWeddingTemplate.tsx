@@ -7,7 +7,7 @@ import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent } from '@/entities/wedding/model/store';
 import type { CustomSection } from '@/entities/wedding/model/store';
-import type { DressCode } from '@/shared/types';
+import type { DressCode, SectionColors } from '@/shared/types';
 
 interface BeachWeddingTemplateProps {
   partner1Name: string;
@@ -22,6 +22,7 @@ interface BeachWeddingTemplateProps {
   customSections?: CustomSection[];
   weddingSlug?: string;
   dressCode?: DressCode | null;
+  sectionColors?: SectionColors | null;
 }
 
 const defaultContent: SiteContent = {
@@ -88,9 +89,21 @@ export function BeachWeddingTemplate({
   customSections = [],
   weddingSlug,
   dressCode,
+  sectionColors,
 }: BeachWeddingTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
+
+  // Helper to get section color with fallback to default
+  const getColor = (section: keyof SectionColors, key: string, fallback: string) => {
+    if (sectionColors && sectionColors[section]) {
+      const sectionConfig = sectionColors[section] as Record<string, string | number>;
+      if (sectionConfig[key]) {
+        return sectionConfig[key] as string;
+      }
+    }
+    return fallback;
+  };
 
   return (
     <div
@@ -122,12 +135,12 @@ export function BeachWeddingTemplate({
 
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
-          <p className="text-sm uppercase tracking-[0.3em] text-white/90 mb-2">
+          <p className="text-sm uppercase tracking-[0.3em] mb-2" style={{ color: getColor('hero', 'subtitleColor', 'rgba(255,255,255,0.9)') }}>
             {content.heroTitle}
           </p>
           <h1
-            className="font-serif text-5xl md:text-7xl lg:text-8xl text-white drop-shadow-lg mb-4"
-            style={{ textShadow: '0 4px 30px rgba(0,0,0,0.3)' }}
+            className="font-serif text-5xl md:text-7xl lg:text-8xl drop-shadow-lg mb-4"
+            style={{ color: getColor('hero', 'titleColor', '#FFFFFF'), textShadow: '0 4px 30px rgba(0,0,0,0.3)' }}
           >
             {location || 'Paradise'}
           </h1>
@@ -175,13 +188,13 @@ export function BeachWeddingTemplate({
 
       {/* Intro Section */}
       {content.showStorySection && (
-        <section className="py-16 px-4 text-center">
+        <section className="py-16 px-4 text-center" style={{ backgroundColor: getColor('story', 'backgroundColor', '#FFFFFF') }}>
           <div className="max-w-3xl mx-auto">
-            <Shell className="h-8 w-8 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl md:text-4xl mb-6 text-gray-900">
+            <Shell className="h-8 w-8 mx-auto mb-4" style={{ color: getColor('story', 'accentColor', primaryColor) }} />
+            <h2 className="font-serif text-3xl md:text-4xl mb-6" style={{ color: getColor('story', 'titleColor', '#111827') }}>
               {content.storyTitle}
             </h2>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="leading-relaxed" style={{ color: getColor('story', 'textColor', '#4b5563') }}>
               {content.storyContent}
             </p>
           </div>
@@ -190,12 +203,12 @@ export function BeachWeddingTemplate({
 
       {/* Timeline/Journey Section */}
       {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
-        <section className="py-16 px-4 bg-gray-50">
+        <section className="py-16 px-4" style={{ backgroundColor: getColor('timeline', 'backgroundColor', '#f9fafb') }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <div
                 className="inline-block px-6 py-2 rounded-full text-sm font-medium mb-6"
-                style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}
+                style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}15`, color: getColor('timeline', 'titleColor', primaryColor) }}
               >
                 {content.timelineTitle}
               </div>
@@ -206,7 +219,7 @@ export function BeachWeddingTemplate({
               {/* Vertical line */}
               <div
                 className="absolute left-6 md:left-8 top-0 bottom-0 w-0.5"
-                style={{ backgroundColor: `${primaryColor}30` }}
+                style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}30` }}
               />
 
               <div className="space-y-6">
@@ -215,7 +228,7 @@ export function BeachWeddingTemplate({
                     {/* Pin/Dot */}
                     <div
                       className="relative z-10 w-12 md:w-16 h-12 md:h-16 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: primaryColor }}
+                      style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }}
                     >
                       <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
                     </div>
@@ -223,16 +236,16 @@ export function BeachWeddingTemplate({
                     {/* Content Card */}
                     <div className="flex-1 bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                       <div className="flex flex-wrap items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                        <h3 className="font-semibold" style={{ color: getColor('timeline', 'titleColor', '#111827') }}>{event.title}</h3>
                         <span
                           className="text-xs px-2 py-1 rounded-full"
-                          style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}
+                          style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}15`, color: getColor('timeline', 'accentColor', primaryColor) }}
                         >
                           {event.time}
                         </span>
                       </div>
                       {event.description && (
-                        <p className="text-sm text-gray-600">{event.description}</p>
+                        <p className="text-sm" style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{event.description}</p>
                       )}
                     </div>
                   </div>
@@ -480,25 +493,31 @@ export function BeachWeddingTemplate({
       {/* RSVP Section */}
       {content.showRsvpSection && (
         <section
-          className="py-20 px-4 text-white"
-          style={{ backgroundColor: '#0c4a6e' }}
+          className="py-20 px-4"
+          style={{ backgroundColor: getColor('rsvp', 'backgroundColor', '#0c4a6e') }}
         >
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl mb-4">{content.rsvpTitle}</h2>
-            <p className="text-white/80 mb-8">{content.rsvpDescription}</p>
+            <h2 className="font-serif text-3xl md:text-4xl mb-4" style={{ color: getColor('rsvp', 'titleColor', '#FFFFFF') }}>{content.rsvpTitle}</h2>
+            <p className="mb-8" style={{ color: getColor('rsvp', 'textColor', 'rgba(255,255,255,0.8)') }}>{content.rsvpDescription}</p>
 
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-8 py-3 rounded-full font-medium text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="inline-block px-8 py-3 rounded-full font-medium transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#FFFFFF')
+                }}
               >
                 RSVP Now
               </Link>
             ) : (
               <button
-                className="px-8 py-3 rounded-full font-medium text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: primaryColor }}
+                className="px-8 py-3 rounded-full font-medium transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#FFFFFF')
+                }}
               >
                 RSVP Now
               </button>
@@ -526,14 +545,14 @@ export function BeachWeddingTemplate({
 
       {/* Footer */}
       <footer
-        className="py-12 text-center text-white"
-        style={{ backgroundColor: '#0c4a6e' }}
+        className="py-12 text-center"
+        style={{ backgroundColor: getColor('footer', 'backgroundColor', '#0c4a6e') }}
       >
-        <Anchor className="h-8 w-8 mx-auto mb-4 opacity-50" />
-        <p className="font-serif text-xl mb-2">
+        <Anchor className="h-8 w-8 mx-auto mb-4 opacity-50" style={{ color: getColor('footer', 'accentColor', '#FFFFFF') }} />
+        <p className="font-serif text-xl mb-2" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>
           {partner1Name} & {partner2Name}
         </p>
-        <p className="text-sm opacity-70">{content.footerMessage}</p>
+        <p className="text-sm opacity-70" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>{content.footerMessage}</p>
       </footer>
     </div>
   );

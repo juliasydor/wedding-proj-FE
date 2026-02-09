@@ -154,3 +154,42 @@ export interface PaymentIntent {
 }
 
 export type Locale = 'pt' | 'en';
+
+// Section Colors - Customizable colors for each template section
+export interface SectionColorConfig {
+  titleColor?: string;
+  textColor?: string;
+  backgroundColor?: string;
+  accentColor?: string;
+}
+
+export interface SectionColors {
+  hero: {
+    titleColor?: string;
+    subtitleColor?: string;
+    overlayColor?: string;
+    overlayOpacity?: number;
+  };
+  dateBar: SectionColorConfig;
+  story: SectionColorConfig;
+  timeline: SectionColorConfig;
+  dressCode: SectionColorConfig;
+  weddingParty: SectionColorConfig;
+  gallery: SectionColorConfig;
+  accommodations: SectionColorConfig;
+  gifts: SectionColorConfig;
+  travelTips: SectionColorConfig;
+  rsvp: {
+    titleColor?: string;
+    textColor?: string;
+    backgroundColor?: string;
+    buttonColor?: string;
+    buttonTextColor?: string;
+  };
+  hashtag: SectionColorConfig;
+  footer: {
+    textColor?: string;
+    backgroundColor?: string;
+    accentColor?: string;
+  };
+}

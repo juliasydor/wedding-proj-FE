@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
-import type { DressCode } from '@/shared/types';
+import type { DressCode, SectionColors } from '@/shared/types';
 
 interface BohemianDreamTemplateProps {
   partner1Name: string;
@@ -21,6 +21,7 @@ interface BohemianDreamTemplateProps {
   customSections?: CustomSection[];
   weddingSlug?: string;
   dressCode?: DressCode | null;
+  sectionColors?: SectionColors | null;
 }
 
 const defaultContent: SiteContent = {
@@ -86,10 +87,22 @@ export function BohemianDreamTemplate({
   customSections = [],
   weddingSlug,
   dressCode,
+  sectionColors,
 }: BohemianDreamTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
   const [openTravelTip, setOpenTravelTip] = useState<string | null>(null);
+
+  // Helper to get section color with fallback to default
+  const getColor = (section: keyof SectionColors, key: string, fallback: string) => {
+    if (sectionColors && sectionColors[section]) {
+      const sectionConfig = sectionColors[section] as Record<string, string | number>;
+      if (sectionConfig[key]) {
+        return sectionConfig[key] as string;
+      }
+    }
+    return fallback;
+  };
 
   return (
     <div
@@ -131,14 +144,14 @@ export function BohemianDreamTemplate({
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
           {/* Sparkle decoration */}
           <div className="flex items-center gap-4 mb-8">
-            <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
-            <p className="text-sm uppercase tracking-[0.4em]" style={{ color: primaryColor }}>
+            <Sparkles className="h-5 w-5" style={{ color: getColor('hero', 'accentColor', primaryColor) }} />
+            <p className="text-sm uppercase tracking-[0.4em]" style={{ color: getColor('hero', 'subtitleColor', primaryColor) }}>
               {content.heroTitle}
             </p>
-            <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
+            <Sparkles className="h-5 w-5" style={{ color: getColor('hero', 'accentColor', primaryColor) }} />
           </div>
 
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl mb-0 italic">
+          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl mb-0 italic" style={{ color: getColor('hero', 'titleColor', '#5c4a3d') }}>
             {partner1Name || 'Partner 1'}
           </h1>
 
@@ -148,24 +161,24 @@ export function BohemianDreamTemplate({
                 <div
                   key={i}
                   className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: primaryColor }}
+                  style={{ backgroundColor: getColor('hero', 'accentColor', primaryColor) }}
                 />
               ))}
               <Heart
                 className="h-10 w-10 mx-6"
-                style={{ color: primaryColor, fill: `${primaryColor}50` }}
+                style={{ color: getColor('hero', 'accentColor', primaryColor), fill: `${getColor('hero', 'accentColor', primaryColor)}50` }}
               />
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
                   className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: primaryColor }}
+                  style={{ backgroundColor: getColor('hero', 'accentColor', primaryColor) }}
                 />
               ))}
             </div>
           </div>
 
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl italic">
+          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl italic" style={{ color: getColor('hero', 'titleColor', '#5c4a3d') }}>
             {partner2Name || 'Partner 2'}
           </h1>
 
@@ -252,7 +265,7 @@ export function BohemianDreamTemplate({
 
       {/* Our Story Section */}
       {content.showStorySection && (
-        <section className="py-20 px-4 bg-white">
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('story', 'backgroundColor', '#FFFFFF') }}>
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               {/* Image */}
@@ -266,9 +279,9 @@ export function BohemianDreamTemplate({
                 ) : (
                   <div
                     className="w-full h-96 rounded-3xl flex items-center justify-center"
-                    style={{ backgroundColor: `${primaryColor}20` }}
+                    style={{ backgroundColor: `${getColor('story', 'accentColor', primaryColor)}20` }}
                   >
-                    <Heart className="h-20 w-20" style={{ color: `${primaryColor}50` }} />
+                    <Heart className="h-20 w-20" style={{ color: `${getColor('story', 'accentColor', primaryColor)}50` }} />
                   </div>
                 )}
               </div>
@@ -276,13 +289,13 @@ export function BohemianDreamTemplate({
               {/* Text */}
               <div>
                 <div className="flex items-center gap-4 mb-6">
-                  <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
-                  <h2 className="font-serif text-3xl italic" style={{ color: primaryColor }}>
+                  <Sparkles className="h-5 w-5" style={{ color: getColor('story', 'accentColor', primaryColor) }} />
+                  <h2 className="font-serif text-3xl italic" style={{ color: getColor('story', 'titleColor', primaryColor) }}>
                     {content.storyTitle}
                   </h2>
-                  <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
+                  <Sparkles className="h-5 w-5" style={{ color: getColor('story', 'accentColor', primaryColor) }} />
                 </div>
-                <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+                <p className="text-lg leading-relaxed whitespace-pre-line" style={{ color: getColor('story', 'textColor', '#5c4a3d'), opacity: 0.8 }}>
                   {content.storyContent}
                 </p>
               </div>
@@ -293,19 +306,19 @@ export function BohemianDreamTemplate({
 
       {/* Timeline Section */}
       {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
-        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}15` }}>
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('timeline', 'backgroundColor', `${primaryColor}15`) }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-4 mb-4">
-                <Moon className="h-5 w-5" style={{ color: primaryColor }} />
-                <Sun className="h-6 w-6" style={{ color: primaryColor }} />
-                <Moon className="h-5 w-5" style={{ color: primaryColor }} />
+                <Moon className="h-5 w-5" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
+                <Sun className="h-6 w-6" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
+                <Moon className="h-5 w-5" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
               </div>
-              <h2 className="font-serif text-3xl italic mb-2" style={{ color: primaryColor }}>
+              <h2 className="font-serif text-3xl italic mb-2" style={{ color: getColor('timeline', 'titleColor', primaryColor) }}>
                 {content.timelineTitle}
               </h2>
               {content.timelineSubtitle && (
-                <p className="text-gray-600">{content.timelineSubtitle}</p>
+                <p style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{content.timelineSubtitle}</p>
               )}
             </div>
 
@@ -314,7 +327,7 @@ export function BohemianDreamTemplate({
               {/* Horizontal line */}
               <div
                 className="hidden md:block absolute top-16 left-0 right-0 h-0.5"
-                style={{ backgroundColor: `${primaryColor}40` }}
+                style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}40` }}
               />
 
               <div className="grid md:grid-cols-3 gap-8">
@@ -324,25 +337,25 @@ export function BohemianDreamTemplate({
                     <div className="relative">
                       <div
                         className="w-12 h-12 mx-auto rounded-full flex items-center justify-center border-4 bg-white relative z-10"
-                        style={{ borderColor: primaryColor }}
+                        style={{ borderColor: getColor('timeline', 'accentColor', primaryColor) }}
                       >
-                        <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
+                        <Sparkles className="h-5 w-5" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
                       </div>
                     </div>
 
                     {/* Time badge */}
                     <div
                       className="inline-block mt-4 px-4 py-2 rounded-full text-sm font-medium text-white"
-                      style={{ backgroundColor: primaryColor }}
+                      style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }}
                     >
                       {event.time}
                     </div>
 
                     {/* Content */}
                     <div className="mt-4">
-                      <h3 className="font-serif text-xl mb-1">{event.title}</h3>
+                      <h3 className="font-serif text-xl mb-1" style={{ color: getColor('timeline', 'titleColor', '#1a1a2e') }}>{event.title}</h3>
                       {event.description && (
-                        <p className="text-sm text-gray-600">{event.description}</p>
+                        <p className="text-sm" style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{event.description}</p>
                       )}
                     </div>
                   </div>
@@ -659,23 +672,29 @@ export function BohemianDreamTemplate({
 
       {/* RSVP Section */}
       {content.showRsvpSection && (
-        <section className="py-20 px-4 text-center bg-[#fef9f3]">
+        <section className="py-20 px-4 text-center" style={{ backgroundColor: getColor('rsvp', 'backgroundColor', '#fef9f3') }}>
           <div className="max-w-xl mx-auto">
-            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: primaryColor }} />
-            <h2 className="font-serif text-3xl mb-4 italic">{content.rsvpTitle}</h2>
-            <p className="mb-8 opacity-80">{content.rsvpDescription}</p>
+            <Mail className="h-10 w-10 mx-auto mb-4" style={{ color: getColor('rsvp', 'accentColor', primaryColor) }} />
+            <h2 className="font-serif text-3xl mb-4 italic" style={{ color: getColor('rsvp', 'titleColor', '#5c4a3d') }}>{content.rsvpTitle}</h2>
+            <p className="mb-8 opacity-80" style={{ color: getColor('rsvp', 'textColor', '#5c4a3d') }}>{content.rsvpDescription}</p>
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-10 py-4 rounded-full font-semibold text-white transition-all hover:scale-105"
-                style={{ backgroundColor: primaryColor }}
+                className="inline-block px-10 py-4 rounded-full font-semibold transition-all hover:scale-105"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#FFFFFF')
+                }}
               >
                 RSVP Now
               </Link>
             ) : (
               <button
-                className="px-10 py-4 rounded-full font-semibold text-white transition-all hover:scale-105"
-                style={{ backgroundColor: primaryColor }}
+                className="px-10 py-4 rounded-full font-semibold transition-all hover:scale-105"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', primaryColor),
+                  color: getColor('rsvp', 'buttonTextColor', '#FFFFFF')
+                }}
               >
                 RSVP Now
               </button>
@@ -732,16 +751,16 @@ export function BohemianDreamTemplate({
 
       {/* Footer */}
       <footer
-        className="py-12 text-center text-white"
-        style={{ backgroundColor: '#5c4a3d' }}
+        className="py-12 text-center"
+        style={{ backgroundColor: getColor('footer', 'backgroundColor', '#5c4a3d') }}
       >
         <div className="flex items-center justify-center gap-2 mb-3">
-          <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
-          <Heart className="h-6 w-6" style={{ color: primaryColor }} />
-          <Sparkles className="h-5 w-5" style={{ color: primaryColor }} />
+          <Sparkles className="h-5 w-5" style={{ color: getColor('footer', 'accentColor', primaryColor) }} />
+          <Heart className="h-6 w-6" style={{ color: getColor('footer', 'accentColor', primaryColor) }} />
+          <Sparkles className="h-5 w-5" style={{ color: getColor('footer', 'accentColor', primaryColor) }} />
         </div>
-        <p className="mb-2">{content.footerMessage}</p>
-        <p className="font-serif text-lg italic">
+        <p className="mb-2" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>{content.footerMessage}</p>
+        <p className="font-serif text-lg italic" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>
           {partner1Name} & {partner2Name}
         </p>
       </footer>

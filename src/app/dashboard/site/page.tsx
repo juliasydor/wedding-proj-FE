@@ -22,6 +22,8 @@ import {
   ChevronUp,
   Plus,
   Trash2,
+  Paintbrush,
+  RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,9 +44,9 @@ import {
 } from '@/shared/ui/templates';
 import { SectionBlockEditor } from '@/shared/ui/molecules/SectionBlockEditor';
 
-import type { DressCode, DressLength, GroomsmenStyle } from '@/shared/types';
+import type { DressCode, DressLength, GroomsmenStyle, SectionColors } from '@/shared/types';
 
-type TabId = 'template' | 'colors' | 'content' | 'info' | 'images';
+type TabId = 'template' | 'colors' | 'sectionColors' | 'content' | 'info' | 'images';
 type PreviewMode = 'desktop' | 'mobile';
 
 // Dress Code Color Families
@@ -267,6 +269,245 @@ const COLOR_PALETTES = [
   { id: 'burgundy', name: 'Vinho', primary: '#722f37', secondary: '#8b3a42' },
 ];
 
+// All available colors for section customization
+const ALL_COLORS = [
+  // Neutrals
+  { name: 'White', value: '#FFFFFF' },
+  { name: 'Ivory', value: '#FFFFF0' },
+  { name: 'Cream', value: '#FFFDD0' },
+  { name: 'Beige', value: '#F5F5DC' },
+  { name: 'Light Gray', value: '#D3D3D3' },
+  { name: 'Gray', value: '#808080' },
+  { name: 'Charcoal', value: '#36454F' },
+  { name: 'Black', value: '#000000' },
+  // Pinks
+  { name: 'Pale Pink', value: '#FADADD' },
+  { name: 'Blush', value: '#FFB6C1' },
+  { name: 'Rose', value: '#FF007F' },
+  { name: 'Hot Pink', value: '#FF69B4' },
+  { name: 'Fuchsia', value: '#FF00FF' },
+  { name: 'Raspberry', value: '#E30B5C' },
+  // Reds
+  { name: 'Coral', value: '#FF7F50' },
+  { name: 'Red', value: '#FF0000' },
+  { name: 'Crimson', value: '#DC143C' },
+  { name: 'Burgundy', value: '#800020' },
+  { name: 'Wine', value: '#722F37' },
+  { name: 'Maroon', value: '#800000' },
+  // Blues
+  { name: 'Ice Blue', value: '#D6ECEF' },
+  { name: 'Baby Blue', value: '#89CFF0' },
+  { name: 'Sky Blue', value: '#87CEEB' },
+  { name: 'Royal Blue', value: '#4169E1' },
+  { name: 'Navy', value: '#000080' },
+  { name: 'Midnight', value: '#191970' },
+  // Purples
+  { name: 'Lavender', value: '#E6E6FA' },
+  { name: 'Lilac', value: '#C8A2C8' },
+  { name: 'Violet', value: '#EE82EE' },
+  { name: 'Purple', value: '#800080' },
+  { name: 'Plum', value: '#8E4585' },
+  // Greens
+  { name: 'Mint', value: '#98FB98' },
+  { name: 'Sage', value: '#9CAF88' },
+  { name: 'Olive', value: '#808000' },
+  { name: 'Emerald', value: '#50C878' },
+  { name: 'Forest', value: '#228B22' },
+  { name: 'Teal', value: '#008080' },
+  // Earth Tones
+  { name: 'Camel', value: '#C19A6B' },
+  { name: 'Mocha', value: '#967969' },
+  { name: 'Coffee', value: '#6F4E37' },
+  { name: 'Chocolate', value: '#7B3F00' },
+  { name: 'Terracotta', value: '#E2725B' },
+  // Warm Tones
+  { name: 'Yellow', value: '#FFFF00' },
+  { name: 'Sunflower', value: '#FFDA03' },
+  { name: 'Mustard', value: '#FFDB58' },
+  { name: 'Peach', value: '#FFCBA4' },
+  { name: 'Orange', value: '#FFA500' },
+  { name: 'Burnt Orange', value: '#CC5500' },
+  // Metallics
+  { name: 'Gold', value: '#FFD700' },
+  { name: 'Rose Gold', value: '#B76E79' },
+  { name: 'Silver', value: '#C0C0C0' },
+  { name: 'Bronze', value: '#CD7F32' },
+  { name: 'Copper', value: '#B87333' },
+];
+
+// Section configuration for the color editor
+const SECTION_COLOR_CONFIG = [
+  {
+    id: 'hero',
+    name: 'Hero / Cabeçalho',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'subtitleColor', label: 'Cor do Subtítulo' },
+      { key: 'overlayColor', label: 'Cor da Sobreposição' },
+    ],
+  },
+  {
+    id: 'dateBar',
+    name: 'Barra de Data/Local',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+      { key: 'accentColor', label: 'Cor dos Ícones' },
+    ],
+  },
+  {
+    id: 'story',
+    name: 'Nossa História',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'textColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+      { key: 'accentColor', label: 'Cor de Destaque' },
+    ],
+  },
+  {
+    id: 'timeline',
+    name: 'Cronograma / Programação',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'textColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+      { key: 'accentColor', label: 'Cor dos Destaques' },
+    ],
+  },
+  {
+    id: 'dressCode',
+    name: 'Dress Code',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'textColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+      { key: 'accentColor', label: 'Cor dos Cards' },
+    ],
+  },
+  {
+    id: 'gallery',
+    name: 'Galeria',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+    ],
+  },
+  {
+    id: 'accommodations',
+    name: 'Hospedagem',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'textColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+    ],
+  },
+  {
+    id: 'gifts',
+    name: 'Lista de Presentes',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'textColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+    ],
+  },
+  {
+    id: 'rsvp',
+    name: 'Confirmação de Presença',
+    fields: [
+      { key: 'titleColor', label: 'Cor do Título' },
+      { key: 'textColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+      { key: 'buttonColor', label: 'Cor do Botão' },
+      { key: 'buttonTextColor', label: 'Cor do Texto do Botão' },
+    ],
+  },
+  {
+    id: 'footer',
+    name: 'Rodapé',
+    fields: [
+      { key: 'textColor', label: 'Cor do Texto' },
+      { key: 'backgroundColor', label: 'Cor de Fundo' },
+      { key: 'accentColor', label: 'Cor de Destaque' },
+    ],
+  },
+];
+
+// Default section colors
+const getDefaultSectionColors = (primaryColor: string, secondaryColor: string): SectionColors => ({
+  hero: {
+    titleColor: '#FFFFFF',
+    subtitleColor: '#FFFFFF',
+    overlayColor: '#000000',
+    overlayOpacity: 30,
+  },
+  dateBar: {
+    titleColor: '#1a1a2e',
+    backgroundColor: '#f9fafb',
+    accentColor: primaryColor,
+  },
+  story: {
+    titleColor: '#111827',
+    textColor: '#4b5563',
+    backgroundColor: '#FFFFFF',
+    accentColor: primaryColor,
+  },
+  timeline: {
+    titleColor: '#111827',
+    textColor: '#4b5563',
+    backgroundColor: '#f9fafb',
+    accentColor: primaryColor,
+  },
+  dressCode: {
+    titleColor: '#111827',
+    textColor: '#4b5563',
+    backgroundColor: '#FFFFFF',
+    accentColor: '#f9fafb',
+  },
+  weddingParty: {
+    titleColor: '#111827',
+    textColor: '#4b5563',
+    backgroundColor: '#FFFFFF',
+    accentColor: primaryColor,
+  },
+  gallery: {
+    titleColor: '#111827',
+    backgroundColor: '#f9fafb',
+  },
+  accommodations: {
+    titleColor: '#111827',
+    textColor: '#4b5563',
+    backgroundColor: '#FFFFFF',
+  },
+  gifts: {
+    titleColor: '#111827',
+    textColor: '#4b5563',
+    backgroundColor: '#f9fafb',
+  },
+  travelTips: {
+    titleColor: '#111827',
+    textColor: '#4b5563',
+    backgroundColor: '#f9fafb',
+  },
+  rsvp: {
+    titleColor: '#FFFFFF',
+    textColor: '#FFFFFF',
+    backgroundColor: '#1a1a2e',
+    buttonColor: primaryColor,
+    buttonTextColor: '#FFFFFF',
+  },
+  hashtag: {
+    titleColor: '#6b7280',
+    accentColor: primaryColor,
+    backgroundColor: '#f9fafb',
+  },
+  footer: {
+    textColor: '#FFFFFF',
+    backgroundColor: '#1a1a2e',
+    accentColor: primaryColor,
+  },
+});
+
 const TEMPLATES = [
   {
     id: 'modern-elegance' as TemplateId,
@@ -471,9 +712,17 @@ export default function SiteEditorPage() {
 
   const currentPalette = COLOR_PALETTES.find((p) => p.id === selectedPalette) || COLOR_PALETTES[0];
 
+  // Section colors state (must be after currentPalette is defined)
+  const [sectionColors, setSectionColors] = useState<SectionColors>(
+    onboarding.sectionColors || getDefaultSectionColors(currentPalette.primary, currentPalette.secondary)
+  );
+  const [activeSectionColorEditor, setActiveSectionColorEditor] = useState<string | null>(null);
+  const [showColorPicker, setShowColorPicker] = useState<{ section: string; field: string } | null>(null);
+
   const tabs = [
     { id: 'template' as TabId, icon: Layout, label: t('sections.template') },
     { id: 'colors' as TabId, icon: Palette, label: t('sections.colors') },
+    { id: 'sectionColors' as TabId, icon: Paintbrush, label: 'Cores das Seções' },
     { id: 'content' as TabId, icon: Type, label: 'Conteúdo' },
     { id: 'info' as TabId, icon: Info, label: t('sections.info') },
     { id: 'images' as TabId, icon: ImageIcon, label: t('sections.images') },
@@ -489,8 +738,38 @@ export default function SiteEditorPage() {
       siteContent,
       customSections,
       dressCode: (dressCode.guests?.enabled || dressCode.bridesmaids?.enabled || dressCode.groomsmen?.enabled) ? dressCode : null,
+      sectionColors,
     });
     toast.success('Alterações salvas com sucesso!');
+  };
+
+  // Section colors handlers
+  const handleSectionColorChange = (sectionId: string, field: string, color: string) => {
+    setSectionColors((prev) => {
+      const prevSection = prev[sectionId as keyof SectionColors] as Record<string, string | number> | undefined;
+      return {
+        ...prev,
+        [sectionId]: {
+          ...(prevSection || {}),
+          [field]: color,
+        },
+      } as SectionColors;
+    });
+  };
+
+  const handleResetSectionColors = () => {
+    setSectionColors(getDefaultSectionColors(currentPalette.primary, currentPalette.secondary));
+    toast.success('Cores das seções restauradas ao padrão!');
+  };
+
+  const getSectionColor = (sectionId: string, field: string): string => {
+    const section = sectionColors[sectionId as keyof SectionColors] as Record<string, string | number> | undefined;
+    if (section && section[field]) {
+      return section[field] as string;
+    }
+    const defaultColors = getDefaultSectionColors(currentPalette.primary, currentPalette.secondary);
+    const defaultSection = defaultColors[sectionId as keyof SectionColors] as Record<string, string | number> | undefined;
+    return (defaultSection?.[field] as string) || '#000000';
   };
 
   // Dress code handlers
@@ -734,6 +1013,167 @@ export default function SiteEditorPage() {
                       )}
                     </button>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Section Colors Tab */}
+            {activeTab === 'sectionColors' && (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Cores das Seções</h3>
+                    <p className="text-sm text-subtitle mt-1">Personalize as cores de cada seção do seu site</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResetSectionColors}
+                    className="rounded-full"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Restaurar Padrão
+                  </Button>
+                </div>
+
+                <div className="space-y-3">
+                  {SECTION_COLOR_CONFIG.map((section) => (
+                    <div
+                      key={section.id}
+                      className="border border-border/50 rounded-xl overflow-hidden"
+                    >
+                      <button
+                        onClick={() =>
+                          setActiveSectionColorEditor(
+                            activeSectionColorEditor === section.id ? null : section.id
+                          )
+                        }
+                        className="w-full flex items-center justify-between p-4 bg-quaternary/30 hover:bg-quaternary/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Paintbrush className="h-4 w-4 text-secondary" />
+                          <span className="font-medium text-foreground">{section.name}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {/* Preview of current colors */}
+                          <div className="flex gap-1">
+                            {section.fields.slice(0, 3).map((field) => (
+                              <div
+                                key={field.key}
+                                className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
+                                style={{ backgroundColor: getSectionColor(section.id, field.key) }}
+                                title={field.label}
+                              />
+                            ))}
+                          </div>
+                          {activeSectionColorEditor === section.id ? (
+                            <ChevronUp className="h-4 w-4 text-subtitle" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 text-subtitle" />
+                          )}
+                        </div>
+                      </button>
+
+                      {activeSectionColorEditor === section.id && (
+                        <div className="p-4 space-y-4 bg-card">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {section.fields.map((field) => (
+                              <div key={field.key} className="space-y-2">
+                                <Label className="text-sm text-subtitle">{field.label}</Label>
+                                <div className="relative">
+                                  <button
+                                    onClick={() =>
+                                      setShowColorPicker(
+                                        showColorPicker?.section === section.id &&
+                                        showColorPicker?.field === field.key
+                                          ? null
+                                          : { section: section.id, field: field.key }
+                                      )
+                                    }
+                                    className="w-full flex items-center gap-3 p-3 rounded-xl border border-border bg-input-bg hover:border-secondary/50 transition-colors"
+                                  >
+                                    <div
+                                      className="w-8 h-8 rounded-lg border border-gray-200 shadow-sm"
+                                      style={{ backgroundColor: getSectionColor(section.id, field.key) }}
+                                    />
+                                    <span className="text-sm font-mono text-foreground">
+                                      {getSectionColor(section.id, field.key).toUpperCase()}
+                                    </span>
+                                    <ChevronDown className="h-4 w-4 text-subtitle ml-auto" />
+                                  </button>
+
+                                  {/* Color Picker Dropdown */}
+                                  {showColorPicker?.section === section.id &&
+                                    showColorPicker?.field === field.key && (
+                                      <div className="absolute z-20 top-full left-0 right-0 mt-2 p-3 bg-card border border-border rounded-xl shadow-xl max-h-64 overflow-y-auto">
+                                        {/* Custom color input */}
+                                        <div className="flex gap-2 mb-3 pb-3 border-b border-border">
+                                          <input
+                                            type="color"
+                                            value={getSectionColor(section.id, field.key)}
+                                            onChange={(e) =>
+                                              handleSectionColorChange(section.id, field.key, e.target.value)
+                                            }
+                                            className="w-10 h-10 rounded-lg border border-border cursor-pointer"
+                                          />
+                                          <Input
+                                            value={getSectionColor(section.id, field.key)}
+                                            onChange={(e) =>
+                                              handleSectionColorChange(section.id, field.key, e.target.value)
+                                            }
+                                            placeholder="#FFFFFF"
+                                            className="flex-1 font-mono text-sm bg-input-bg"
+                                          />
+                                        </div>
+                                        {/* Preset colors */}
+                                        <div className="grid grid-cols-8 gap-1.5">
+                                          {ALL_COLORS.map((color) => (
+                                            <button
+                                              key={color.value}
+                                              onClick={() => {
+                                                handleSectionColorChange(section.id, field.key, color.value);
+                                                setShowColorPicker(null);
+                                              }}
+                                              className={cn(
+                                                'w-7 h-7 rounded-lg border-2 transition-all hover:scale-110',
+                                                getSectionColor(section.id, field.key) === color.value
+                                                  ? 'border-secondary ring-2 ring-secondary/30'
+                                                  : 'border-transparent hover:border-white/50'
+                                              )}
+                                              style={{ backgroundColor: color.value }}
+                                              title={color.name}
+                                            />
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Quick Tips */}
+                <div className="mt-6 p-4 bg-quaternary/30 rounded-xl">
+                  <h4 className="font-medium text-sm text-foreground mb-2">Dicas de Personalização</h4>
+                  <ul className="text-xs text-subtitle space-y-1">
+                    <li className="flex items-start gap-2">
+                      <Check className="h-3 w-3 text-secondary mt-0.5 shrink-0" />
+                      Use cores que harmonizem com a paleta principal do seu casamento
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-3 w-3 text-secondary mt-0.5 shrink-0" />
+                      Mantenha bom contraste entre textos e fundos para legibilidade
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-3 w-9 text-secondary mt-0.5 shrink-0" />
+                      O preview ao vivo mostra as alterações em tempo real
+                    </li>
+                  </ul>
                 </div>
               </div>
             )}
@@ -1378,6 +1818,7 @@ export default function SiteEditorPage() {
                         siteContent={siteContent}
                         customSections={customSections.filter(s => s.isVisible)}
                         dressCode={dressCode}
+                        sectionColors={sectionColors}
                       />
                     </div>
                   </div>
@@ -1411,6 +1852,7 @@ export default function SiteEditorPage() {
                             isPreview
                             siteContent={siteContent}
                             customSections={customSections.filter(s => s.isVisible)}
+                            sectionColors={sectionColors}
                           />
                         </div>
                       </div>
@@ -1688,6 +2130,8 @@ export default function SiteEditorPage() {
                       secondaryColor={currentPalette.secondary}
                       siteContent={siteContent}
                       customSections={customSections.filter(s => s.isVisible)}
+                      dressCode={dressCode}
+                      sectionColors={sectionColors}
                     />
                   </div>
                 </div>
@@ -1709,6 +2153,8 @@ export default function SiteEditorPage() {
                             isPreview
                             siteContent={siteContent}
                             customSections={customSections.filter(s => s.isVisible)}
+                            dressCode={dressCode}
+                            sectionColors={sectionColors}
                           />
                         </div>
                       </div>

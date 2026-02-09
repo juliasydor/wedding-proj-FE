@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Countdown } from '@/shared/ui/molecules/Countdown';
 import type { SiteContent, CustomSection } from '@/entities/wedding/model/store';
-import type { DressCode } from '@/shared/types';
+import type { DressCode, SectionColors } from '@/shared/types';
 
 interface RusticGardenTemplateProps {
   partner1Name: string;
@@ -21,6 +21,7 @@ interface RusticGardenTemplateProps {
   customSections?: CustomSection[];
   weddingSlug?: string;
   dressCode?: DressCode | null;
+  sectionColors?: SectionColors | null;
 }
 
 const defaultContent: SiteContent = {
@@ -86,10 +87,22 @@ export function RusticGardenTemplate({
   customSections = [],
   weddingSlug,
   dressCode,
+  sectionColors,
 }: RusticGardenTemplateProps) {
   const content = { ...defaultContent, ...siteContent };
   const weddingDate = date ? new Date(date) : null;
   const [openTravelTip, setOpenTravelTip] = useState<string | null>(null);
+
+  // Helper to get section color with fallback to default
+  const getColor = (section: keyof SectionColors, key: string, fallback: string) => {
+    if (sectionColors && sectionColors[section]) {
+      const sectionConfig = sectionColors[section] as Record<string, string | number>;
+      if (sectionConfig[key]) {
+        return sectionConfig[key] as string;
+      }
+    }
+    return fallback;
+  };
 
   return (
     <div
@@ -137,21 +150,21 @@ export function RusticGardenTemplate({
               style={{ borderColor: primaryColor }}
             >
               <div className="text-center px-8">
-                <p className="text-xs uppercase tracking-[0.3em] mb-4" style={{ color: primaryColor }}>
+                <p className="text-xs uppercase tracking-[0.3em] mb-4" style={{ color: getColor('hero', 'subtitleColor', primaryColor) }}>
                   {content.heroTitle}
                 </p>
 
-                <h1 className="font-serif text-3xl md:text-4xl mb-1">
+                <h1 className="font-serif text-3xl md:text-4xl mb-1" style={{ color: getColor('hero', 'titleColor', '#3d3d3d') }}>
                   {partner1Name || 'Partner 1'}
                 </h1>
 
                 <div className="flex items-center justify-center gap-3 my-3">
-                  <Leaf className="h-4 w-4 -rotate-45" style={{ color: primaryColor }} />
-                  <span className="text-2xl font-serif" style={{ color: primaryColor }}>&</span>
-                  <Leaf className="h-4 w-4 rotate-45" style={{ color: primaryColor }} />
+                  <Leaf className="h-4 w-4 -rotate-45" style={{ color: getColor('hero', 'accentColor', primaryColor) }} />
+                  <span className="text-2xl font-serif" style={{ color: getColor('hero', 'accentColor', primaryColor) }}>&</span>
+                  <Leaf className="h-4 w-4 rotate-45" style={{ color: getColor('hero', 'accentColor', primaryColor) }} />
                 </div>
 
-                <h1 className="font-serif text-3xl md:text-4xl">
+                <h1 className="font-serif text-3xl md:text-4xl" style={{ color: getColor('hero', 'titleColor', '#3d3d3d') }}>
                   {partner2Name || 'Partner 2'}
                 </h1>
 
@@ -215,19 +228,19 @@ export function RusticGardenTemplate({
 
       {/* Our Story Section */}
       {content.showStorySection && (
-        <section className="py-20 px-4" style={{ backgroundColor: `${primaryColor}10` }}>
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('story', 'backgroundColor', `${primaryColor}10`) }}>
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               {/* Text */}
               <div className="order-2 md:order-1">
                 <div className="flex items-center gap-4 mb-6">
-                  <Leaf className="h-5 w-5 -rotate-45" style={{ color: primaryColor }} />
-                  <h2 className="font-serif text-3xl" style={{ color: primaryColor }}>
+                  <Leaf className="h-5 w-5 -rotate-45" style={{ color: getColor('story', 'accentColor', primaryColor) }} />
+                  <h2 className="font-serif text-3xl" style={{ color: getColor('story', 'titleColor', primaryColor) }}>
                     {content.storyTitle}
                   </h2>
-                  <Leaf className="h-5 w-5 rotate-45" style={{ color: primaryColor }} />
+                  <Leaf className="h-5 w-5 rotate-45" style={{ color: getColor('story', 'accentColor', primaryColor) }} />
                 </div>
-                <p className="text-lg leading-relaxed whitespace-pre-line opacity-80">
+                <p className="text-lg leading-relaxed whitespace-pre-line" style={{ color: getColor('story', 'textColor', '#3d3d3d'), opacity: 0.8 }}>
                   {content.storyContent}
                 </p>
               </div>
@@ -243,9 +256,9 @@ export function RusticGardenTemplate({
                 ) : (
                   <div
                     className="w-full h-80 rounded-2xl flex items-center justify-center"
-                    style={{ backgroundColor: `${primaryColor}20` }}
+                    style={{ backgroundColor: `${getColor('story', 'accentColor', primaryColor)}20` }}
                   >
-                    <Heart className="h-16 w-16" style={{ color: `${primaryColor}50` }} />
+                    <Heart className="h-16 w-16" style={{ color: `${getColor('story', 'accentColor', primaryColor)}50` }} />
                   </div>
                 )}
               </div>
@@ -256,19 +269,19 @@ export function RusticGardenTemplate({
 
       {/* Timeline Section */}
       {content.showTimelineSection && content.timelineEvents && content.timelineEvents.length > 0 && (
-        <section className="py-20 px-4 bg-white">
+        <section className="py-20 px-4" style={{ backgroundColor: getColor('timeline', 'backgroundColor', '#FFFFFF') }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-4 mb-4">
-                <Leaf className="h-5 w-5 -rotate-45" style={{ color: primaryColor }} />
-                <Clock className="h-6 w-6" style={{ color: primaryColor }} />
-                <Leaf className="h-5 w-5 rotate-45" style={{ color: primaryColor }} />
+                <Leaf className="h-5 w-5 -rotate-45" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
+                <Clock className="h-6 w-6" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
+                <Leaf className="h-5 w-5 rotate-45" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
               </div>
-              <h2 className="font-serif text-3xl mb-2" style={{ color: primaryColor }}>
+              <h2 className="font-serif text-3xl mb-2" style={{ color: getColor('timeline', 'titleColor', primaryColor) }}>
                 {content.timelineTitle}
               </h2>
               {content.timelineSubtitle && (
-                <p className="text-gray-600">{content.timelineSubtitle}</p>
+                <p style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{content.timelineSubtitle}</p>
               )}
             </div>
 
@@ -277,7 +290,7 @@ export function RusticGardenTemplate({
               {/* Vine/branch line */}
               <div
                 className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 md:-translate-x-1/2"
-                style={{ backgroundColor: `${primaryColor}40` }}
+                style={{ backgroundColor: `${getColor('timeline', 'accentColor', primaryColor)}40` }}
               />
 
               <div className="space-y-8">
@@ -292,9 +305,9 @@ export function RusticGardenTemplate({
                     {/* Leaf marker */}
                     <div
                       className="absolute left-6 md:left-1/2 md:-translate-x-1/2 w-6 h-6 rounded-full flex items-center justify-center bg-white border-2 z-10"
-                      style={{ borderColor: primaryColor }}
+                      style={{ borderColor: getColor('timeline', 'accentColor', primaryColor) }}
                     >
-                      <Leaf className="h-3 w-3" style={{ color: primaryColor }} />
+                      <Leaf className="h-3 w-3" style={{ color: getColor('timeline', 'accentColor', primaryColor) }} />
                     </div>
 
                     {/* Card */}
@@ -303,17 +316,17 @@ export function RusticGardenTemplate({
                         'ml-16 md:ml-0 md:w-[calc(50%-2rem)] p-6 bg-white rounded-2xl shadow-sm border',
                         index % 2 === 0 ? 'md:mr-auto md:text-right' : 'md:ml-auto md:text-left'
                       )}
-                      style={{ borderColor: `${primaryColor}30` }}
+                      style={{ borderColor: `${getColor('timeline', 'accentColor', primaryColor)}30` }}
                     >
                       <span
                         className="inline-block px-3 py-1 rounded-full text-sm font-medium text-white mb-2"
-                        style={{ backgroundColor: primaryColor }}
+                        style={{ backgroundColor: getColor('timeline', 'accentColor', primaryColor) }}
                       >
                         {event.time}
                       </span>
-                      <h3 className="font-serif text-xl mb-1">{event.title}</h3>
+                      <h3 className="font-serif text-xl mb-1" style={{ color: getColor('timeline', 'titleColor', '#1a1a2e') }}>{event.title}</h3>
                       {event.description && (
-                        <p className="text-sm text-gray-600">{event.description}</p>
+                        <p className="text-sm" style={{ color: getColor('timeline', 'textColor', '#4b5563') }}>{event.description}</p>
                       )}
                     </div>
                   </div>
@@ -635,25 +648,31 @@ export function RusticGardenTemplate({
       {/* RSVP Section */}
       {content.showRsvpSection && (
         <section
-          className="py-20 px-4 text-center text-white"
-          style={{ backgroundColor: primaryColor }}
+          className="py-20 px-4 text-center"
+          style={{ backgroundColor: getColor('rsvp', 'backgroundColor', primaryColor) }}
         >
           <div className="max-w-xl mx-auto">
-            <Mail className="h-10 w-10 mx-auto mb-4 opacity-80" />
-            <h2 className="font-serif text-3xl mb-4">{content.rsvpTitle}</h2>
-            <p className="mb-8 opacity-80">{content.rsvpDescription}</p>
+            <Mail className="h-10 w-10 mx-auto mb-4 opacity-80" style={{ color: getColor('rsvp', 'titleColor', '#FFFFFF') }} />
+            <h2 className="font-serif text-3xl mb-4" style={{ color: getColor('rsvp', 'titleColor', '#FFFFFF') }}>{content.rsvpTitle}</h2>
+            <p className="mb-8 opacity-80" style={{ color: getColor('rsvp', 'textColor', '#FFFFFF') }}>{content.rsvpDescription}</p>
             {weddingSlug ? (
               <Link
                 href={`/wedding/${weddingSlug}/rsvp`}
-                className="inline-block px-10 py-4 rounded-full font-semibold bg-white transition-all hover:opacity-90"
-                style={{ color: primaryColor }}
+                className="inline-block px-10 py-4 rounded-full font-semibold transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', '#FFFFFF'),
+                  color: getColor('rsvp', 'buttonTextColor', primaryColor)
+                }}
               >
                 RSVP Now
               </Link>
             ) : (
               <button
-                className="px-10 py-4 rounded-full font-semibold bg-white transition-all hover:opacity-90"
-                style={{ color: primaryColor }}
+                className="px-10 py-4 rounded-full font-semibold transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: getColor('rsvp', 'buttonColor', '#FFFFFF'),
+                  color: getColor('rsvp', 'buttonTextColor', primaryColor)
+                }}
               >
                 RSVP Now
               </button>
@@ -710,12 +729,12 @@ export function RusticGardenTemplate({
 
       {/* Footer */}
       <footer
-        className="py-12 text-center text-white"
-        style={{ backgroundColor: primaryColor }}
+        className="py-12 text-center"
+        style={{ backgroundColor: getColor('footer', 'backgroundColor', primaryColor) }}
       >
-        <Leaf className="h-8 w-8 mx-auto mb-3 opacity-60" />
-        <p className="mb-2">{content.footerMessage}</p>
-        <p className="font-serif text-lg">
+        <Leaf className="h-8 w-8 mx-auto mb-3 opacity-60" style={{ color: getColor('footer', 'accentColor', '#FFFFFF') }} />
+        <p className="mb-2" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>{content.footerMessage}</p>
+        <p className="font-serif text-lg" style={{ color: getColor('footer', 'textColor', '#FFFFFF') }}>
           {partner1Name} & {partner2Name}
         </p>
       </footer>
