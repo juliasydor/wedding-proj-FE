@@ -26,6 +26,7 @@ export const ROUTES = {
   giftList: '/dashboard/gifts',
   addGift: '/dashboard/gifts/add',
   guests: '/dashboard/guests',
+  invitations: '/dashboard/invitations',
   settings: '/dashboard/settings',
   weddingSite: (slug: string) => `/wedding/${slug}`,
   checkout: '/checkout',
@@ -53,8 +54,19 @@ export const API_ENDPOINTS = {
   },
   guests: {
     list: '/api/guests',
-    invite: '/api/guests/invite',
+    create: '/api/guests',
+    update: (id: string) => `/api/guests/${id}`,
+    delete: (id: string) => `/api/guests/${id}`,
     rsvp: '/api/guests/rsvp',
+    import: '/api/guests/import',
+  },
+  invitations: {
+    send: '/api/invitations/send',
+    sendBulk: '/api/invitations/send-bulk',
+    resend: (guestId: string) => `/api/invitations/resend/${guestId}`,
+    status: (guestId: string) => `/api/invitations/status/${guestId}`,
+    stats: '/api/invitations/stats',
+    webhook: '/api/invitations/webhook',
   },
   payments: {
     checkout: '/api/payments/checkout',

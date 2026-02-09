@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import {
   Plus,
   Search,
@@ -182,11 +183,13 @@ export default function GuestsPage() {
           <p className="text-subtitle text-sm md:text-base">{t('subtitle')}</p>
         </div>
         <div className="flex gap-2 sm:gap-3">
-          <Button variant="outline" className="rounded-full border-border text-sm" size="sm">
-            <Mail className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Enviar Convites</span>
-            <span className="sm:hidden">Convites</span>
-          </Button>
+          <Link href="/dashboard/invitations">
+            <Button variant="outline" className="rounded-full border-border text-sm" size="sm">
+              <Mail className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Enviar Convites</span>
+              <span className="sm:hidden">Convites</span>
+            </Button>
+          </Link>
           <Button
             onClick={() => setShowAddModal(true)}
             className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm"
