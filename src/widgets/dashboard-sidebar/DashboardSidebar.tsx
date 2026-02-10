@@ -15,18 +15,20 @@ import {
   ExternalLink,
   Menu,
   X,
+  Wallet,
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Logo } from '@/shared/ui/atoms/Logo';
 import { ROUTES } from '@/shared/config';
 import { useWeddingStore } from '@/entities/wedding';
 import { useAuthStore } from '@/entities/user';
-import { ThemeToggle, ThemeToggleCompact } from '@/shared/ui/molecules/ThemeToggle';
+import { ThemeToggle } from '@/shared/ui/molecules/ThemeToggle';
 
 const navItems = [
   { href: ROUTES.dashboard, icon: LayoutDashboard, labelKey: 'overview' },
   { href: ROUTES.siteEditor, icon: Globe, labelKey: 'siteEditor' },
   { href: ROUTES.giftList, icon: Gift, labelKey: 'giftList' },
+  { href: ROUTES.wallet, icon: Wallet, labelKey: 'wallet' },
   { href: ROUTES.guests, icon: Users, labelKey: 'guests' },
   { href: ROUTES.settings, icon: Settings, labelKey: 'settings' },
 ];
@@ -48,7 +50,7 @@ export function DashboardSidebar() {
     <>
       {/* Logo */}
       <div className="p-4 md:p-6 border-b border-border/50 flex items-center justify-between">
-        <Logo size="md" />
+        <Logo size="md" href={ROUTES.dashboard} />
         <button
           onClick={closeSidebar}
           className="md:hidden p-2 rounded-lg hover:bg-quaternary"
@@ -131,16 +133,13 @@ export function DashboardSidebar() {
     <>
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border/50 px-4 py-3 flex items-center justify-between">
-        <Logo size="sm" />
-        <div className="flex items-center gap-2">
-          <ThemeToggleCompact />
-          <button
-            onClick={() => setIsOpen(true)}
-            className="p-2 rounded-lg hover:bg-quaternary"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
+        <Logo size="sm" href={ROUTES.dashboard} />
+        <button
+          onClick={() => setIsOpen(true)}
+          className="p-2 rounded-lg hover:bg-quaternary"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
       </header>
 
       {/* Mobile Sidebar Overlay */}
