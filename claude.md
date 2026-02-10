@@ -181,6 +181,13 @@ The theme toggle appears in:
 | `/api/payments/:paymentId/status` | GET | Check payment status | `src/features/checkout/api/getPaymentStatus.ts` |
 | `/api/wedding/:id/contributions` | GET | Get all gift contributions | `src/entities/contribution/api/getContributions.ts` |
 
+### Wallet & Claims Endpoints
+| Endpoint | Method | Description | Frontend Usage |
+|----------|--------|-------------|----------------|
+| `/api/wedding/:id/wallet` | GET | Get wallet summary (received gifts, total value, claimable amount) | `src/app/dashboard/gifts/wallet/page.tsx` |
+| `/api/wedding/:id/wallet/claim` | POST | Request payout/claim of received gift funds | `src/app/dashboard/gifts/wallet/page.tsx` |
+| `/api/wedding/:id/gifts/received` | GET | Get list of received (gifted) gifts with gifter details | `src/app/dashboard/gifts/wallet/page.tsx` |
+
 ### Data Models
 
 ```typescript
@@ -237,23 +244,27 @@ interface Gift {
   weddingId: string;
   name: string;
   description?: string;
-  targetAmount: number;
-  currentAmount: number;
+  price: number;                    // Full price (no partial gifting)
   imageUrl?: string;
   category: 'honeymoon' | 'kitchen' | 'bedroom' | 'dining' | 'other';
   isActive: boolean;
+  isGifted: boolean;                // Whether someone already purchased this gift
+  giftedBy?: string;               // Name of the guest who gifted
+  giftedAt?: string;               // ISO timestamp of when it was gifted
 }
 
-// Contribution
+// Contribution (full-price only — no partial gifting)
 interface Contribution {
   id: string;
   giftId: string;
   guestId: string;
   guestName: string;
-  amount: number;
+  amount: number;                    // Always equals gift.price (full price)
   message?: string;
   paymentMethod: 'pix' | 'credit_card' | 'boleto';
   status: 'pending' | 'completed' | 'failed';
+  claimed: boolean;                  // Whether the couple has claimed/withdrawn this amount
+  claimedAt?: string;               // ISO timestamp of claim
   createdAt: string;
 }
 ```
@@ -663,7 +674,7 @@ Each template supports the following customizable sections:
 
 3. **Our Story Section** (toggle: `showStorySection`)
    - `storyTitle`: Section title
-   - `storyContent`: Story text (supports line breaks)
+   - `storyContent`: Story text (HTML — uses rich text editor with bold, italic, underline, lists, alignment, font size)
    - `storyImage`: Optional image
 
 4. **Ceremony & Reception** (sempre visível)
@@ -672,15 +683,15 @@ Each template supports the following customizable sections:
 
 5. **RSVP Section** (toggle: `showRsvpSection`)
    - `rsvpTitle`: Section title
-   - `rsvpDescription`: Description text
+   - `rsvpDescription`: Description text (HTML — rich text editor)
 
 6. **Gift Section** (toggle: `showGiftSection`)
    - `giftTitle`: Section title
-   - `giftDescription`: Description text
+   - `giftDescription`: Description text (HTML — rich text editor)
 
 7. **Accommodations Section** (toggle: `showAccommodationsSection`)
    - `accommodationsTitle`: Section title
-   - `accommodationsContent`: Content text
+   - `accommodationsContent`: Content text (HTML — rich text editor)
 
 8. **Gallery Section** (toggle: `showGallerySection`)
    - `galleryTitle`: Section title
@@ -943,9 +954,10 @@ interface PaymentStatus {
 
 Couples can manually add guests with full control over their RSVP status. The guest list supports companion (plus-one) information with name and age.
 
-### Add Guest Modal Features
+### Add Guest Features
 
-Located in `/dashboard/guests/page.tsx`:
+**Desktop:** Opens a modal dialog in `/dashboard/guests/page.tsx`
+**Mobile:** Navigates to dedicated page `/dashboard/guests/add/page.tsx` (same form, full-page layout with back button)
 
 - **Guest Information**
   - Name (required)
@@ -963,6 +975,10 @@ Located in `/dashboard/guests/page.tsx`:
   - Toggle to add companion
   - Companion name field (optional)
   - Companion age field (optional)
+
+### Guest Actions (3-dot menu)
+- **Edit guest** - Opens edit modal (desktop) or navigates to edit page
+- **Delete guest** - Removes guest with confirmation toast
 
 ### Guest Data Model
 
@@ -1027,6 +1043,115 @@ The frontend provides 6 predefined color palettes:
 | Church Wedding | #722f37 | #8b3a42 |
 
 Users can also input custom hex colors in the dashboard site editor.
+
+---
+
+## Gift System (Updated — Full-Price Only)
+
+### Overview
+
+The gift system uses **full-price gifting only** — no partial contributions or percentage-based payments. Each gift can be purchased **once** by a single guest paying the full price.
+
+### Gift Model Changes
+
+- Removed: `targetAmount`, `currentAmount` (partial gifting fields)
+- Added: `price` (full price of the gift), `isGifted` (boolean), `giftedBy` (guest name), `giftedAt` (timestamp)
+- Gift status is binary: **Available** or **Already gifted**
+
+### Frontend Pages
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Gift List | `/dashboard/gifts` | Lists all gifts with "Available"/"Recebido" status badges |
+| Add Gift | `/dashboard/gifts/add` | Create a new gift (name, description, price, category, image) |
+| Edit Gift | `/dashboard/gifts/edit/[id]` | Edit existing gift (same form as Add, pre-filled) |
+| My Wallet | `/dashboard/gifts/wallet` | Shows received gifts, total value, claim button |
+
+### My Wallet Page
+
+Located at `/dashboard/gifts/wallet/page.tsx`:
+
+- **Summary stats**: Total gifts received, total value, available for claim
+- **Claim button**: Triggers payout request to couple's bank account
+- **Received gifts list**: Shows each gifted item with gifter name, date, and amount
+
+### Backend Notes
+
+- When a guest purchases a gift via checkout, the backend should:
+  1. Set `gift.isGifted = true`
+  2. Set `gift.giftedBy = guestName`
+  3. Set `gift.giftedAt = now()`
+  4. Create a Contribution record with `amount = gift.price`
+- The wallet/claim endpoint should aggregate all completed contributions and process payout
+
+---
+
+## Rich Text Editor
+
+### Overview
+
+Long-form text fields in the site editor use a custom `RichTextEditor` component instead of plain textareas.
+
+### Component
+
+Located at `src/shared/ui/molecules/RichTextEditor.tsx`
+
+Features:
+- Bold, Italic, Underline
+- Unordered list
+- Text alignment (left, center, right)
+- Font size (small, normal, large, extra large)
+- Uses `contentEditable` with `document.execCommand` (no external dependencies)
+
+### Affected Fields
+
+The following `SiteContent` fields now contain **HTML** instead of plain text:
+- `storyContent`
+- `rsvpDescription`
+- `giftDescription`
+- `accommodationsContent`
+
+**Backend note:** These fields should be stored as `text` (or `longtext`) columns that accept HTML content. The backend should sanitize HTML on save to prevent XSS (allow only safe tags: `b`, `i`, `u`, `ul`, `ol`, `li`, `div`, `span`, `br`, `font`, `p`).
+
+---
+
+## Toast Messages (Global CRUD Feedback)
+
+### Overview
+
+A reusable toast utility at `src/shared/lib/toast-messages.ts` provides consistent success/error messages for all CRUD operations.
+
+### Usage
+
+```typescript
+import { toastMessages } from '@/shared/lib/toast-messages';
+
+// Create
+toastMessages.create.success('Convidado');  // "Convidado criado(a) com sucesso!"
+toastMessages.create.error('Convidado');    // "Erro ao criar convidado. Tente novamente."
+
+// Update, Delete, Save, Upload, Validation follow same pattern
+```
+
+### Backend Note
+
+All API responses should include appropriate HTTP status codes so the frontend can trigger the correct toast:
+- `200/201` → success toast
+- `400/422` → validation error toast
+- `500` → generic error toast
+
+---
+
+## New Frontend Routes
+
+```typescript
+export const ROUTES = {
+  // ... existing routes
+  editGift: (id: string) => `/dashboard/gifts/edit/${id}`,
+  wallet: '/dashboard/gifts/wallet',
+  addGuest: '/dashboard/guests/add',
+};
+```
 
 ---
 
