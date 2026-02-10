@@ -93,10 +93,10 @@ export default async function HomePage() {
       <Navbar variant="landing" />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="relative pt-16 pb-16 md:pt-32 md:pb-24">
+        <div className="max-w-7xl mx-auto px-0 md:px-8">
           {/* Hero Image Background */}
-          <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden mb-8">
+          <div className="relative h-[400px] md:h-[500px] rounded-none md:rounded-3xl overflow-hidden mb-8">
             <Image
               src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
               alt="Happy wedding couple"
@@ -110,9 +110,6 @@ export default async function HomePage() {
 
             {/* Hero Content Overlay */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-              <p className="text-tertiary text-sm font-medium uppercase tracking-wider mb-4">
-                THE MODERN WEDDING PLATFORM
-              </p>
               <h1 className="text-heading-1 text-white max-w-3xl mb-6">
                 {t('hero.title')}
               </h1>
