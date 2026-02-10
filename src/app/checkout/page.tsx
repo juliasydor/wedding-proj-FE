@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { ChevronLeft, Lock, CreditCard, QrCode, Heart, Edit2 } from 'lucide-react';
+import { ChevronLeft, Lock, CreditCard, QrCode, Edit2 } from 'lucide-react';
+import IconImage from '@/app/assets/Icon.png';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -103,7 +104,7 @@ export default function CheckoutPage() {
             className="bg-input-bg border-0"
           />
           <div className="flex justify-end mt-1">
-            <Heart className="h-4 w-4 text-subtitle" />
+            <Image src={IconImage} alt="Véu & Gravata" width={96} height={96} className="object-contain" />
           </div>
         </div>
 

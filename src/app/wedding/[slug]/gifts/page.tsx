@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Gift, Search, Heart, ChevronDown, DollarSign } from 'lucide-react';
+import Image from 'next/image';
+import { Gift, Search, ChevronDown, DollarSign } from 'lucide-react';
+import IconImage from '@/app/assets/Icon.png';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/shared/lib/utils';
@@ -240,7 +242,7 @@ export default function GuestGiftsPage() {
                       style={{ backgroundColor: `${primaryColor}CC` }}
                     >
                       <div className="text-center text-white">
-                        <Heart className="h-8 w-8 mx-auto mb-2 fill-white" />
+                        <Image src={IconImage} alt="Véu & Gravata" width={140} height={140} className="mx-auto mb-2 object-contain" />
                         <span className="font-semibold text-sm md:text-base">Presente Completo!</span>
                       </div>
                     </div>

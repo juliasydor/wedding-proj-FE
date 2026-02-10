@@ -38,7 +38,7 @@ export function AuthForm({
   return (
     <div className={cn('w-full max-w-md mx-auto space-y-8', className)}>
       <div className="text-center space-y-4">
-        <HeartIcon size={32} animate className="mx-auto" />
+        <HeartIcon size={140} animate className="mx-auto" />
         <h1 className="text-heading-2">{title}</h1>
         {subtitle && <p className="text-subtitle">{subtitle}</p>}
       </div>

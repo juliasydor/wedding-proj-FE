@@ -1,7 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Check, Heart, Home } from 'lucide-react';
+import Image from 'next/image';
+import { Check, Home } from 'lucide-react';
+import IconImage from '@/app/assets/Icon.png';
 import { Button } from '@/components/ui/button';
 import { SparkleText } from '@/shared/animations/SparkleText';
 
@@ -17,7 +19,7 @@ export default function CheckoutSuccessPage() {
             <Check className="h-8 w-8 text-secondary-foreground" />
           </div>
         </div>
-        <Heart className="absolute -top-2 -right-2 h-8 w-8 text-secondary fill-secondary animate-bounce" />
+        <Image src={IconImage} alt="Véu & Gravata" width={140} height={140} className="absolute -top-6 -right-6 object-contain animate-bounce" />
       </div>
 
       {/* Message */}

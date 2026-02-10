@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ArrowLeft,
   Gift,
@@ -11,12 +12,12 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Heart,
   User,
   Mail,
   Phone,
   DollarSign,
 } from 'lucide-react';
+import IconImage from '@/app/assets/Icon.png';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -622,7 +623,7 @@ export default function CheckoutPage() {
                 className="pt-4 border-t border-border/50 flex items-center gap-3 rounded-xl p-3 mt-2"
                 style={{ backgroundColor: `${primaryColor}10` }}
               >
-                <Heart className="h-5 w-5" style={{ color: primaryColor }} />
+                <Image src={IconImage} alt="Véu & Gravata" width={110} height={110} className="object-contain" />
                 <div>
                   <p className="text-sm font-medium text-foreground">
                     Para {onboarding.partner1Name || 'Noivo'} & {onboarding.partner2Name || 'Noiva'}

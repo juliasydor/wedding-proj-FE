@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { Heart, Gift, Menu, X, Home } from 'lucide-react';
+import Image from 'next/image';
+import { Gift, Menu, X, Home } from 'lucide-react';
+import IconImage from '@/app/assets/Icon.png';
 import { cn } from '@/shared/lib/utils';
 
 export default function WeddingLayout({
@@ -36,7 +38,7 @@ export default function WeddingLayout({
           <div className="flex items-center justify-between h-14 md:h-16">
             {/* Logo */}
             <Link href={`/wedding/${slug}`} className="flex items-center gap-2">
-              <Heart className="h-5 w-5 text-secondary fill-secondary" />
+              <Image src={IconImage} alt="Véu & Gravata" width={140} height={140} className="object-contain" />
               <span className="font-semibold text-foreground text-sm md:text-base">
                 Véu & Gravata
               </span>
