@@ -39,7 +39,7 @@ export function Logo({ className, size = 'md', showText = true, href }: LogoProp
         alt="Véu & Gravata"
         width={iconSizeMap[size]}
         height={iconSizeMap[size]}
-        className="object-contain -mr-2"
+        className="object-contain -mr-2 h-auto"
       />
       {showText && (
         <span className={cn('font-bold text-foreground', sizeMap[size])}>

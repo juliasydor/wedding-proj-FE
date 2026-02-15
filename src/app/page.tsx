@@ -90,7 +90,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <HeartAnimation count={10} />
-      <Navbar variant="landing" />
+      <Navbar variant="landing" heroImageUrl="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" />
 
       {/* Hero Section */}
       <section className="relative pt-16 pb-16 md:pt-32 md:pb-24">
