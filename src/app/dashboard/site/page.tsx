@@ -43,6 +43,7 @@ import {
   type TemplateId,
 } from '@/shared/ui/templates';
 import { SectionBlockEditor } from '@/shared/ui/molecules/SectionBlockEditor';
+import { RichTextEditor } from '@/shared/ui/molecules/RichTextEditor';
 
 import type { DressCode, DressLength, GroomsmenStyle, SectionColors } from '@/shared/types';
 
@@ -590,29 +591,29 @@ function CollapsibleSection({
         className="flex items-center justify-between p-4 bg-quaternary/30 cursor-pointer"
         onClick={onToggle}
       >
+        <h4 className="font-medium text-foreground">{title}</h4>
         <div className="flex items-center gap-3">
-          <h4 className="font-medium text-foreground">{title}</h4>
           {showToggle && enabled !== undefined && (
             <div
               onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-2"
             >
+              <span className="text-xs text-subtitle">
+                {enabled ? 'Visível' : 'Oculto'}
+              </span>
               <Switch
                 checked={enabled}
                 onCheckedChange={onEnabledChange}
                 className="data-[state=checked]:bg-secondary"
               />
-              <span className="text-xs text-subtitle">
-                {enabled ? 'Visível' : 'Oculto'}
-              </span>
             </div>
           )}
+          {isOpen ? (
+            <ChevronUp className="h-4 w-4 text-subtitle" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-subtitle" />
+          )}
         </div>
-        {isOpen ? (
-          <ChevronUp className="h-4 w-4 text-subtitle" />
-        ) : (
-          <ChevronDown className="h-4 w-4 text-subtitle" />
-        )}
       </div>
       {isOpen && <div className="p-4 space-y-4">{children}</div>}
     </div>
@@ -1252,12 +1253,10 @@ export default function SiteEditorPage() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm">Conteúdo</Label>
-                      <textarea
+                      <RichTextEditor
                         value={siteContent.storyContent}
-                        onChange={(e) => setSiteContent({ ...siteContent, storyContent: e.target.value })}
+                        onChange={(val) => setSiteContent({ ...siteContent, storyContent: val })}
                         placeholder="Conte sua história de amor..."
-                        rows={4}
-                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
                       />
                     </div>
                     <div className="space-y-2">
@@ -1379,11 +1378,11 @@ export default function SiteEditorPage() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm">Descrição</Label>
-                      <textarea
+                      <RichTextEditor
                         value={siteContent.rsvpDescription}
-                        onChange={(e) => setSiteContent({ ...siteContent, rsvpDescription: e.target.value })}
-                        rows={2}
-                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                        onChange={(val) => setSiteContent({ ...siteContent, rsvpDescription: val })}
+                        placeholder="Descrição do RSVP..."
+                        minHeight="80px"
                       />
                     </div>
                   </div>
@@ -1409,11 +1408,11 @@ export default function SiteEditorPage() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm">Descrição</Label>
-                      <textarea
+                      <RichTextEditor
                         value={siteContent.giftDescription}
-                        onChange={(e) => setSiteContent({ ...siteContent, giftDescription: e.target.value })}
-                        rows={2}
-                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                        onChange={(val) => setSiteContent({ ...siteContent, giftDescription: val })}
+                        placeholder="Descrição da lista de presentes..."
+                        minHeight="80px"
                       />
                     </div>
                   </div>
@@ -1439,12 +1438,10 @@ export default function SiteEditorPage() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm">Conteúdo</Label>
-                      <textarea
+                      <RichTextEditor
                         value={siteContent.accommodationsContent}
-                        onChange={(e) => setSiteContent({ ...siteContent, accommodationsContent: e.target.value })}
-                        rows={3}
+                        onChange={(val) => setSiteContent({ ...siteContent, accommodationsContent: val })}
                         placeholder="Adicione informações sobre hotéis, pousadas..."
-                        className="w-full px-4 py-3 bg-input-bg border border-border rounded-xl text-foreground placeholder:text-subtitle resize-none focus:outline-none focus:ring-2 focus:ring-secondary/50"
                       />
                     </div>
                   </div>
@@ -2076,7 +2073,7 @@ export default function SiteEditorPage() {
       {showFullPreview && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/90" onClick={() => setShowFullPreview(false)} />
-          <div className="absolute inset-2 md:inset-4 lg:inset-8 bg-card rounded-2xl overflow-hidden flex flex-col">
+          <div className="absolute inset-0 md:inset-4 lg:inset-8 bg-card md:rounded-2xl overflow-hidden flex flex-col">
             <div className="p-3 md:p-4 border-b border-border flex items-center justify-between shrink-0">
               <span className="font-medium text-sm md:text-base">Preview Completo</span>
               <div className="flex items-center gap-2 md:gap-3">
@@ -2116,10 +2113,10 @@ export default function SiteEditorPage() {
                 </Button>
               </div>
             </div>
-            <div className="flex-1 overflow-hidden bg-quaternary/50 flex items-center justify-center p-4">
+            <div className="flex-1 overflow-hidden bg-quaternary/50 flex items-center justify-center p-2 md:p-4">
               {previewMode === 'desktop' ? (
-                <div className="w-full max-w-6xl h-full overflow-auto rounded-lg border border-border/50 bg-white">
-                  <div style={{ minWidth: '1024px' }}>
+                <div className="w-full h-full overflow-auto rounded-lg border border-border/50 bg-white">
+                  <div className="min-w-[320px] md:min-w-[1024px]">
                     <TemplateComponent
                       partner1Name={formData.partner1Name || 'Parceiro 1'}
                       partner2Name={formData.partner2Name || 'Parceiro 2'}
@@ -2136,10 +2133,10 @@ export default function SiteEditorPage() {
                   </div>
                 </div>
               ) : (
-                <div className="relative h-full flex items-center justify-center">
-                  <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl flex flex-col" style={{ width: '390px', height: 'min(95%, 844px)' }}>
-                    <div className="w-full flex-1 bg-white rounded-[2.5rem] overflow-hidden relative flex flex-col">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-gray-900 rounded-b-2xl z-10" />
+                <div className="relative h-full flex items-center justify-center w-full">
+                  <div className="bg-gray-900 rounded-[2rem] md:rounded-[3rem] p-1.5 md:p-2 shadow-2xl flex flex-col w-full max-w-[390px]" style={{ height: 'min(95%, 844px)' }}>
+                    <div className="w-full flex-1 bg-white rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden relative flex flex-col">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 md:w-28 h-5 md:h-7 bg-gray-900 rounded-b-xl md:rounded-b-2xl z-10" />
                       <div className="flex-1 overflow-y-auto overflow-x-hidden">
                         <div style={{ width: '100%' }}>
                           <TemplateComponent

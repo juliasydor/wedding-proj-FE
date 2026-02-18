@@ -96,6 +96,9 @@ export interface Gift {
   imageUrl?: string;
   category: GiftCategory;
   isSelected: boolean;
+  isGifted: boolean;
+  giftedBy?: string;
+  giftedAt?: string;
   contributedAmount: number;
   contributors: GiftContributor[];
 }

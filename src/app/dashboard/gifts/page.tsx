@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { Plus, Search, Gift, Trash2, Edit2, DollarSign, ChevronDown } from 'lucide-react';
+import { Plus, Search, Gift, Trash2, Edit2, ChevronDown, Wallet, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/shared/lib/utils';
 import { ROUTES } from '@/shared/config';
+import { toast } from 'sonner';
 import type { Gift as GiftType } from '@/shared/types';
 
 const MOCK_GIFTS: GiftType[] = [
@@ -20,7 +21,8 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=200&fit=crop',
     category: 'honeymoon',
     isSelected: true,
-    contributedAmount: 250,
+    isGifted: false,
+    contributedAmount: 0,
     contributors: [],
   },
   {
@@ -32,7 +34,10 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=200&fit=crop',
     category: 'kitchen',
     isSelected: true,
-    contributedAmount: 400,
+    isGifted: true,
+    giftedBy: 'Maria Silva',
+    giftedAt: '2024-02-15',
+    contributedAmount: 800,
     contributors: [],
   },
   {
@@ -44,6 +49,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=200&fit=crop',
     category: 'kitchen',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 0,
     contributors: [],
   },
@@ -56,6 +62,9 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300&h=200&fit=crop',
     category: 'bedroom',
     isSelected: true,
+    isGifted: true,
+    giftedBy: 'João Santos',
+    giftedAt: '2024-02-10',
     contributedAmount: 450,
     contributors: [],
   },
@@ -73,7 +82,7 @@ export default function GiftsPage() {
   const t = useTranslations('dashboard');
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
-  const [gifts] = useState<GiftType[]>(MOCK_GIFTS);
+  const [gifts, setGifts] = useState<GiftType[]>(MOCK_GIFTS);
   const [showCategories, setShowCategories] = useState(false);
 
   const filteredGifts = gifts.filter((gift) => {
@@ -82,8 +91,10 @@ export default function GiftsPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const totalValue = gifts.reduce((sum, gift) => sum + gift.price, 0);
-  const totalContributed = gifts.reduce((sum, gift) => sum + (gift.contributedAmount || 0), 0);
+  const handleDeleteGift = (giftId: string) => {
+    setGifts(gifts.filter((g) => g.id !== giftId));
+    toast.success('Presente removido com sucesso!');
+  };
 
   return (
     <div className="p-4 md:p-8">
@@ -103,7 +114,7 @@ export default function GiftsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
+      <div className="grid grid-cols-2 gap-3 md:gap-6 mb-6 md:mb-8">
         <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border/50">
           <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
             <Gift className="h-4 w-4 md:h-5 md:w-5 text-secondary" />
@@ -111,20 +122,15 @@ export default function GiftsPage() {
           </div>
           <p className="text-2xl md:text-3xl font-bold text-foreground">{gifts.length}</p>
         </div>
-        <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border/50">
-          <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
-            <DollarSign className="h-4 w-4 md:h-5 md:w-5 text-tertiary" />
-            <span className="text-xs md:text-sm text-subtitle">Valor Total</span>
+        <Link href="/dashboard/gifts/wallet">
+          <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border/50 hover:border-secondary/50 transition-colors cursor-pointer">
+            <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+              <Wallet className="h-4 w-4 md:h-5 md:w-5 text-tertiary" />
+              <span className="text-xs md:text-sm text-subtitle">Minha Carteira</span>
+            </div>
+            <p className="text-sm md:text-base font-medium text-secondary">Ver recebidos →</p>
           </div>
-          <p className="text-2xl md:text-3xl font-bold text-foreground">R$ {totalValue.toLocaleString()}</p>
-        </div>
-        <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 border border-border/50">
-          <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
-            <DollarSign className="h-4 w-4 md:h-5 md:w-5 text-secondary" />
-            <span className="text-xs md:text-sm text-subtitle">Arrecadado</span>
-          </div>
-          <p className="text-2xl md:text-3xl font-bold text-secondary">R$ {totalContributed.toLocaleString()}</p>
-        </div>
+        </Link>
       </div>
 
       {/* Filters */}
@@ -193,71 +199,73 @@ export default function GiftsPage() {
 
       {/* Gifts Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-        {filteredGifts.map((gift) => {
-          const progress = gift.contributedAmount
-            ? Math.round((gift.contributedAmount / gift.price) * 100)
-            : 0;
-          const isComplete = progress >= 100;
-
-          return (
-            <div
-              key={gift.id}
-              className={cn(
-                'bg-card rounded-xl md:rounded-2xl border overflow-hidden transition-all',
-                isComplete ? 'border-secondary/50' : 'border-border/50'
+        {filteredGifts.map((gift) => (
+          <div
+            key={gift.id}
+            className={cn(
+              'bg-card rounded-xl md:rounded-2xl border overflow-hidden transition-all',
+              gift.isGifted ? 'border-secondary/50' : 'border-border/50'
+            )}
+          >
+            <div className="relative h-32 md:h-40">
+              <img
+                src={gift.imageUrl}
+                alt={gift.name}
+                className="w-full h-full object-cover"
+              />
+              {gift.isGifted && (
+                <div className="absolute inset-0 bg-secondary/80 flex flex-col items-center justify-center">
+                  <CheckCircle2 className="h-8 w-8 text-white mb-1" />
+                  <span className="text-white font-semibold text-sm md:text-base">Já presenteado</span>
+                  {gift.giftedBy && (
+                    <span className="text-white/80 text-xs mt-0.5">por {gift.giftedBy}</span>
+                  )}
+                </div>
               )}
-            >
-              <div className="relative h-32 md:h-40">
-                <img
-                  src={gift.imageUrl}
-                  alt={gift.name}
-                  className="w-full h-full object-cover"
-                />
-                {isComplete && (
-                  <div className="absolute inset-0 bg-secondary/80 flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm md:text-base">Completo!</span>
-                  </div>
+            </div>
+            <div className="p-3 md:p-4">
+              <h3 className="font-semibold text-foreground mb-1 text-sm md:text-base">{gift.name}</h3>
+              <p className="text-xs md:text-sm text-subtitle mb-2 md:mb-3 line-clamp-2">{gift.description}</p>
+
+              <div className="flex items-center justify-between mb-3 md:mb-4">
+                <span className="text-base md:text-lg font-bold text-secondary">
+                  R$ {gift.price.toLocaleString()}
+                </span>
+                {gift.isGifted ? (
+                  <span className="text-xs font-medium text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full">
+                    Recebido
+                  </span>
+                ) : (
+                  <span className="text-xs font-medium text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded-full">
+                    Disponível
+                  </span>
                 )}
               </div>
-              <div className="p-3 md:p-4">
-                <h3 className="font-semibold text-foreground mb-1 text-sm md:text-base">{gift.name}</h3>
-                <p className="text-xs md:text-sm text-subtitle mb-2 md:mb-3 line-clamp-2">{gift.description}</p>
 
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-base md:text-lg font-bold text-secondary">
-                    R$ {gift.price.toLocaleString()}
-                  </span>
-                  <span className="text-xs md:text-sm text-subtitle">{progress}%</span>
-                </div>
-
-                <div className="h-1.5 md:h-2 bg-quaternary rounded-full overflow-hidden mb-3 md:mb-4">
-                  <div
-                    className="h-full bg-secondary rounded-full transition-all"
-                    style={{ width: `${Math.min(progress, 100)}%` }}
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="flex-1 rounded-full border-border text-xs md:text-sm"
-                  >
+              <div className="flex gap-2">
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 rounded-full border-border text-xs md:text-sm"
+                >
+                  <Link href={`/dashboard/gifts/edit/${gift.id}`}>
                     <Edit2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                     Editar
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
-                  >
-                    <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
-                  </Button>
-                </div>
+                  </Link>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                  onClick={() => handleDeleteGift(gift.id)}
+                >
+                  <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
+                </Button>
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       {filteredGifts.length === 0 && (

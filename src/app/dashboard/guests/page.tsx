@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Plus,
   Search,
@@ -18,6 +19,8 @@ import {
   User,
   AtSign,
   Calendar,
+  Edit2,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,7 +35,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/shared/lib/utils';
+import { ROUTES } from '@/shared/config';
 import { toast } from 'sonner';
 
 interface Guest {
@@ -96,12 +106,14 @@ const STATUS_OPTIONS = [
 
 export default function GuestsPage() {
   const t = useTranslations('dashboard.guests');
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [guests, setGuests] = useState<Guest[]>(MOCK_GUESTS);
   const [formData, setFormData] = useState<NewGuestForm>(initialFormState);
+  const [editingGuestId, setEditingGuestId] = useState<string | null>(null);
 
   const filteredGuests = guests.filter((guest) => {
     const matchesSearch = guest.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -171,7 +183,61 @@ export default function GuestsPage() {
 
   const handleCloseModal = () => {
     setFormData(initialFormState);
+    setEditingGuestId(null);
     setShowAddModal(false);
+  };
+
+  const handleEditGuest = (guest: Guest) => {
+    setEditingGuestId(guest.id);
+    setFormData({
+      name: guest.name,
+      email: guest.email,
+      phone: guest.phone || '',
+      status: guest.rsvpStatus,
+      hasPlusOne: guest.plusOne,
+      plusOneName: guest.plusOneName || '',
+      plusOneAge: guest.plusOneAge ? String(guest.plusOneAge) : '',
+      dietaryRestrictions: guest.dietaryRestrictions || '',
+    });
+    setShowAddModal(true);
+  };
+
+  const handleSaveGuest = () => {
+    if (!formData.name || !formData.email) {
+      toast.error('Por favor, preencha nome e email do convidado.');
+      return;
+    }
+
+    if (editingGuestId) {
+      setGuests(guests.map((g) =>
+        g.id === editingGuestId
+          ? {
+              ...g,
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone || undefined,
+              rsvpStatus: formData.status,
+              plusOne: formData.hasPlusOne,
+              plusOneName: formData.hasPlusOne && formData.plusOneName ? formData.plusOneName : undefined,
+              plusOneAge: formData.hasPlusOne && formData.plusOneAge ? parseInt(formData.plusOneAge) : undefined,
+              dietaryRestrictions: formData.dietaryRestrictions || undefined,
+            }
+          : g
+      ));
+      toast.success('Convidado atualizado com sucesso!');
+    } else {
+      handleAddGuest();
+      return;
+    }
+
+    setFormData(initialFormState);
+    setEditingGuestId(null);
+    setShowAddModal(false);
+  };
+
+  const handleDeleteGuest = (guestId: string) => {
+    setGuests(guests.filter((g) => g.id !== guestId));
+    toast.success('Convidado removido com sucesso!');
   };
 
   return (
@@ -190,14 +256,23 @@ export default function GuestsPage() {
               <span className="sm:hidden">Convites</span>
             </Button>
           </Link>
+          {/* Desktop: open modal */}
           <Button
             onClick={() => setShowAddModal(true)}
-            className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm"
+            className="hidden md:flex rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm"
             size="sm"
           >
             <Plus className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">{t('addGuest')}</span>
-            <span className="sm:hidden">Adicionar</span>
+            {t('addGuest')}
+          </Button>
+          {/* Mobile: navigate to add page */}
+          <Button
+            onClick={() => router.push(ROUTES.addGuest)}
+            className="md:hidden rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm"
+            size="sm"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Adicionar
           </Button>
         </div>
       </div>
@@ -354,9 +429,26 @@ export default function GuestsPage() {
                   )}
                 </td>
                 <td className="p-4 text-right">
-                  <Button size="sm" variant="ghost" className="text-subtitle">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="ghost" className="text-subtitle">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-card border-border">
+                      <DropdownMenuItem onClick={() => handleEditGuest(guest)} className="cursor-pointer">
+                        <Edit2 className="h-4 w-4 mr-2" />
+                        Editar convidado
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDeleteGuest(guest.id)}
+                        className="cursor-pointer text-red-500 focus:text-red-500"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Remover convidado
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
             ))}
@@ -391,9 +483,26 @@ export default function GuestsPage() {
                   <p className="text-xs text-subtitle">{guest.email}</p>
                 </div>
               </div>
-              <Button size="sm" variant="ghost" className="text-subtitle -mr-2">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="ghost" className="text-subtitle -mr-2">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-card border-border">
+                  <DropdownMenuItem onClick={() => handleEditGuest(guest)} className="cursor-pointer">
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    Editar convidado
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleDeleteGuest(guest.id)}
+                    className="cursor-pointer text-red-500 focus:text-red-500"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remover convidado
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Companion Info */}
@@ -449,10 +558,12 @@ export default function GuestsPage() {
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
               <UserPlus className="h-5 w-5 text-secondary" />
-              Adicionar Convidado
+              {editingGuestId ? 'Editar Convidado' : 'Adicionar Convidado'}
             </DialogTitle>
             <DialogDescription className="text-subtitle">
-              Preencha as informações do convidado abaixo.
+              {editingGuestId
+                ? 'Atualize as informações do convidado.'
+                : 'Preencha as informações do convidado abaixo.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -611,11 +722,20 @@ export default function GuestsPage() {
               Cancelar
             </Button>
             <Button
-              onClick={handleAddGuest}
+              onClick={handleSaveGuest}
               className="rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
             >
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Convidado
+              {editingGuestId ? (
+                <>
+                  <Edit2 className="mr-2 h-4 w-4" />
+                  Salvar Alterações
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Adicionar Convidado
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

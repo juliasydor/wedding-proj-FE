@@ -259,6 +259,7 @@
       "overview": "Overview",
       "siteEditor": "Edit Site",
       "giftList": "Gift List",
+      "wallet": "My Wallet",
       "guests": "Guests",
       "settings": "Settings",
       "viewSite": "View Site",
@@ -357,8 +358,7 @@
       "schedule": "Monday to Friday 9am to 9pm"
     },
     "bottom": {
-      "developedWith": "Developed with",
-      "forEveryone": "for everyone",
+      "developedWith": "Developed for everyone",
       "terms": "Terms and conditions",
       "privacy": "Privacy policy"
     }
