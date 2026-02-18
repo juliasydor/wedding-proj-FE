@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Gift, Users, Calendar, MapPin, Eye, ArrowRight } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -47,6 +47,7 @@ const MOCK_CONTRIBUTIONS: GiftContribution[] = [
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const { onboarding } = useWeddingStore();
+  const IconImage = useThemeIcon();
 
   const totalReceived = 4250;
   const goalAmount = 6500;

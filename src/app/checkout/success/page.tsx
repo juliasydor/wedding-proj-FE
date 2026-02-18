@@ -3,12 +3,13 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Check, Home } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { SparkleText } from '@/shared/animations/SparkleText';
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();
+  const IconImage = useThemeIcon();
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 text-center">

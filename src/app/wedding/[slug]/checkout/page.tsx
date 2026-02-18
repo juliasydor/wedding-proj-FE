@@ -17,7 +17,7 @@ import {
   Phone,
   DollarSign,
 } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -114,6 +114,7 @@ interface GuestInfo {
 export default function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
+  const IconImage = useThemeIcon();
   const searchParams = useSearchParams();
   const slug = params?.slug as string || '';
   const giftId = searchParams?.get('gift') || null;

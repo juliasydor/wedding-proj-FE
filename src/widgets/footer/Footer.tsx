@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Facebook, Instagram, ChevronUp } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { ROUTES } from '@/shared/config';
 
 export function Footer() {
   const t = useTranslations('footer');
+  const IconImage = useThemeIcon();
   const year = new Date().getFullYear();
 
   const scrollToTop = () => {

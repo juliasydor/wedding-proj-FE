@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { ChevronLeft, ChevronRight, Sparkles, Heart } from 'lucide-react';
 import { OnboardingLayout } from '@/shared/ui/organisms/OnboardingLayout';
 import { useWeddingStore } from '@/entities/wedding';
 import { ROUTES } from '@/shared/config';
@@ -122,7 +120,7 @@ export default function OnboardingDatePage() {
               <Sparkles className="w-6 h-6" />
             </div>
             <div className="absolute bottom-3 left-3 text-secondary/20">
-              <Image src={IconImage} alt="Véu & Gravata" width={110} height={110} className="object-contain" />
+              <Heart className="w-8 h-8 fill-current" />
             </div>
 
             {/* Month Navigation */}
@@ -197,7 +195,7 @@ export default function OnboardingDatePage() {
                     {day}
                     {selected && (
                       <>
-                        <Image src={IconImage} alt="Selected" width={88} height={88} className="absolute -top-5 -right-5 object-contain animate-pulse" />
+                        <Heart className="absolute -top-2 -right-2 w-5 h-5 text-secondary fill-secondary animate-pulse" />
                         <div className="absolute inset-0 rounded-xl bg-secondary/20 animate-ping" style={{ animationDuration: '2s' }} />
                       </>
                     )}
@@ -210,7 +208,7 @@ export default function OnboardingDatePage() {
             {selectedDate && (
               <div className="mt-6 pt-4 border-t border-border">
                 <div className="flex items-center justify-center gap-3 text-center">
-                  <Image src={IconImage} alt="Véu & Gravata" width={110} height={110} className="object-contain animate-pulse" />
+                  <Heart className="w-6 h-6 text-secondary fill-secondary animate-pulse" />
                   <div>
                     <p className="text-xs uppercase tracking-wider text-tertiary mb-1">Your Special Day</p>
                     <p className="text-lg font-semibold text-foreground">
@@ -222,7 +220,7 @@ export default function OnboardingDatePage() {
                       })}
                     </p>
                   </div>
-                  <Image src={IconImage} alt="Véu & Gravata" width={110} height={110} className="object-contain animate-pulse" />
+                  <Heart className="w-6 h-6 text-secondary fill-secondary animate-pulse" />
                 </div>
               </div>
             )}

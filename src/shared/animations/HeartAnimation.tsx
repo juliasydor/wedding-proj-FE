@@ -27,7 +27,7 @@ export function HeartAnimation({ count = 15, className }: HeartAnimationProps) {
       x: Math.random() * 100,
       delay: Math.random() * 5,
       duration: 3 + Math.random() * 4,
-      size: 10 + Math.random() * 20,
+      size: 6 + Math.random() * 10,
     }));
     setHearts(generatedHearts);
   }, [count]);

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ChevronLeft, Check, Users, Mail, Phone, MessageCircle, X } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,7 @@ type RsvpStatus = 'attending' | 'not-attending' | null;
 export default function RsvpPage() {
   const params = useParams();
   const router = useRouter();
+  const IconImage = useThemeIcon();
   const slug = params?.slug as string || '';
   const { onboarding } = useWeddingStore();
   const { confirmRSVP } = useGuestStore();

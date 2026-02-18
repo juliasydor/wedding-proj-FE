@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
@@ -18,10 +18,30 @@ interface NavbarProps {
 export function Navbar({ variant = 'landing', heroImageUrl }: NavbarProps) {
   const t = useTranslations('nav');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (variant !== 'landing' || !heroImageUrl) return;
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [variant, heroImageUrl]);
+
+  const isLandingWithHero = variant === 'landing' && !!heroImageUrl;
 
   return (
     <div>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+      <header className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isLandingWithHero && !scrolled
+          ? "md:bg-background/80 md:backdrop-blur-md md:border-b md:border-border/50 bg-transparent"
+          : "bg-background/80 backdrop-blur-md border-b border-border/50"
+      )}>
         <nav className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           <Logo size="md" />
 

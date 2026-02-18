@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { ChevronLeft, Lock, CreditCard, QrCode, Edit2 } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -16,6 +16,7 @@ import { cn } from '@/shared/lib/utils';
 export default function CheckoutPage() {
   const t = useTranslations('checkout');
   const router = useRouter();
+  const IconImage = useThemeIcon();
 
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
   const [isLoading, setIsLoading] = useState(false);

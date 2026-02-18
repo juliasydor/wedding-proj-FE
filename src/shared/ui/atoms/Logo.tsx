@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/entities/user';
 import { ROUTES } from '@/shared/config';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 
 interface LogoProps {
   className?: string;
@@ -28,6 +28,7 @@ const iconSizeMap = {
 
 export function Logo({ className, size = 'md', showText = true, href }: LogoProps) {
   const { isAuthenticated } = useAuthStore();
+  const IconImage = useThemeIcon();
 
   // If href is explicitly provided, use it. Otherwise, auto-detect based on auth state.
   const resolvedHref = href ?? (isAuthenticated ? ROUTES.dashboard : '/');
@@ -41,11 +42,6 @@ export function Logo({ className, size = 'md', showText = true, href }: LogoProp
         height={iconSizeMap[size]}
         className="object-contain -mr-2 h-auto"
       />
-      {showText && (
-        <span className={cn('font-bold text-foreground', sizeMap[size])}>
-          Véu & Gravata
-        </span>
-      )}
     </div>
   );
 

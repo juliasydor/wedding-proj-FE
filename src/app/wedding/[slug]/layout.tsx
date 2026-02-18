@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Gift, Menu, X, Home } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { cn } from '@/shared/lib/utils';
 
 export default function WeddingLayout({
@@ -15,6 +15,7 @@ export default function WeddingLayout({
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const IconImage = useThemeIcon();
   const params = useParams();
   const slug = params?.slug as string || '';
 
@@ -39,9 +40,6 @@ export default function WeddingLayout({
             {/* Logo */}
             <Link href={`/wedding/${slug}`} className="flex items-center gap-2">
               <Image src={IconImage} alt="Véu & Gravata" width={140} height={140} className="object-contain" />
-              <span className="font-semibold text-foreground text-sm md:text-base">
-                Véu & Gravata
-              </span>
             </Link>
 
             {/* Desktop Navigation */}

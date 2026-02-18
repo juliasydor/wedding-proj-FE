@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Gift, Search, ChevronDown, DollarSign } from 'lucide-react';
-import IconImage from '@/app/assets/Icon.png';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/shared/lib/utils';
@@ -98,6 +98,7 @@ const CATEGORIES = [
 export default function GuestGiftsPage() {
   const params = useParams();
   const router = useRouter();
+  const IconImage = useThemeIcon();
   const slug = params?.slug as string || '';
   const { onboarding } = useWeddingStore();
 
