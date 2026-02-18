@@ -21,9 +21,9 @@ const sizeMap = {
 };
 
 const iconSizeMap = {
-  sm: 120,
-  md: 150,
-  lg: 180,
+  sm: 90,
+  md: 120,
+  lg: 160,
 };
 
 export function Logo({ className, size = 'md', showText = true, href }: LogoProps) {
@@ -34,13 +34,13 @@ export function Logo({ className, size = 'md', showText = true, href }: LogoProp
   const resolvedHref = href ?? (isAuthenticated ? ROUTES.dashboard : '/');
 
   const content = (
-    <div className={cn('flex items-center gap-0', className)}>
+    <div className={cn('flex items-center', className)}>
       <Image
         src={IconImage}
         alt="Véu & Gravata"
         width={iconSizeMap[size]}
-        height={iconSizeMap[size]}
-        className="object-contain -mr-2 h-auto"
+        height={Math.round(iconSizeMap[size] * 2 / 3)}
+        className="object-contain h-auto max-h-12"
       />
     </div>
   );
