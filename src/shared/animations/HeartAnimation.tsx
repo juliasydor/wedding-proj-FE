@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { useThemeStore } from '@/shared/store/themeStore';
-import { useThemeStore } from '@/shared/store/themeStore';
 
 interface Heart {
   id: number;
