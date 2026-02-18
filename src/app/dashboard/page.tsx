@@ -2,9 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
-import { Gift, Users, Calendar, MapPin, Eye, ArrowRight } from 'lucide-react';
-import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
+import { Gift, Users, Calendar, MapPin, Eye, ArrowRight, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -47,7 +45,6 @@ const MOCK_CONTRIBUTIONS: GiftContribution[] = [
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const { onboarding } = useWeddingStore();
-  const IconImage = useThemeIcon();
 
   const totalReceived = 4250;
   const goalAmount = 6500;
@@ -120,14 +117,14 @@ export default function DashboardPage() {
         <div className="lg:col-span-1">
           <div className="bg-gradient-to-br from-secondary/20 to-tertiary/10 rounded-2xl md:rounded-3xl p-4 md:p-6 relative overflow-hidden h-full">
             <div className="absolute top-4 right-4 opacity-20">
-              <Image src={IconImage} alt="Véu & Gravata" width={280} height={280} className="object-contain md:w-72 md:h-72 w-48 h-48" />
+              <Heart className="w-32 h-32 md:w-40 md:h-40 text-secondary fill-secondary" />
             </div>
 
             <h3 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4">Seu Casamento</h3>
 
             <div className="space-y-3 md:space-y-4">
               <div className="flex items-center gap-3">
-                <Image src={IconImage} alt="Véu & Gravata" width={110} height={110} className="object-contain shrink-0" />
+                <Heart className="h-4 w-4 md:h-5 md:w-5 text-secondary fill-secondary shrink-0" />
                 <div>
                   <p className="text-xs md:text-sm text-subtitle">Casal</p>
                   <p className="font-medium text-foreground text-sm md:text-base">
@@ -227,7 +224,7 @@ export default function DashboardPage() {
                       variant="ghost"
                       className="text-secondary hover:text-tertiary hover:bg-secondary/10 hidden sm:flex"
                     >
-                      <Image src={IconImage} alt="Véu & Gravata" width={96} height={96} className="object-contain" />
+                      <Heart className="h-5 w-5 fill-current" />
                     </Button>
                   )}
                 </div>
