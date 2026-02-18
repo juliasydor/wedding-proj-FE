@@ -95,6 +95,7 @@ export default function OnboardingGiftListPage() {
       ...gift,
       weddingId: '',
       isSelected: true,
+      isGifted: false,
       contributedAmount: 0,
       contributors: [],
     });
