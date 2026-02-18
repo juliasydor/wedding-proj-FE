@@ -35,7 +35,7 @@ export default function EditGiftPage() {
   const t = useTranslations('dashboard');
   const router = useRouter();
   const params = useParams();
-  const giftId = params.id as string;
+  const giftId = params?.id as string;
 
   const [formData, setFormData] = useState({
     name: '',
