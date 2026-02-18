@@ -65,7 +65,8 @@ export function DashboardSidebar() {
       <nav className="flex-1 p-3 md:p-4 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
-            (item.href !== ROUTES.dashboard && pathname?.startsWith(item.href));
+            (item.href !== ROUTES.dashboard && pathname?.startsWith(item.href) &&
+              !navItems.some((other) => other.href !== item.href && other.href.startsWith(item.href) && pathname?.startsWith(other.href)));
 
           return (
             <Link
