@@ -135,8 +135,8 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border/50 px-4 py-3 flex items-center justify-between">
-        <Logo size="sm" href={ROUTES.dashboard} />
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border/50 px-4 h-14 flex items-center justify-between">
+        <Logo size="sm" href={ROUTES.dashboard} className="[&_img]:max-h-10" />
         <button
           onClick={() => setIsOpen(true)}
           className="p-2 rounded-lg hover:bg-quaternary"
