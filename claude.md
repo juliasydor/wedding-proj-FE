@@ -1185,4 +1185,83 @@ Shapes: Utilizing CSS to create non-standard shapes, most notably hearts, throug
 Resources and Examples
 Heart Animation with JavaScript & CSS: You can see how to create a heart confetti effect in this YouTube tutorial.
 Romantic Web Page Code Examples: Various code snippets and full projects, including proposal pages and love animations, are shared on platforms like DEV Community and GitHub.
-CSS Animation Libraries: Libraries like Animate.css provide pre-built, customizable animations that can add life to elements quickly. 
+CSS Animation Libraries: Libraries like Animate.css provide pre-built, customizable animations that can add life to elements quickly.
+
+---
+
+## Frontend Refinements (Latest Updates)
+
+### Theme-Aware Logo System
+
+The app logo switches between two SVG files based on the active theme:
+
+- **Véu (pink):** `src/app/assets/icon.svg` (fill: `#ea2e5b`)
+- **Gravata (blue):** `src/app/assets/icon-blue.svg` (fill: `#0133E6`)
+
+**Implementation:**
+- Hook: `src/shared/hooks/useThemeIcon.ts` — returns the correct SVG based on `useThemeStore().mode`
+- All components use `useThemeIcon()` instead of importing icon files directly
+- The `Logo` component (`src/shared/ui/atoms/Logo.tsx`) is fully theme-aware
+
+```typescript
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
+
+// Inside a client component:
+const IconImage = useThemeIcon();
+// Returns icon.svg for 'veu' mode, icon-blue.svg for 'gravata' mode
+```
+
+**Files using the theme icon:**
+- `src/shared/ui/atoms/Logo.tsx`
+- `src/widgets/footer/Footer.tsx`
+- `src/app/checkout/success/page.tsx`
+- `src/app/checkout/page.tsx`
+- `src/app/wedding/[slug]/rsvp/page.tsx`
+- `src/app/wedding/[slug]/layout.tsx`
+- `src/app/wedding/[slug]/gifts/page.tsx`
+- `src/app/wedding/[slug]/checkout/page.tsx`
+
+**Important:** The old `Icon.png` file is no longer used. All logo references use `.svg` files.
+
+### Heart Icons vs Logo Usage
+
+Decorative/animated elements use **heart icons** (from `lucide-react` `Heart` component), NOT the app logo. The logo is only used for branding (navbar, footer, sidebar).
+
+**Pages updated to use hearts instead of logo:**
+- `src/app/onboarding/date/page.tsx` — calendar decorations and selected date display
+- `src/app/dashboard/page.tsx` — "Seu Casamento" card background and icons
+
+### Heart Animation Configuration
+
+The `HeartAnimation` component (`src/shared/animations/HeartAnimation.tsx`) renders floating hearts on the landing page:
+- Heart sizes: `4px` to `10px` (small, subtle)
+- Default count: `10` hearts (landing page uses `count={10}`)
+- Only renders in **Véu** (dark/pink) mode, hidden in **Gravata** (light/blue) mode
+
+### Auth Form Heart Icon
+
+The `HeartIcon` component in `AuthForm` (signup/login pages) uses `size={48}` for a compact, proportional heart above the form title.
+
+### Logo Component Sizing
+
+The `Logo` component uses these size presets:
+
+| Size | Width | Max Height |
+|------|-------|------------|
+| `sm` | 120px | 56px (`max-h-14`) |
+| `md` | 160px | 56px (`max-h-14`) |
+| `lg` | 200px | 56px (`max-h-14`) |
+
+The SVG has a 3:2 aspect ratio (1536x1024pt). The `height` prop is calculated as `width * 2/3`.
+
+### Dashboard Sidebar Navigation
+
+Active state logic accounts for nested routes to prevent parent routes from highlighting when a child route is active:
+- `/dashboard/gifts` (Lista de Presentes) does NOT highlight when `/dashboard/gifts/wallet` (Minha Carteira) is active
+- Located in `src/widgets/dashboard-sidebar/DashboardSidebar.tsx`
+
+### Mobile Dashboard Layout
+
+- Mobile header height: `h-14` (56px), fixed position with `z-50`
+- Content top padding: `pt-14` (56px) to clear the fixed header
+- Logo in mobile header uses `max-h-10` (40px) override via `[&_img]:max-h-10`
