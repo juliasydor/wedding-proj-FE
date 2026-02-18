@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useThemeStore, type ThemeMode } from '@/shared/store/themeStore';
 import { cn } from '@/shared/lib/utils';
 
@@ -61,6 +62,14 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ className, size = 'md' }: ThemeToggleProps) {
   const { mode, toggle } = useThemeStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Use default 'veu' until mounted to avoid hydration mismatch
+  const currentMode = mounted ? mode : 'veu';
 
   const sizeClasses = {
     sm: 'w-14 h-7',
@@ -81,9 +90,9 @@ export function ThemeToggle({ className, size = 'md' }: ThemeToggleProps) {
   };
 
   const thumbTranslate = {
-    sm: mode === 'gravata' ? 'translate-x-7' : 'translate-x-0',
-    md: mode === 'gravata' ? 'translate-x-8' : 'translate-x-0',
-    lg: mode === 'gravata' ? 'translate-x-10' : 'translate-x-0',
+    sm: currentMode === 'gravata' ? 'translate-x-7' : 'translate-x-0',
+    md: currentMode === 'gravata' ? 'translate-x-8' : 'translate-x-0',
+    lg: currentMode === 'gravata' ? 'translate-x-10' : 'translate-x-0',
   };
 
   return (
@@ -91,13 +100,13 @@ export function ThemeToggle({ className, size = 'md' }: ThemeToggleProps) {
       onClick={toggle}
       className={cn(
         'relative rounded-full p-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2',
-        mode === 'veu'
+        currentMode === 'veu'
           ? 'bg-gradient-to-r from-secondary/80 to-tertiary/80 focus:ring-secondary'
           : 'bg-gradient-to-r from-[#0A0524] to-[#0133E6] focus:ring-[#0133E6]',
         sizeClasses[size],
         className
       )}
-      aria-label={`Mudar para tema ${mode === 'veu' ? 'gravata' : 'véu'}`}
+      aria-label={`Mudar para tema ${currentMode === 'veu' ? 'gravata' : 'véu'}`}
     >
       {/* Background icons */}
       <div className="absolute inset-0 flex items-center justify-between px-1.5">
@@ -105,14 +114,14 @@ export function ThemeToggle({ className, size = 'md' }: ThemeToggleProps) {
           className={cn(
             iconSizes[size],
             'transition-opacity duration-300',
-            mode === 'veu' ? 'opacity-0' : 'opacity-40 text-white'
+            currentMode === 'veu' ? 'opacity-0' : 'opacity-40 text-white'
           )}
         />
         <GravataIcon
           className={cn(
             iconSizes[size],
             'transition-opacity duration-300',
-            mode === 'gravata' ? 'opacity-0' : 'opacity-40 text-white'
+            currentMode === 'gravata' ? 'opacity-0' : 'opacity-40 text-white'
           )}
         />
       </div>
@@ -125,7 +134,7 @@ export function ThemeToggle({ className, size = 'md' }: ThemeToggleProps) {
           thumbTranslate[size]
         )}
       >
-        {mode === 'veu' ? (
+        {currentMode === 'veu' ? (
           <VeuIcon className={cn(iconSizes[size], 'text-secondary')} />
         ) : (
           <GravataIcon className={cn(iconSizes[size], 'text-[#0133E6]')} />
@@ -138,20 +147,27 @@ export function ThemeToggle({ className, size = 'md' }: ThemeToggleProps) {
 // Compact version for navbar
 export function ThemeToggleCompact({ className }: { className?: string }) {
   const { mode, toggle } = useThemeStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentMode = mounted ? mode : 'veu';
 
   return (
     <button
       onClick={toggle}
       className={cn(
         'relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300',
-        mode === 'veu'
+        currentMode === 'veu'
           ? 'bg-secondary/20 hover:bg-secondary/30 text-secondary'
           : 'bg-[#0133E6]/20 hover:bg-[#0133E6]/30 text-[#0133E6]',
         className
       )}
-      aria-label={`Tema atual: ${mode === 'veu' ? 'Véu' : 'Gravata'}. Clique para alternar.`}
+      aria-label={`Tema atual: ${currentMode === 'veu' ? 'Véu' : 'Gravata'}. Clique para alternar.`}
     >
-      {mode === 'veu' ? (
+      {currentMode === 'veu' ? (
         <VeuIcon className="w-5 h-5" />
       ) : (
         <GravataIcon className="w-5 h-5" />

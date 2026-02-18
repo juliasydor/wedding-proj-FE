@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useThemeStore } from '@/shared/store/themeStore';
 import { HeartCursorTrail } from '@/shared/animations/HeartCursorTrail';
 
@@ -10,6 +10,11 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const { mode } = useThemeStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -23,8 +28,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   return (
     <>
-      {/* Only show heart cursor trail in véu mode */}
-      {mode === 'veu' && <HeartCursorTrail />}
+      {/* Only show heart cursor trail in véu mode, after client mount */}
+      {mounted && mode === 'veu' && <HeartCursorTrail />}
       {children}
     </>
   );

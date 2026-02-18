@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
+import { useThemeStore } from '@/shared/store/themeStore';
 
 interface Heart {
   id: number;
@@ -18,8 +19,11 @@ interface HeartAnimationProps {
 
 export function HeartAnimation({ count = 15, className }: HeartAnimationProps) {
   const [hearts, setHearts] = useState<Heart[]>([]);
+  const [mounted, setMounted] = useState(false);
+  const { mode } = useThemeStore();
 
   useEffect(() => {
+    setMounted(true);
     const generatedHearts = Array.from({ length: count }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
@@ -29,6 +33,11 @@ export function HeartAnimation({ count = 15, className }: HeartAnimationProps) {
     }));
     setHearts(generatedHearts);
   }, [count]);
+
+  // Don't render hearts in Gravata (light) mode or before hydration
+  if (!mounted || mode === 'gravata') {
+    return null;
+  }
 
   return (
     <div className={cn('pointer-events-none fixed inset-0 overflow-hidden', className)}>
