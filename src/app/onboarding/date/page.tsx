@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ChevronLeft, ChevronRight, Heart, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sparkles, Heart } from 'lucide-react';
 import { OnboardingLayout } from '@/shared/ui/organisms/OnboardingLayout';
 import { useWeddingStore } from '@/entities/wedding';
 import { ROUTES } from '@/shared/config';
@@ -120,7 +120,7 @@ export default function OnboardingDatePage() {
               <Sparkles className="w-6 h-6" />
             </div>
             <div className="absolute bottom-3 left-3 text-secondary/20">
-              <Heart className="w-5 h-5" />
+              <Heart className="w-8 h-8 fill-current" />
             </div>
 
             {/* Month Navigation */}
@@ -195,7 +195,7 @@ export default function OnboardingDatePage() {
                     {day}
                     {selected && (
                       <>
-                        <Heart className="absolute -top-1 -right-1 w-4 h-4 text-secondary fill-secondary animate-pulse" />
+                        <Heart className="absolute -top-2 -right-2 w-5 h-5 text-secondary fill-secondary animate-pulse" />
                         <div className="absolute inset-0 rounded-xl bg-secondary/20 animate-ping" style={{ animationDuration: '2s' }} />
                       </>
                     )}
@@ -208,7 +208,7 @@ export default function OnboardingDatePage() {
             {selectedDate && (
               <div className="mt-6 pt-4 border-t border-border">
                 <div className="flex items-center justify-center gap-3 text-center">
-                  <Heart className="w-5 h-5 text-secondary fill-secondary animate-pulse" />
+                  <Heart className="w-6 h-6 text-secondary fill-secondary animate-pulse" />
                   <div>
                     <p className="text-xs uppercase tracking-wider text-tertiary mb-1">Your Special Day</p>
                     <p className="text-lg font-semibold text-foreground">
@@ -220,7 +220,7 @@ export default function OnboardingDatePage() {
                       })}
                     </p>
                   </div>
-                  <Heart className="w-5 h-5 text-secondary fill-secondary animate-pulse" />
+                  <Heart className="w-6 h-6 text-secondary fill-secondary animate-pulse" />
                 </div>
               </div>
             )}

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ArrowLeft,
   Gift,
@@ -11,12 +12,12 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Heart,
   User,
   Mail,
   Phone,
   DollarSign,
 } from 'lucide-react';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -35,6 +36,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=200&fit=crop',
     category: 'honeymoon',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 250,
     contributors: [],
   },
@@ -47,6 +49,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=200&fit=crop',
     category: 'kitchen',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 400,
     contributors: [],
   },
@@ -59,6 +62,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=200&fit=crop',
     category: 'kitchen',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 0,
     contributors: [],
   },
@@ -71,6 +75,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300&h=200&fit=crop',
     category: 'bedroom',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 450,
     contributors: [],
   },
@@ -83,6 +88,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop',
     category: 'living',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 600,
     contributors: [],
   },
@@ -95,6 +101,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=300&h=200&fit=crop',
     category: 'bathroom',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 200,
     contributors: [],
   },
@@ -113,6 +120,7 @@ interface GuestInfo {
 export default function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
+  const IconImage = useThemeIcon();
   const searchParams = useSearchParams();
   const slug = params?.slug as string || '';
   const giftId = searchParams?.get('gift') || null;
@@ -622,7 +630,7 @@ export default function CheckoutPage() {
                 className="pt-4 border-t border-border/50 flex items-center gap-3 rounded-xl p-3 mt-2"
                 style={{ backgroundColor: `${primaryColor}10` }}
               >
-                <Heart className="h-5 w-5" style={{ color: primaryColor }} />
+                <Image src={IconImage} alt="Véu & Gravata" width={110} height={110} className="object-contain" />
                 <div>
                   <p className="text-sm font-medium text-foreground">
                     Para {onboarding.partner1Name || 'Noivo'} & {onboarding.partner2Name || 'Noiva'}

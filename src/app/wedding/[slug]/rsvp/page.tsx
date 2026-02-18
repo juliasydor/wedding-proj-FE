@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ChevronLeft, Check, Users, Mail, Phone, MessageCircle, Heart, X } from 'lucide-react';
+import Image from 'next/image';
+import { ChevronLeft, Check, Users, Mail, Phone, MessageCircle, X } from 'lucide-react';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,6 +19,7 @@ type RsvpStatus = 'attending' | 'not-attending' | null;
 export default function RsvpPage() {
   const params = useParams();
   const router = useRouter();
+  const IconImage = useThemeIcon();
   const slug = params?.slug as string || '';
   const { onboarding } = useWeddingStore();
   const { confirmRSVP } = useGuestStore();
@@ -100,7 +103,7 @@ export default function RsvpPage() {
             style={{ backgroundColor: `${primaryColor}20` }}
           >
             {rsvpStatus === 'attending' ? (
-              <Heart className="h-10 w-10" style={{ color: primaryColor }} />
+              <Image src={IconImage} alt="Véu & Gravata" width={150} height={150} className="object-contain" />
             ) : (
               <Check className="h-10 w-10" style={{ color: primaryColor }} />
             )}

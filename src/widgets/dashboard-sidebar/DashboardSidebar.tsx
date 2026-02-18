@@ -15,18 +15,20 @@ import {
   ExternalLink,
   Menu,
   X,
+  Wallet,
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Logo } from '@/shared/ui/atoms/Logo';
 import { ROUTES } from '@/shared/config';
 import { useWeddingStore } from '@/entities/wedding';
 import { useAuthStore } from '@/entities/user';
-import { ThemeToggle, ThemeToggleCompact } from '@/shared/ui/molecules/ThemeToggle';
+import { ThemeToggle } from '@/shared/ui/molecules/ThemeToggle';
 
 const navItems = [
   { href: ROUTES.dashboard, icon: LayoutDashboard, labelKey: 'overview' },
   { href: ROUTES.siteEditor, icon: Globe, labelKey: 'siteEditor' },
   { href: ROUTES.giftList, icon: Gift, labelKey: 'giftList' },
+  { href: ROUTES.wallet, icon: Wallet, labelKey: 'wallet' },
   { href: ROUTES.guests, icon: Users, labelKey: 'guests' },
   { href: ROUTES.settings, icon: Settings, labelKey: 'settings' },
 ];
@@ -47,11 +49,13 @@ export function DashboardSidebar() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="p-4 md:p-6 border-b border-border/50 flex items-center justify-between">
-        <Logo size="md" />
+      <div className="p-4 md:p-6 border-b border-border/50 relative">
+        <div className="flex items-center justify-center">
+          <Logo size="md" href={ROUTES.dashboard} />
+        </div>
         <button
           onClick={closeSidebar}
-          className="md:hidden p-2 rounded-lg hover:bg-quaternary"
+          className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-quaternary"
         >
           <X className="h-5 w-5" />
         </button>
@@ -61,7 +65,8 @@ export function DashboardSidebar() {
       <nav className="flex-1 p-3 md:p-4 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
-            (item.href !== ROUTES.dashboard && pathname?.startsWith(item.href));
+            (item.href !== ROUTES.dashboard && pathname?.startsWith(item.href) &&
+              !navItems.some((other) => other.href !== item.href && other.href.startsWith(item.href) && pathname?.startsWith(other.href)));
 
           return (
             <Link
@@ -130,17 +135,14 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border/50 px-4 py-3 flex items-center justify-between">
-        <Logo size="sm" />
-        <div className="flex items-center gap-2">
-          <ThemeToggleCompact />
-          <button
-            onClick={() => setIsOpen(true)}
-            className="p-2 rounded-lg hover:bg-quaternary"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border/50 px-4 h-14 flex items-center justify-between">
+        <Logo size="sm" href={ROUTES.dashboard} className="[&_img]:max-h-10" />
+        <button
+          onClick={() => setIsOpen(true)}
+          className="p-2 rounded-lg hover:bg-quaternary"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
       </header>
 
       {/* Mobile Sidebar Overlay */}

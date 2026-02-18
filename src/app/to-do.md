@@ -1,3 +1,9 @@
+Here are the modifications we need to implement in the Wedding Project. For **every** change you make, **update the backend instructions**, because we’ll rely on those instructions to build the backend later.
+
+Before coding, think through the full flow, review the patterns already used in the frontend, and **follow them consistently**. 
+
+This are the instructions we used to build the Frontend Project, during the new development, follow the same patterns:
+
 ## During creation
 
 We will develop a **wedding website** project where the couple can create a **customizable** site with information such as:
@@ -238,7 +244,7 @@ interface Guest {
   createdAt: string;
 }
 
-// Gift
+// Gift (full-price only — no partial gifting)
 interface Gift {
   id: string;
   weddingId: string;
@@ -674,7 +680,7 @@ Each template supports the following customizable sections:
 
 3. **Our Story Section** (toggle: `showStorySection`)
    - `storyTitle`: Section title
-   - `storyContent`: Story text (HTML — uses rich text editor with bold, italic, underline, lists, alignment, font size)
+   - `storyContent`: Story text (HTML — uses rich text editor)
    - `storyImage`: Optional image
 
 4. **Ceremony & Reception** (sempre visível)
@@ -954,10 +960,9 @@ interface PaymentStatus {
 
 Couples can manually add guests with full control over their RSVP status. The guest list supports companion (plus-one) information with name and age.
 
-### Add Guest Features
+### Add Guest Modal Features
 
-**Desktop:** Opens a modal dialog in `/dashboard/guests/page.tsx`
-**Mobile:** Navigates to dedicated page `/dashboard/guests/add/page.tsx` (same form, full-page layout with back button)
+Located in `/dashboard/guests/page.tsx`:
 
 - **Guest Information**
   - Name (required)
@@ -975,10 +980,6 @@ Couples can manually add guests with full control over their RSVP status. The gu
   - Toggle to add companion
   - Companion name field (optional)
   - Companion age field (optional)
-
-### Guest Actions (3-dot menu)
-- **Edit guest** - Opens edit modal (desktop) or navigates to edit page
-- **Delete guest** - Removes guest with confirmation toast
 
 ### Guest Data Model
 
@@ -1046,115 +1047,6 @@ Users can also input custom hex colors in the dashboard site editor.
 
 ---
 
-## Gift System (Updated — Full-Price Only)
-
-### Overview
-
-The gift system uses **full-price gifting only** — no partial contributions or percentage-based payments. Each gift can be purchased **once** by a single guest paying the full price.
-
-### Gift Model Changes
-
-- Removed: `targetAmount`, `currentAmount` (partial gifting fields)
-- Added: `price` (full price of the gift), `isGifted` (boolean), `giftedBy` (guest name), `giftedAt` (timestamp)
-- Gift status is binary: **Available** or **Already gifted**
-
-### Frontend Pages
-
-| Page | Route | Description |
-|------|-------|-------------|
-| Gift List | `/dashboard/gifts` | Lists all gifts with "Available"/"Recebido" status badges |
-| Add Gift | `/dashboard/gifts/add` | Create a new gift (name, description, price, category, image) |
-| Edit Gift | `/dashboard/gifts/edit/[id]` | Edit existing gift (same form as Add, pre-filled) |
-| My Wallet | `/dashboard/gifts/wallet` | Shows received gifts, total value, claim button |
-
-### My Wallet Page
-
-Located at `/dashboard/gifts/wallet/page.tsx`:
-
-- **Summary stats**: Total gifts received, total value, available for claim
-- **Claim button**: Triggers payout request to couple's bank account
-- **Received gifts list**: Shows each gifted item with gifter name, date, and amount
-
-### Backend Notes
-
-- When a guest purchases a gift via checkout, the backend should:
-  1. Set `gift.isGifted = true`
-  2. Set `gift.giftedBy = guestName`
-  3. Set `gift.giftedAt = now()`
-  4. Create a Contribution record with `amount = gift.price`
-- The wallet/claim endpoint should aggregate all completed contributions and process payout
-
----
-
-## Rich Text Editor
-
-### Overview
-
-Long-form text fields in the site editor use a custom `RichTextEditor` component instead of plain textareas.
-
-### Component
-
-Located at `src/shared/ui/molecules/RichTextEditor.tsx`
-
-Features:
-- Bold, Italic, Underline
-- Unordered list
-- Text alignment (left, center, right)
-- Font size (small, normal, large, extra large)
-- Uses `contentEditable` with `document.execCommand` (no external dependencies)
-
-### Affected Fields
-
-The following `SiteContent` fields now contain **HTML** instead of plain text:
-- `storyContent`
-- `rsvpDescription`
-- `giftDescription`
-- `accommodationsContent`
-
-**Backend note:** These fields should be stored as `text` (or `longtext`) columns that accept HTML content. The backend should sanitize HTML on save to prevent XSS (allow only safe tags: `b`, `i`, `u`, `ul`, `ol`, `li`, `div`, `span`, `br`, `font`, `p`).
-
----
-
-## Toast Messages (Global CRUD Feedback)
-
-### Overview
-
-A reusable toast utility at `src/shared/lib/toast-messages.ts` provides consistent success/error messages for all CRUD operations.
-
-### Usage
-
-```typescript
-import { toastMessages } from '@/shared/lib/toast-messages';
-
-// Create
-toastMessages.create.success('Convidado');  // "Convidado criado(a) com sucesso!"
-toastMessages.create.error('Convidado');    // "Erro ao criar convidado. Tente novamente."
-
-// Update, Delete, Save, Upload, Validation follow same pattern
-```
-
-### Backend Note
-
-All API responses should include appropriate HTTP status codes so the frontend can trigger the correct toast:
-- `200/201` → success toast
-- `400/422` → validation error toast
-- `500` → generic error toast
-
----
-
-## New Frontend Routes
-
-```typescript
-export const ROUTES = {
-  // ... existing routes
-  editGift: (id: string) => `/dashboard/gifts/edit/${id}`,
-  wallet: '/dashboard/gifts/wallet',
-  addGuest: '/dashboard/guests/add',
-};
-```
-
----
-
 ## Final deliverables
 
 1. **Documentation of the backend endpoints** required:
@@ -1185,83 +1077,119 @@ Shapes: Utilizing CSS to create non-standard shapes, most notably hearts, throug
 Resources and Examples
 Heart Animation with JavaScript & CSS: You can see how to create a heart confetti effect in this YouTube tutorial.
 Romantic Web Page Code Examples: Various code snippets and full projects, including proposal pages and love animations, are shared on platforms like DEV Community and GitHub.
-CSS Animation Libraries: Libraries like Animate.css provide pre-built, customizable animations that can add life to elements quickly.
+CSS Animation Libraries: Libraries like Animate.css provide pre-built, customizable animations that can add life to elements quickly. 
 
----
+## Required changes (ALL COMPLETED)
 
-## Frontend Refinements (Latest Updates)
+* **Add Guests (mobile behavior)** ✅
 
-### Theme-Aware Logo System
+  * Mirror the pattern used in **Add Gift Product**.
+  * **Mobile:** do **not** open a modal when the user taps **“Add guests”**. Instead, navigate to a **new page** with a **back icon** (same behavior as Add Gift Product).
+  * **Desktop:** keep the current **modal** behavior.
 
-The app logo switches between two SVG files based on the active theme:
+* **Mobile header** ✅
 
-- **Véu (pink):** `src/app/assets/icon.svg` (fill: `#ea2e5b`)
-- **Gravata (blue):** `src/app/assets/icon-blue.svg` (fill: `#0133E6`)
+  * Improve the mobile header to display **only**:
 
-**Implementation:**
-- Hook: `src/shared/hooks/useThemeIcon.ts` — returns the correct SVG based on `useThemeStore().mode`
-- All components use `useThemeIcon()` instead of importing icon files directly
-- The `Logo` component (`src/shared/ui/atoms/Logo.tsx`) is fully theme-aware
+    * the **logo**
+    * a **hamburger menu**
+  * The hamburger menu must contain:
 
-```typescript
-import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
+    * **Sign-in / Sign-up**
+    * **Dark / Light mode toggle**
 
-// Inside a client component:
-const IconImage = useThemeIcon();
-// Returns icon.svg for 'veu' mode, icon-blue.svg for 'gravata' mode
-```
+* **Light mode (blue design): remove floating hearts** ✅
 
-**Files using the theme icon:**
-- `src/shared/ui/atoms/Logo.tsx`
-- `src/widgets/footer/Footer.tsx`
-- `src/app/checkout/success/page.tsx`
-- `src/app/checkout/page.tsx`
-- `src/app/wedding/[slug]/rsvp/page.tsx`
-- `src/app/wedding/[slug]/layout.tsx`
-- `src/app/wedding/[slug]/gifts/page.tsx`
-- `src/app/wedding/[slug]/checkout/page.tsx`
+  * Remove the floating hearts background in **light mode**.
+  * Apply this change on **both desktop and mobile**.
 
-**Important:** The old `Icon.png` file is no longer used. All logo references use `.svg` files.
+* **Landing page image on mobile** ✅
 
-### Heart Icons vs Logo Usage
+  * On **mobile only**, the landing image must blend smoothly with the menu/header.
+  * It must have **no padding or margin** on the top or sides.
+  * Keep the **desktop landing page unchanged**.
 
-Decorative/animated elements use **heart icons** (from `lucide-react` `Heart` component), NOT the app logo. The logo is only used for branding (navbar, footer, sidebar).
+* **Hearts interaction (dark mode pink design)** ✅
 
-**Pages updated to use hearts instead of logo:**
-- `src/app/onboarding/date/page.tsx` — calendar decorations and selected date display
-- `src/app/dashboard/page.tsx` — "Seu Casamento" card background and icons
+  * On **mobile**, remove the **click** interaction with hearts.
+  * Keep the hearts **hover** interaction **only on desktop**.
 
-### Heart Animation Configuration
+* **Create "My Wallet" page** ✅
 
-The `HeartAnimation` component (`src/shared/animations/HeartAnimation.tsx`) renders floating hearts on the landing page:
-- Heart sizes: `4px` to `10px` (small, subtle)
-- Default count: `10` hearts (landing page uses `count={10}`)
-- Only renders in **Véu** (dark/pink) mode, hidden in **Gravata** (light/blue) mode
+  * Create a page called **“My Wallet”** showing:
 
-### Auth Form Heart Icon
+    * received gifts
+    * gift details
+    * a **“Claim gifts”** action to claim the received money
+  * This must be a **subpage** under **“List of Presents”**.
 
-The `HeartIcon` component in `AuthForm` (signup/login pages) uses `size={48}` for a compact, proportional heart above the form title.
+* **Move summary data from "List of Presents" to "My Wallet"** ✅
 
-### Logo Component Sizing
+  * On **List of Presents**, remove the summary fields:
 
-The `Logo` component uses these size presets:
+    * “total”, “value”, “arrecadado”
+  * Add these summary fields to the **My Wallet** subpage instead.
 
-| Size | Width | Max Height |
-|------|-------|------------|
-| `sm` | 120px | 56px (`max-h-14`) |
-| `md` | 160px | 56px (`max-h-14`) |
-| `lg` | 200px | 56px (`max-h-14`) |
+* **Guest actions menu (3-dot icon)** ✅
 
-The SVG has a 3:2 aspect ratio (1536x1024pt). The `height` prop is calculated as `width * 2/3`.
+  * The guest list “actions” (3-dot menu) currently has no actions.
+  * Add **“Edit guest”** there.
 
-### Dashboard Sidebar Navigation
+* **Gift goals / partial gifting logic** ✅
 
-Active state logic accounts for nested routes to prevent parent routes from highlighting when a child route is active:
-- `/dashboard/gifts` (Lista de Presentes) does NOT highlight when `/dashboard/gifts/wallet` (Minha Carteira) is active
-- Located in `src/widgets/dashboard-sidebar/DashboardSidebar.tsx`
+  * Update the gifting logic:
 
-### Mobile Dashboard Layout
+    * Each gift can be purchased **only once**.
+    * The guest must pay the **full price** (no 50%, 15%, etc.).
+  * Remove any **percentage-based** UI/logic.
+  * Display only a status like **“Already gifted”** when applicable.
 
-- Mobile header height: `h-14` (56px), fixed position with `z-50`
-- Content top padding: `pt-14` (56px) to clear the fixed header
-- Logo in mobile header uses `max-h-10` (40px) override via `[&_img]:max-h-10`
+* **Global confirmation messages (CRUD)** ✅
+
+  * Implement consistent confirmation/toast messages for:
+
+    * **Creation**, **Update**, **Deletion**
+    * **Success** and **Failure**
+  * Ensure this is reusable across endpoints/actions.
+  * **Update backend instructions** accordingly.
+
+* **Dashboard header: remove duplicated theme toggle** ✅
+
+  * Do not show the dark/light toggle in the dashboard header.
+  * Keep it only in the menu (avoid duplication).
+
+* **Template editor: align visibility buttons** ✅
+
+  * In the content sections where templates can be edited, the visibility toggle (visible / not visible) must be:
+
+    * aligned to the **right**
+    * in the **same position** across all section containers
+
+* **Rich text editor for long text sections** ✅
+
+  * For section text editing (non-title / non-short text):
+
+    * replace simple inputs with a **rich text editor** (textarea-style)
+    * include tools like **bold**, **italic**, **font size**, etc.
+  * Choose a solid library and implement it cleanly.
+
+* **Template preview responsiveness on mobile** ✅
+
+  * Fix the selected template preview when creating the site on a phone:
+
+    * both **desktop preview** and **mobile preview** must be responsive
+    * current previews are not adapting correctly
+
+* **Logo click behavior** ✅
+
+  * Clicking the logo should return the user to the **logged area/dashboard** when logged in.
+  * Only redirect to the **landing page** if the user is **not logged in / not signed up**.
+
+* **Landing page copy** ✅
+
+  * Remove the text **“WEDDING PLATFORM”** from the landing page.
+
+* **Create "Edit Product" page** ✅
+
+  * Implement a dedicated **Edit Product** page following existing patterns (routing, layout, validation, UI conventions).
+  * Update backend instructions accordingly.

@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Heart, Facebook, Instagram, ChevronUp } from 'lucide-react';
+import Image from 'next/image';
+import { Facebook, Instagram, ChevronUp } from 'lucide-react';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { ROUTES } from '@/shared/config';
 
 export function Footer() {
   const t = useTranslations('footer');
+  const IconImage = useThemeIcon();
   const year = new Date().getFullYear();
 
   const scrollToTop = () => {
@@ -159,8 +162,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 text-center text-sm">
           <p className="text-foreground/80 mb-1">
             © 2024-{year} Véu & Gravata - {t('bottom.developedWith')}{' '}
-            <Heart className="inline h-4 w-4 text-secondary fill-secondary" />{' '}
-            {t('bottom.forEveryone')}
+            <Image src={IconImage} alt="Véu & Gravata" width={96} height={96} className="inline object-contain align-middle" />{' '}
           </p>
           <p className="text-foreground/60 text-xs mb-2">
             VÉU & GRAVATA - SITE DE CASAMENTO E EVENTOS

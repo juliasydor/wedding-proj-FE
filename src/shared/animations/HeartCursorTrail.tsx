@@ -105,12 +105,19 @@ export function HeartCursorTrail() {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('click', handleClick);
+    // Only add mouse interactions on desktop (non-touch devices)
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    if (!isTouchDevice) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('click', handleClick);
+    }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('click', handleClick);
+      if (!isTouchDevice) {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('click', handleClick);
+      }
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
       }

@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Gift, Search, Heart, ChevronDown, DollarSign } from 'lucide-react';
+import Image from 'next/image';
+import { Gift, Search, ChevronDown, DollarSign } from 'lucide-react';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/shared/lib/utils';
@@ -19,6 +21,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=200&fit=crop',
     category: 'honeymoon',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 250,
     contributors: [],
   },
@@ -31,6 +34,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=200&fit=crop',
     category: 'kitchen',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 400,
     contributors: [],
   },
@@ -43,6 +47,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=200&fit=crop',
     category: 'kitchen',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 0,
     contributors: [],
   },
@@ -55,6 +60,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300&h=200&fit=crop',
     category: 'bedroom',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 450,
     contributors: [],
   },
@@ -67,6 +73,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop',
     category: 'living',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 600,
     contributors: [],
   },
@@ -79,6 +86,7 @@ const MOCK_GIFTS: GiftType[] = [
     imageUrl: 'https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=300&h=200&fit=crop',
     category: 'bathroom',
     isSelected: true,
+    isGifted: false,
     contributedAmount: 200,
     contributors: [],
   },
@@ -96,6 +104,7 @@ const CATEGORIES = [
 export default function GuestGiftsPage() {
   const params = useParams();
   const router = useRouter();
+  const IconImage = useThemeIcon();
   const slug = params?.slug as string || '';
   const { onboarding } = useWeddingStore();
 
@@ -240,7 +249,7 @@ export default function GuestGiftsPage() {
                       style={{ backgroundColor: `${primaryColor}CC` }}
                     >
                       <div className="text-center text-white">
-                        <Heart className="h-8 w-8 mx-auto mb-2 fill-white" />
+                        <Image src={IconImage} alt="Véu & Gravata" width={140} height={140} className="mx-auto mb-2 object-contain" />
                         <span className="font-semibold text-sm md:text-base">Presente Completo!</span>
                       </div>
                     </div>
