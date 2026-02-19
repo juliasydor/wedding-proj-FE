@@ -9,7 +9,6 @@ import {
   Phone,
   User,
   AtSign,
-  Calendar,
   UserCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,7 +38,6 @@ export default function EditGuestPage() {
     status: 'pending' as 'pending' | 'confirmed' | 'declined',
     hasPlusOne: false,
     plusOneName: '',
-    plusOneAge: '',
     dietaryRestrictions: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +54,6 @@ export default function EditGuestPage() {
           status: guest.rsvpStatus || 'pending',
           hasPlusOne: guest.plusOne || false,
           plusOneName: guest.plusOneName || '',
-          plusOneAge: guest.plusOneAge ? String(guest.plusOneAge) : '',
           dietaryRestrictions: guest.dietaryRestrictions || '',
         });
       } catch {
@@ -245,22 +242,6 @@ export default function EditGuestPage() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="plus-one-age" className="text-sm flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-tertiary" />
-                  Idade do acompanhante
-                </Label>
-                <Input
-                  id="plus-one-age"
-                  type="number"
-                  min="0"
-                  max="120"
-                  value={formData.plusOneAge}
-                  onChange={(e) => setFormData({ ...formData, plusOneAge: e.target.value })}
-                  placeholder="Ex: 35"
-                  className="bg-input-bg border-border"
-                />
-              </div>
             </div>
           )}
         </div>

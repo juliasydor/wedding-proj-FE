@@ -18,7 +18,6 @@ import {
   Phone,
   User,
   AtSign,
-  Calendar,
   Edit2,
   Trash2,
 } from 'lucide-react';
@@ -53,20 +52,19 @@ interface Guest {
   rsvpStatus: 'pending' | 'confirmed' | 'declined';
   plusOne: boolean;
   plusOneName?: string;
-  plusOneAge?: number;
   dietaryRestrictions?: string;
   invitedAt: string;
 }
 
 const MOCK_GUESTS: Guest[] = [
-  { id: '1', name: 'Maria Silva', email: 'maria@email.com', phone: '(11) 99999-1111', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Carlos Silva', plusOneAge: 35, invitedAt: '2024-01-15' },
+  { id: '1', name: 'Maria Silva', email: 'maria@email.com', phone: '(11) 99999-1111', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Carlos Silva', invitedAt: '2024-01-15' },
   { id: '2', name: 'João Santos', email: 'joao@email.com', rsvpStatus: 'confirmed', plusOne: false, invitedAt: '2024-01-15' },
-  { id: '3', name: 'Ana Costa', email: 'ana@email.com', phone: '(11) 99999-3333', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Roberto Costa', plusOneAge: 42, invitedAt: '2024-01-16' },
+  { id: '3', name: 'Ana Costa', email: 'ana@email.com', phone: '(11) 99999-3333', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Roberto Costa', invitedAt: '2024-01-16' },
   { id: '4', name: 'Pedro Oliveira', email: 'pedro@email.com', rsvpStatus: 'declined', plusOne: false, invitedAt: '2024-01-16' },
-  { id: '5', name: 'Carla Mendes', email: 'carla@email.com', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Felipe Mendes', plusOneAge: 28, invitedAt: '2024-01-17' },
+  { id: '5', name: 'Carla Mendes', email: 'carla@email.com', rsvpStatus: 'confirmed', plusOne: true, plusOneName: 'Felipe Mendes', invitedAt: '2024-01-17' },
   { id: '6', name: 'Lucas Ferreira', email: 'lucas@email.com', phone: '(11) 99999-6666', rsvpStatus: 'pending', plusOne: false, invitedAt: '2024-01-18' },
   { id: '7', name: 'Fernanda Lima', email: 'fernanda@email.com', rsvpStatus: 'confirmed', plusOne: false, invitedAt: '2024-01-18' },
-  { id: '8', name: 'Ricardo Alves', email: 'ricardo@email.com', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Juliana Alves', plusOneAge: 31, invitedAt: '2024-01-19' },
+  { id: '8', name: 'Ricardo Alves', email: 'ricardo@email.com', rsvpStatus: 'pending', plusOne: true, plusOneName: 'Juliana Alves', invitedAt: '2024-01-19' },
 ];
 
 const FILTERS = [
@@ -83,7 +81,6 @@ interface NewGuestForm {
   status: 'pending' | 'confirmed' | 'declined';
   hasPlusOne: boolean;
   plusOneName: string;
-  plusOneAge: string;
   dietaryRestrictions: string;
 }
 
@@ -94,7 +91,6 @@ const initialFormState: NewGuestForm = {
   status: 'pending',
   hasPlusOne: false,
   plusOneName: '',
-  plusOneAge: '',
   dietaryRestrictions: '',
 };
 
@@ -170,7 +166,6 @@ export default function GuestsPage() {
       rsvpStatus: formData.status,
       plusOne: formData.hasPlusOne,
       plusOneName: formData.hasPlusOne && formData.plusOneName ? formData.plusOneName : undefined,
-      plusOneAge: formData.hasPlusOne && formData.plusOneAge ? parseInt(formData.plusOneAge) : undefined,
       dietaryRestrictions: formData.dietaryRestrictions || undefined,
       invitedAt: new Date().toISOString().split('T')[0],
     };
@@ -196,7 +191,6 @@ export default function GuestsPage() {
       status: guest.rsvpStatus,
       hasPlusOne: guest.plusOne,
       plusOneName: guest.plusOneName || '',
-      plusOneAge: guest.plusOneAge ? String(guest.plusOneAge) : '',
       dietaryRestrictions: guest.dietaryRestrictions || '',
     });
     setShowAddModal(true);
@@ -224,7 +218,6 @@ export default function GuestsPage() {
               rsvpStatus: formData.status,
               plusOne: formData.hasPlusOne,
               plusOneName: formData.hasPlusOne && formData.plusOneName ? formData.plusOneName : undefined,
-              plusOneAge: formData.hasPlusOne && formData.plusOneAge ? parseInt(formData.plusOneAge) : undefined,
               dietaryRestrictions: formData.dietaryRestrictions || undefined,
             }
           : g
@@ -420,12 +413,7 @@ export default function GuestsPage() {
                   {guest.plusOne && guest.plusOneName ? (
                     <div className="flex items-center gap-2">
                       <UserPlus className="h-4 w-4 text-tertiary" />
-                      <div>
-                        <p className="text-foreground text-sm">{guest.plusOneName}</p>
-                        {guest.plusOneAge && (
-                          <p className="text-subtitle text-xs">{guest.plusOneAge} anos</p>
-                        )}
-                      </div>
+                      <p className="text-foreground text-sm">{guest.plusOneName}</p>
                     </div>
                   ) : guest.plusOne ? (
                     <span className="text-yellow-500 text-sm">Aguardando dados</span>
@@ -516,12 +504,7 @@ export default function GuestsPage() {
                 {guest.plusOneName ? (
                   <div className="flex items-center gap-2 bg-tertiary/10 rounded-lg p-2">
                     <UserPlus className="h-4 w-4 text-tertiary shrink-0" />
-                    <div className="min-w-0">
-                      <p className="text-foreground text-sm font-medium truncate">{guest.plusOneName}</p>
-                      {guest.plusOneAge && (
-                        <p className="text-subtitle text-xs">{guest.plusOneAge} anos</p>
-                      )}
-                    </div>
+                    <p className="text-foreground text-sm font-medium truncate">{guest.plusOneName}</p>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 text-yellow-500 text-xs">
@@ -698,22 +681,6 @@ export default function GuestsPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="plus-one-age" className="text-sm flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-tertiary" />
-                    Idade do acompanhante
-                  </Label>
-                  <Input
-                    id="plus-one-age"
-                    type="number"
-                    min="0"
-                    max="120"
-                    value={formData.plusOneAge}
-                    onChange={(e) => setFormData({ ...formData, plusOneAge: e.target.value })}
-                    placeholder="Ex: 35"
-                    className="bg-input-bg border-border"
-                  />
-                </div>
               </div>
             )}
           </div>
