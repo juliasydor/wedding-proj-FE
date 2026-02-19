@@ -39,7 +39,7 @@ export default function WeddingLayout({
           <div className="flex items-center justify-between h-14 md:h-16">
             {/* Logo */}
             <Link href={`/wedding/${slug}`} className="flex items-center gap-2">
-              <Image src={IconImage} alt="Véu & Gravata" width={140} height={93} className="w-auto h-auto object-contain" />
+              <Image src={IconImage} alt="Véu & Gravata" width={260} height={173} className="w-auto h-auto max-h-20 object-contain" />
             </Link>
 
             {/* Desktop Navigation */}
