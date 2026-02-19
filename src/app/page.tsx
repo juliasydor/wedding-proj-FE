@@ -93,10 +93,10 @@ export default async function HomePage() {
       <Navbar variant="landing" heroImageUrl="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" />
 
       {/* Hero Section */}
-      <section className="relative pt-16 pb-16 md:pt-32 md:pb-24">
+      <section className="relative pt-0 pb-16 md:pt-32 md:pb-24">
         <div className="max-w-7xl mx-auto px-0 md:px-8">
           {/* Hero Image Background */}
-          <div className="relative h-[400px] md:h-[500px] rounded-none md:rounded-3xl overflow-hidden mb-8">
+          <div className="relative h-[460px] md:h-[500px] rounded-none md:rounded-3xl overflow-hidden mb-8">
             <Image
               src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
               alt="Happy wedding couple"
