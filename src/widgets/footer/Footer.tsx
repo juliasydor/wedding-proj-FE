@@ -162,7 +162,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 text-center text-sm">
           <p className="text-foreground/80 mb-1">
             © 2024-{year} Véu & Gravata - {t('bottom.developedWith')}{' '}
-            <Image src={IconImage} alt="Véu & Gravata" width={96} height={96} className="inline object-contain align-middle" />{' '}
+            <Image src={IconImage} alt="Véu & Gravata" width={160} height={107} className="inline w-auto h-auto max-h-14 object-contain align-middle" />{' '}
           </p>
           <p className="text-foreground/60 text-xs mb-2">
             VÉU & GRAVATA - SITE DE CASAMENTO E EVENTOS

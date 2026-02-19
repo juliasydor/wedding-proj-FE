@@ -630,7 +630,7 @@ export default function CheckoutPage() {
                 className="pt-4 border-t border-border/50 flex items-center gap-3 rounded-xl p-3 mt-2"
                 style={{ backgroundColor: `${primaryColor}10` }}
               >
-                <Image src={IconImage} alt="Véu & Gravata" width={110} height={110} className="object-contain" />
+                <Image src={IconImage} alt="Véu & Gravata" width={110} height={73} className="w-auto h-auto object-contain" />
                 <div>
                   <p className="text-sm font-medium text-foreground">
                     Para {onboarding.partner1Name || 'Noivo'} & {onboarding.partner2Name || 'Noiva'}

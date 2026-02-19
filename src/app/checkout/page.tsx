@@ -105,7 +105,7 @@ export default function CheckoutPage() {
             className="bg-input-bg border-0"
           />
           <div className="flex justify-end mt-1">
-            <Image src={IconImage} alt="Véu & Gravata" width={96} height={96} className="object-contain" />
+            <Image src={IconImage} alt="Véu & Gravata" width={96} height={64} className="w-auto h-auto object-contain" />
           </div>
         </div>
 

@@ -249,7 +249,7 @@ export default function GuestGiftsPage() {
                       style={{ backgroundColor: `${primaryColor}CC` }}
                     >
                       <div className="text-center text-white">
-                        <Image src={IconImage} alt="Véu & Gravata" width={140} height={140} className="mx-auto mb-2 object-contain" />
+                        <Image src={IconImage} alt="Véu & Gravata" width={140} height={93} className="mx-auto mb-2 w-auto h-auto object-contain" />
                         <span className="font-semibold text-sm md:text-base">Presente Completo!</span>
                       </div>
                     </div>

@@ -21,9 +21,9 @@ const sizeMap = {
 };
 
 const iconSizeMap = {
-  sm: 120,
-  md: 160,
-  lg: 200,
+  sm: 180,
+  md: 260,
+  lg: 320,
 };
 
 export function Logo({ className, size = 'md', showText = true, href }: LogoProps) {
@@ -40,7 +40,7 @@ export function Logo({ className, size = 'md', showText = true, href }: LogoProp
         alt="Véu & Gravata"
         width={iconSizeMap[size]}
         height={Math.round(iconSizeMap[size] * 2 / 3)}
-        className="object-contain h-auto max-h-14"
+        className="object-contain w-auto h-auto max-h-20"
       />
     </div>
   );
