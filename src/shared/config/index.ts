@@ -29,6 +29,7 @@ export const ROUTES = {
   wallet: '/dashboard/gifts/wallet',
   guests: '/dashboard/guests',
   addGuest: '/dashboard/guests/add',
+  editGuest: (id: string) => `/dashboard/guests/edit/${id}`,
   invitations: '/dashboard/invitations',
   settings: '/dashboard/settings',
   weddingSite: (slug: string) => `/wedding/${slug}`,

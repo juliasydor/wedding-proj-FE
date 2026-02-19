@@ -2,7 +2,8 @@
 
 import { type FormEvent, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
-import { HeartIcon } from '../atoms/HeartIcon';
+import Image from 'next/image';
+import { useThemeIcon } from '@/shared/hooks/useThemeIcon';
 import { SocialButton } from '../molecules/SocialButton';
 import { cn } from '@/shared/lib/utils';
 
@@ -35,10 +36,12 @@ export function AuthForm({
   isLoading = false,
   className,
 }: AuthFormProps) {
+  const IconImage = useThemeIcon();
+
   return (
     <div className={cn('w-full max-w-md mx-auto space-y-8', className)}>
       <div className="text-center space-y-4">
-        <HeartIcon size={48} animate className="mx-auto" />
+        <Image src={IconImage} alt="Véu & Gravata" width={300} height={200} className="mx-auto w-auto h-auto max-h-20 object-contain" />
         <h1 className="text-heading-2">{title}</h1>
         {subtitle && <p className="text-subtitle">{subtitle}</p>}
       </div>

@@ -13,7 +13,7 @@ export function useThemeIcon() {
 
   // During SSR and initial hydration, always return default icon
   // to prevent hydration mismatch (localStorage not available on server)
-  if (!mounted) return IconVeu;
+  if (!mounted) return IconGravata;
 
   return mode === 'gravata' ? IconGravata : IconVeu;
 }

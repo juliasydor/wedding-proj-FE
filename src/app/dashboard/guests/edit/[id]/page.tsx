@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import {
   ChevronLeft,
-  Plus,
+  Edit2,
   UserPlus,
   Phone,
   User,
@@ -27,9 +26,10 @@ const STATUS_OPTIONS = [
   { id: 'declined' as const, label: 'Recusado', color: 'bg-red-500/20 text-red-500 border-red-500/30' },
 ];
 
-export default function AddGuestPage() {
-  const t = useTranslations('dashboard.guests');
+export default function EditGuestPage() {
   const router = useRouter();
+  const params = useParams();
+  const guestId = params?.id as string;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -42,6 +42,26 @@ export default function AddGuestPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    const stored = sessionStorage.getItem(`edit-guest-${guestId}`);
+    if (stored) {
+      try {
+        const guest = JSON.parse(stored);
+        setFormData({
+          name: guest.name || '',
+          email: guest.email || '',
+          phone: guest.phone || '',
+          status: guest.rsvpStatus || 'pending',
+          hasPlusOne: guest.plusOne || false,
+          plusOneName: guest.plusOneName || '',
+          dietaryRestrictions: guest.dietaryRestrictions || '',
+        });
+      } catch {
+        // ignore parse errors
+      }
+    }
+  }, [guestId]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -53,19 +73,21 @@ export default function AddGuestPage() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement API call to save guest
+      // TODO: Implement API call to update guest
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success('Convidado adicionado com sucesso!');
+      sessionStorage.removeItem(`edit-guest-${guestId}`);
+      toast.success('Convidado atualizado com sucesso!');
       router.push(ROUTES.guests);
     } catch {
-      toast.error('Erro ao adicionar convidado. Tente novamente.');
+      toast.error('Erro ao atualizar convidado. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleBack = () => {
+    sessionStorage.removeItem(`edit-guest-${guestId}`);
     router.push(ROUTES.guests);
   };
 
@@ -77,8 +99,8 @@ export default function AddGuestPage() {
           <ChevronLeft className="h-5 w-5" />
         </IconButton>
         <div>
-          <h1 className="text-xl md:text-heading-2 mb-1">Adicionar Convidado</h1>
-          <p className="text-subtitle text-sm">Preencha as informações do convidado</p>
+          <h1 className="text-xl md:text-heading-2 mb-1">Editar Convidado</h1>
+          <p className="text-subtitle text-sm">Atualize as informações do convidado</p>
         </div>
       </div>
 
@@ -91,7 +113,6 @@ export default function AddGuestPage() {
           </div>
 
           <div className="space-y-4">
-            {/* Guest Name */}
             <div className="space-y-2">
               <Label htmlFor="guest-name" className="text-sm flex items-center gap-2">
                 <User className="h-4 w-4 text-secondary" />
@@ -107,7 +128,6 @@ export default function AddGuestPage() {
               />
             </div>
 
-            {/* Guest Email */}
             <div className="space-y-2">
               <Label htmlFor="guest-email" className="text-sm flex items-center gap-2">
                 <AtSign className="h-4 w-4 text-secondary" />
@@ -124,7 +144,6 @@ export default function AddGuestPage() {
               />
             </div>
 
-            {/* Guest Phone */}
             <div className="space-y-2">
               <Label htmlFor="guest-phone" className="text-sm flex items-center gap-2">
                 <Phone className="h-4 w-4 text-secondary" />
@@ -249,8 +268,8 @@ export default function AddGuestPage() {
               </span>
             ) : (
               <>
-                <Plus className="mr-2 h-4 w-4" />
-                Adicionar Convidado
+                <Edit2 className="mr-2 h-4 w-4" />
+                Salvar Alterações
               </>
             )}
           </Button>
