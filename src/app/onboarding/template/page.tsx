@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ChevronLeft, X, Palette, Check, Monitor, Smartphone } from 'lucide-react';
@@ -144,6 +144,30 @@ export default function OnboardingTemplatePage() {
 
   const currentPalette = COLOR_PALETTES.find((p) => p.id === selectedPalette) || COLOR_PALETTES[0];
 
+  const sidebarPreviewRef = useRef<HTMLDivElement>(null);
+  const mobileDesktopPreviewRef = useRef<HTMLDivElement>(null);
+  const [sidebarScale, setSidebarScale] = useState(0.265);
+  const [mobileDesktopScale, setMobileDesktopScale] = useState(0.3);
+
+  useEffect(() => {
+    const updateScales = () => {
+      if (sidebarPreviewRef.current) {
+        setSidebarScale(sidebarPreviewRef.current.clientWidth / 1280);
+      }
+      if (mobileDesktopPreviewRef.current) {
+        setMobileDesktopScale(mobileDesktopPreviewRef.current.clientWidth / 1280);
+      }
+    };
+
+    updateScales();
+    const timer = setTimeout(updateScales, 100);
+    window.addEventListener('resize', updateScales);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateScales);
+    };
+  }, [showPreview, previewMode, selectedTemplate]);
+
   const filteredTemplates =
     selectedCategory === 'all'
       ? TEMPLATES
@@ -182,7 +206,7 @@ export default function OnboardingTemplatePage() {
   const TemplateComponent = selectedTemplate ? getTemplateComponent(selectedTemplate) : null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-4 md:px-8">
         <IconButton variant="ghost" onClick={handleBack} aria-label="Go back">
@@ -212,7 +236,7 @@ export default function OnboardingTemplatePage() {
           {/* Left Column - Template Selection */}
           <div className="lg:col-span-2">
             {/* Category Filters */}
-            <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <div className="flex flex-wrap gap-2 mb-6">
               {CATEGORIES.map((category) => (
                 <Button
                   key={category}
@@ -232,7 +256,7 @@ export default function OnboardingTemplatePage() {
             </div>
 
             {/* Template Grid */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
               {filteredTemplates.map((template) => (
                 <button
                   key={template.id}
@@ -276,7 +300,7 @@ export default function OnboardingTemplatePage() {
                   <Palette className="h-5 w-5 text-secondary" />
                   <h3 className="font-medium">{t('colorPalette')}</h3>
                 </div>
-                <div className="grid grid-cols-6 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {COLOR_PALETTES.map((palette) => (
                     <button
                       key={palette.id}
@@ -349,15 +373,15 @@ export default function OnboardingTemplatePage() {
                     previewMode === 'desktop' ? (
                       /* Desktop Preview - Scaled down with scroll */
                       <div
-                        className="w-full max-w-[340px] h-[500px] rounded-lg border border-border/50 bg-white"
-                        style={{ overflow: 'scroll' }}
+                        ref={sidebarPreviewRef}
+                        className="w-full h-[500px] rounded-lg border border-border/50 bg-white overflow-hidden"
                       >
                         <div
+                          className="origin-top-left"
                           style={{
                             width: '1280px',
-                            transformOrigin: 'top left',
-                            transform: 'scale(0.265)',
-                            marginBottom: '-75%',
+                            transform: `scale(${sidebarScale})`,
+                            height: `${100 / sidebarScale}%`,
                           }}
                         >
                           <TemplateComponent
@@ -465,8 +489,18 @@ export default function OnboardingTemplatePage() {
             {/* Modal Content */}
             <div className="flex-1 overflow-hidden bg-quaternary/50 flex items-center justify-center p-4">
               {previewMode === 'desktop' ? (
-                <div className="w-full max-w-6xl h-full overflow-auto rounded-lg border border-border/50 bg-white">
-                  <div style={{ minWidth: '1024px' }}>
+                <div
+                  ref={mobileDesktopPreviewRef}
+                  className="w-full h-full rounded-lg border border-border/50 bg-white overflow-hidden"
+                >
+                  <div
+                    className="origin-top-left"
+                    style={{
+                      width: '1280px',
+                      transform: `scale(${mobileDesktopScale})`,
+                      height: `${100 / mobileDesktopScale}%`,
+                    }}
+                  >
                     <TemplateComponent
                       partner1Name={onboarding.partner1Name || 'Partner 1'}
                       partner2Name={onboarding.partner2Name || 'Partner 2'}
@@ -479,8 +513,8 @@ export default function OnboardingTemplatePage() {
                   </div>
                 </div>
               ) : (
-                <div className="relative h-full flex items-center justify-center">
-                  <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl flex flex-col" style={{ width: '390px', height: 'min(95%, 844px)' }}>
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl flex flex-col w-full max-w-[390px]" style={{ height: 'min(95%, 844px)' }}>
                     <div className="w-full flex-1 bg-white rounded-[2.5rem] overflow-hidden relative flex flex-col">
                       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-gray-900 rounded-b-2xl z-10" />
                       <div className="flex-1 overflow-y-auto overflow-x-hidden">
@@ -542,7 +576,7 @@ export default function OnboardingTemplatePage() {
         <div className="max-w-7xl mx-auto flex gap-3">
           <Button
             variant="outline"
-            className="lg:hidden h-14 rounded-full border-border px-6"
+            className="lg:hidden h-12 sm:h-14 rounded-full border-border px-4 sm:px-6 text-sm sm:text-base"
             disabled={!selectedTemplate}
             onClick={() => setShowPreview(true)}
           >
@@ -551,7 +585,7 @@ export default function OnboardingTemplatePage() {
           <Button
             onClick={handleContinue}
             disabled={!selectedTemplate}
-            className="flex-1 h-14 rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium text-lg"
+            className="flex-1 h-12 sm:h-14 rounded-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium text-base sm:text-lg"
           >
             {t('selectTemplate')} →
           </Button>
