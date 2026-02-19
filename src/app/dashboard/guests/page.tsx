@@ -202,6 +202,11 @@ export default function GuestsPage() {
     setShowAddModal(true);
   };
 
+  const handleEditGuestMobile = (guest: Guest) => {
+    sessionStorage.setItem(`edit-guest-${guest.id}`, JSON.stringify(guest));
+    router.push(ROUTES.editGuest(guest.id));
+  };
+
   const handleSaveGuest = () => {
     if (!formData.name || !formData.email) {
       toast.error('Por favor, preencha nome e email do convidado.');
@@ -490,7 +495,7 @@ export default function GuestsPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-card border-border">
-                  <DropdownMenuItem onClick={() => handleEditGuest(guest)} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => handleEditGuestMobile(guest)} className="cursor-pointer">
                     <Edit2 className="h-4 w-4 mr-2" />
                     Editar convidado
                   </DropdownMenuItem>
