@@ -14,7 +14,7 @@ import {
   QrCode,
   ExternalLink,
   Menu,
-  X,
+  ChevronLeft,
   Wallet,
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
@@ -49,16 +49,18 @@ export function DashboardSidebar() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="p-4 md:p-6 border-b border-border/50 relative">
-        <div className="flex items-center justify-center">
-          <Logo size="md" href={ROUTES.dashboard} />
+      <div className="p-4 md:p-6 border-b border-border/50">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={closeSidebar}
+            className="md:hidden p-2 rounded-lg hover:bg-quaternary"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="flex-1 flex items-center justify-center md:justify-center">
+            <Logo size="md" href={ROUTES.dashboard} />
+          </div>
         </div>
-        <button
-          onClick={closeSidebar}
-          className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-quaternary"
-        >
-          <X className="h-5 w-5" />
-        </button>
       </div>
 
       {/* Navigation */}
