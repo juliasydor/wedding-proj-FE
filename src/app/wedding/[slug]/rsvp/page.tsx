@@ -103,7 +103,7 @@ export default function RsvpPage() {
             style={{ backgroundColor: `${primaryColor}20` }}
           >
             {rsvpStatus === 'attending' ? (
-              <Image src={IconImage} alt="Véu & Gravata" width={150} height={150} className="object-contain" />
+              <Image src={IconImage} alt="Véu & Gravata" width={150} height={100} className="w-auto h-auto object-contain" />
             ) : (
               <Check className="h-10 w-10" style={{ color: primaryColor }} />
             )}

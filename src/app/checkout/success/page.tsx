@@ -20,7 +20,7 @@ export default function CheckoutSuccessPage() {
             <Check className="h-8 w-8 text-secondary-foreground" />
           </div>
         </div>
-        <Image src={IconImage} alt="Véu & Gravata" width={140} height={140} className="absolute -top-6 -right-6 object-contain animate-bounce" />
+        <Image src={IconImage} alt="Véu & Gravata" width={140} height={93} className="absolute -top-6 -right-6 w-auto h-auto object-contain animate-bounce" />
       </div>
 
       {/* Message */}
