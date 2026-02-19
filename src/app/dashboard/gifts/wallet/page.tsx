@@ -75,9 +75,6 @@ export default function WalletPage() {
     <div className="p-4 md:p-8">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6 md:mb-8">
-        <IconButton variant="ghost" onClick={() => router.push(ROUTES.giftList)} aria-label="Voltar">
-          <ChevronLeft className="h-5 w-5" />
-        </IconButton>
         <div>
           <h1 className="text-xl md:text-heading-2 mb-1">Minha Carteira</h1>
           <p className="text-subtitle text-sm">Gerencie os presentes recebidos</p>
