@@ -12,7 +12,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      mode: 'veu', // Default to véu (bride theme)
+      mode: 'gravata', // Default to gravata (groom theme - light mode)
 
       setMode: (mode) => set({ mode }),
 
